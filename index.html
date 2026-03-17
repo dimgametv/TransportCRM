@@ -42,7 +42,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
-        // Testing ke liye Driver ID 'D1' fix kar rahe hain
         const driverId = "D1"; 
         let watchId = null;
 
@@ -54,20 +53,28 @@
                 watchId = navigator.geolocation.watchPosition((position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
+                    const accuracy = position.coords.accuracy; // Ye naya add kiya hai
                     
-                    // Firebase par data bhej rahe hain
-                    set(ref(db, 'tracking/' + driverId), {
-                        lat: lat,
-                        lng: lng,
-                        timestamp: Date.now()
-                    });
+                    // Agar accuracy 50 meter se achi hai, tabhi Firebase par bhejo
+                    if (accuracy <= 50) {
+                        set(ref(db, 'tracking/' + driverId), {
+                            lat: lat,
+                            lng: lng,
+                            timestamp: Date.now()
+                        });
+                        
+                        document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-emerald-400 font-bold">Accuracy: ${Math.round(accuracy)}m</span><br><span class="text-slate-500 text-xs">Updated just now</span>`;
+                    } else {
+                        // Agar GPS signal weak hai (indoors), toh ignore karo
+                        document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-amber-500 font-bold">Weak GPS (Accuracy: ${Math.round(accuracy)}m)</span><br><span class="text-slate-500 text-xs">Waiting for better signal...</span>`;
+                    }
                     
-                    document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-slate-500 text-xs">Updated just now</span>`;
                 }, (error) => {
                     document.getElementById('status-text').innerHTML = `<span class="text-red-500">Error: ${error.message}<br>Please turn on GPS.</span>`;
                 }, {
                     enableHighAccuracy: true,
-                    maximumAge: 0
+                    maximumAge: 0,
+                    timeout: 10000
                 });
             } else {
                 alert("Geolocation is not supported by this browser.");
