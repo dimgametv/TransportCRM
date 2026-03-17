@@ -3,32 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driver GPS Tracker</title>
+    <title>Driver App | OmniTransport</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked { right: 0; border-color: #10b981; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
+        .toggle-checkbox { right: 4px; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
+        .toggle-label { background-color: #cbd5e1; transition: all 0.3s; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white flex flex-col items-center justify-center h-screen p-6 text-center font-sans">
+<body class="bg-slate-900 text-white flex flex-col items-center justify-center min-h-screen p-6 text-center font-sans">
 
-    <div class="bg-slate-800 p-8 rounded-2xl border-2 border-slate-700 shadow-2xl max-w-sm w-full">
-        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse" id="status-icon">
-            <span class="text-2xl">📍</span>
-        </div>
-        <h2 class="text-2xl font-black mb-2 uppercase">Driver App</h2>
-        <p class="text-slate-400 font-bold mb-6">OmniTransport Live Sync</p>
+    <div class="bg-slate-800 p-8 rounded-3xl border-2 border-slate-700 shadow-2xl max-w-sm w-full relative overflow-hidden">
         
-        <div id="status-text" class="p-4 bg-slate-900 rounded-lg text-sm font-mono text-emerald-400 break-words mb-6 border border-slate-700">
-            Waiting to start...
+        <div class="absolute top-4 right-4 flex items-center gap-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs font-bold text-slate-400">GPS ACTIVE</span>
         </div>
 
-        <button id="start-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wider transition-colors">
-            Start Sharing Location
+        <h2 class="text-2xl font-black mt-2 mb-1 text-emerald-400 uppercase tracking-wider">Driver Console</h2>
+        <p class="text-slate-400 font-bold mb-6 text-sm">Vehicle: RJ-14-GD-1234</p>
+        
+        <div class="bg-slate-900 border-2 border-slate-700 rounded-2xl p-6 mb-6">
+            <h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Current Speed</h3>
+            <div class="flex items-end justify-center gap-1">
+                <span id="speed-display" class="text-5xl font-black text-white">0</span>
+                <span class="text-lg font-bold text-slate-500 mb-1">km/h</span>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between bg-slate-700/50 p-4 rounded-xl mb-6 border border-slate-600">
+            <div class="text-left">
+                <p class="font-bold text-sm">Auto-Share Location</p>
+                <p class="text-xs text-slate-400">Updates every 15 secs</p>
+            </div>
+            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="auto-share-toggle" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                <label for="auto-share-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+            </div>
+        </div>
+        
+        <div id="status-text" class="p-4 bg-slate-900 rounded-xl text-xs font-mono text-emerald-400 break-words mb-6 border border-slate-700 text-left h-32 overflow-y-auto">
+            > System initialized...<br>
+            > Waiting for GPS fix...
+        </div>
+
+        <button id="start-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 px-6 rounded-xl uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-blue-900/50">
+            Connect GPS System
         </button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDLSOpqIBUdvCFy8C2drX16aKzeUO9Wps4",
             authDomain: "omnicrm-0611.firebaseapp.com",
@@ -43,64 +75,94 @@
         const db = getDatabase(app);
         
         const driverId = "D1"; 
+        const UPDATE_INTERVAL = 15000; // 15 Seconds delay
         let watchId = null;
         let lastSentTime = 0; 
-        const UPDATE_INTERVAL = 10000; // 10 Seconds ka delay
         let wakeLock = null; 
+        
+        // State variables
+        let isAutoShare = true;
+        let currentPos = { lat: 0, lng: 0, speed: 0, accuracy: 0 };
+
+        const statusBox = document.getElementById('status-text');
+        const speedBox = document.getElementById('speed-display');
+        const toggleBtn = document.getElementById('auto-share-toggle');
+
+        function logStatus(msg, color = 'emerald-400') {
+            statusBox.innerHTML = `<span class="text-${color}">> ${msg}</span><br>` + statusBox.innerHTML;
+        }
+
+        // Handle Toggle
+        toggleBtn.addEventListener('change', (e) => {
+            isAutoShare = e.target.checked;
+            logStatus(`Auto-Share set to: ${isAutoShare ? 'ON' : 'OFF'}`, isAutoShare ? 'emerald-400' : 'amber-400');
+        });
+
+        // Ping-Pong Listener: Owner ka Manual Sync sunna
+        onValue(ref(db, 'requests/' + driverId), (snapshot) => {
+            const reqTime = snapshot.val();
+            // Agar naya request aaya hai aur hamare paas location hai
+            if (reqTime && reqTime > lastSentTime && currentPos.lat !== 0) {
+                logStatus("Manual Sync Requested by Admin!", "blue-400");
+                sendLocationToFirebase(true); // Force send
+            }
+        });
 
         async function requestWakeLock() {
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-            } catch (err) {
-                console.error('Wake Lock error:', err);
-            }
+            try { wakeLock = await navigator.wakeLock.request('screen'); logStatus("Screen WakeLock Active"); } 
+            catch (err) { console.error('Wake Lock error:', err); }
+        }
+
+        function sendLocationToFirebase(isForced = false) {
+            const now = Date.now();
+            set(ref(db, 'tracking/' + driverId), {
+                lat: currentPos.lat,
+                lng: currentPos.lng,
+                speed: currentPos.speed,
+                timestamp: now,
+                type: isForced ? 'manual' : 'auto'
+            });
+            lastSentTime = now;
+            logStatus(isForced ? "Forced Location Sent 📍" : "Auto Location Sent 📍");
         }
 
         document.getElementById('start-btn').addEventListener('click', async () => {
             if (navigator.geolocation) {
-                document.getElementById('start-btn').innerText = "Tracking Active...";
-                document.getElementById('start-btn').classList.replace('bg-blue-600', 'bg-emerald-600');
-                
-                await requestWakeLock(); // Screen off hone se roko
+                document.getElementById('start-btn').style.display = 'none'; // Hide button after start
+                await requestWakeLock();
+                logStatus("Searching for satellites...");
                 
                 watchId = navigator.geolocation.watchPosition((position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const accuracy = position.coords.accuracy; // Error margin in meters
-                    const now = Date.now();
+                    const coords = position.coords;
+                    currentPos.lat = coords.latitude;
+                    currentPos.lng = coords.longitude;
+                    currentPos.accuracy = coords.accuracy;
                     
-                    // RULE 1: Accuracy 100m ya usse kam (better) honi chahiye
-                    if (accuracy <= 100) {
-                        
-                        // RULE 2: Pichli location bheje hue 10 seconds ho chuke hon
-                        if (now - lastSentTime >= UPDATE_INTERVAL) {
-                            
-                            set(ref(db, 'tracking/' + driverId), {
-                                lat: lat,
-                                lng: lng,
-                                timestamp: now
-                            });
-                            
-                            lastSentTime = now; 
-                            document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-emerald-400 font-bold">Accuracy: ${Math.round(accuracy)}m</span><br><span class="text-slate-500 text-xs">Sent to Server</span>`;
-                        } else {
-                            // 10 second nahi hue, sirf UI update karo
-                            document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-amber-400 font-bold">Accuracy: ${Math.round(accuracy)}m</span><br><span class="text-slate-500 text-xs">Waiting for interval...</span>`;
+                    // Convert m/s to km/h. If null (stationary), show 0.
+                    currentPos.speed = coords.speed ? Math.round(coords.speed * 3.6) : 0;
+                    
+                    // Update UI
+                    speedBox.innerText = currentPos.speed;
+
+                    // Logic: Send data
+                    if (currentPos.accuracy <= 100) { // Accuracy Filter
+                        if (isAutoShare) {
+                            if (Date.now() - lastSentTime >= UPDATE_INTERVAL) {
+                                sendLocationToFirebase();
+                            }
                         }
                     } else {
-                        // Agar accuracy 100m se zyada kharab hai, toh data mat bhejo
-                        document.getElementById('status-text').innerHTML = `<span class="text-red-500 font-bold">Poor GPS (Error: ${Math.round(accuracy)}m)</span><br><span class="text-slate-500 text-xs">Searching for better satellites...</span>`;
+                        logStatus(`Weak GPS (${Math.round(currentPos.accuracy)}m). Not sharing.`, 'amber-500');
                     }
-                    
                 }, (error) => {
-                    document.getElementById('status-text').innerHTML = `<span class="text-red-500">Error: ${error.message}<br>Please check GPS permissions.</span>`;
+                    logStatus(`GPS Error: ${error.message}`, 'red-500');
                 }, {
-                    enableHighAccuracy: true, // Forces phone to use real GPS, not just cell towers
+                    enableHighAccuracy: true,
                     maximumAge: 0,
                     timeout: 10000
                 });
             } else {
-                alert("Geolocation is not supported by this browser.");
+                alert("Geolocation not supported.");
             }
         });
     </script>
