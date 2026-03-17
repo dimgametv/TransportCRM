@@ -4,10 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OmniTransport | XRV LABS</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Akshar's Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLSOpqIBUdvCFy8C2drX16aKzeUO9Wps4",
+            authDomain: "omnicrm-0611.firebaseapp.com",
+            databaseURL: "https://omnicrm-0611-default-rtdb.firebaseio.com",
+            projectId: "omnicrm-0611",
+            storageBucket: "omnicrm-0611.firebasestorage.app",
+            messagingSenderId: "589912209026",
+            appId: "1:589912209026:web:3eb29be71c19f3935f269b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Global function for connecting Live GPS
+        window.connectLiveGPS = function(driverId) {
+            const btn = document.getElementById('sim-btn');
+            if(btn) {
+                btn.innerHTML = '<i data-lucide="satellite" class="inline w-4 h-4 mr-1 animate-pulse"></i> Connected Live';
+                btn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                btn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                lucide.createIcons();
+            }
+
+            const driverRef = ref(db, 'tracking/' + driverId);
+            onValue(driverRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && window.truckMarker && window.mapInstance) {
+                    const newPos = [data.lat, data.lng];
+                    window.truckMarker.setLatLng(newPos);
+                    window.mapInstance.panTo(newPos, { animate: true, duration: 1 });
+                    console.log("Live Location Update:", newPos);
+                } else {
+                    console.log("Waiting for driver's GPS signal...");
+                }
+            });
+        };
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -70,69 +117,52 @@
             #view-main { flex-direction: row !important; }
         }
         .chart-container canvas { width: 100% !important; }
+        .leaflet-container { z-index: 10 !important; border-radius: 8px; }
     </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
 <div id="app" class="app-container">
 
     <section id="view-main" class="flex-1 flex flex-col overflow-hidden w-full">
-        <aside id="desktop-sidebar" class="hidden w-64 bg-white dark:bg-slate-900 border-r-2 border-slate-200 dark:border-slate-800 flex-col flex-shrink-0">
+        <aside id="desktop-sidebar" class="hidden w-64 bg-white dark:bg-slate-900 border-r-2 border-slate-200 dark:border-slate-800 flex-col flex-shrink-0 z-50">
             <div class="p-6 border-b-2 border-slate-100 dark:border-slate-800 flex items-center gap-3">
                 <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white"><i data-lucide="truck" class="w-6 h-6"></i></div>
                 <div><h1 id="sidebar-company-name" class="font-bold text-lg leading-tight">OmniTransport</h1><p class="text-slate-500 text-sm">by XRV LABS</p></div>
             </div>
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <button onclick="switchTab('dashboard')" id="side-dashboard" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="home"></i> Dashboard
-                </button>
-                <button onclick="switchTab('trips')" id="side-trips" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="route"></i> Trips
-                </button>
-                <button onclick="switchTab('vehicles')" id="side-vehicles" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="truck"></i> Vehicles
-                </button>
-                <button onclick="switchTab('drivers')" id="side-drivers" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="users"></i> Drivers
-                </button>
+                <button onclick="switchTab('dashboard')" id="side-dashboard" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="home"></i> Dashboard</button>
+                <button onclick="switchTab('tracking')" id="side-tracking" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="map"></i> Live Track</button>
+                <button onclick="switchTab('trips')" id="side-trips" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="route"></i> Trips</button>
+                <button onclick="switchTab('vehicles')" id="side-vehicles" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="truck"></i> Vehicles</button>
+                <button onclick="switchTab('drivers')" id="side-drivers" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="users"></i> Drivers</button>
                 <div class="my-2 border-t-2 border-slate-100 dark:border-slate-800"></div>
-                <button onclick="switchTab('payments')" id="side-payments" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="indian-rupee"></i> Payments
-                </button>
-                <button onclick="switchTab('expenses')" id="side-expenses" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="banknote"></i> Expense
-                </button>
-                <button onclick="switchTab('reports')" id="side-reports" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="bar-chart-2"></i> Reports
-                </button>
+                <button onclick="switchTab('payments')" id="side-payments" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="indian-rupee"></i> Payments</button>
+                <button onclick="switchTab('expenses')" id="side-expenses" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="banknote"></i> Expense</button>
+                <button onclick="switchTab('reports')" id="side-reports" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="bar-chart-2"></i> Reports</button>
             </nav>
             <div class="p-4 border-t-2 border-slate-100 dark:border-slate-800">
-                <button onclick="switchTab('profile')" id="side-profile" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="settings"></i> Settings
-                </button>
+                <button onclick="switchTab('profile')" id="side-profile" class="w-full flex items-center gap-3 p-3 rounded-lg font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="settings"></i> Settings</button>
             </div>
         </aside>
 
-        <div class="flex-1 flex flex-col overflow-hidden w-full">
-            <header class="flex items-center justify-between bg-white dark:bg-slate-900 border-b-2 border-slate-200 dark:border-slate-800 p-4 z-10">
+        <div class="flex-1 flex flex-col overflow-hidden w-full relative z-20">
+            <header class="flex items-center justify-between bg-white dark:bg-slate-900 border-b-2 border-slate-200 dark:border-slate-800 p-4 z-50 shadow-sm">
                 <h2 id="app-title" class="font-black text-xl tracking-wide text-indigo-600 dark:text-indigo-400">HOME</h2>
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleTheme()" id="theme-btn" class="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800">
-                        <i id="theme-icon" data-lucide="sun"></i>
-                    </button>
-                    <button onclick="switchTab('profile')" class="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AksharChaudhary" class="w-full h-full">
-                    </button>
+                    <button onclick="toggleTheme()" id="theme-btn" class="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"><i id="theme-icon" data-lucide="sun"></i></button>
+                    <button onclick="switchTab('profile')" class="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AksharChaudhary" class="w-full h-full"></button>
                 </div>
             </header>
             <main id="main-content" class="flex-1 overflow-y-auto no-scrollbar relative w-full"></main>
         </div>
 
-        <nav id="bottom-nav" class="flex justify-around items-center bg-white dark:bg-slate-900 z-50 md:hidden w-full py-2">
+        <nav id="bottom-nav" class="flex justify-around items-center bg-white dark:bg-slate-900 z-50 md:hidden w-full py-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
             <button onclick="switchTab('dashboard')" class="flex flex-col items-center gap-1 text-slate-400"><i data-lucide="home" class="w-6 h-6"></i><span class="text-xs font-bold">Home</span></button>
+            <button onclick="switchTab('tracking')" class="flex flex-col items-center gap-1 text-emerald-500"><i data-lucide="map" class="w-6 h-6"></i><span class="text-xs font-bold">Track</span></button>
             <button onclick="showFabMenu()" class="flex flex-col items-center -mt-6 relative z-10">
                 <div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900"><i data-lucide="plus" class="w-7 h-7"></i></div>
             </button>
-            <button onclick="switchTab('reports')" class="flex flex-col items-center gap-1 text-slate-400"><i data-lucide="bar-chart-2" class="w-6 h-6"></i><span class="text-xs font-bold">Reports</span></button>
+            <button onclick="switchTab('trips')" class="flex flex-col items-center gap-1 text-slate-400"><i data-lucide="route" class="w-6 h-6"></i><span class="text-xs font-bold">Trips</span></button>
         </nav>
     </section>
 </div>
@@ -142,27 +172,16 @@
     <div class="absolute bottom-0 left-0 right-0 glass-card rounded-t-[20px] p-6 animate-slide-up flex flex-col gap-4 z-10 md:w-96 md:mx-auto md:bottom-20 md:rounded-[20px]" style="padding-bottom: calc(var(--safe-bottom) + 24px);">
         <h3 class="font-black text-slate-800 dark:text-white uppercase text-center mb-2">Create Record</h3>
         <div class="grid grid-cols-2 gap-3">
-            <button onclick="switchTab('add-trip'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-indigo-100 dark:border-indigo-900 rounded-lg flex flex-col items-center gap-2">
-                <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center"><i data-lucide="map-pin"></i></div>
-                <span class="font-bold text-sm">New Trip</span>
-            </button>
-            <button onclick="switchTab('add-expense'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-red-100 dark:border-red-900 rounded-lg flex flex-col items-center gap-2">
-                <div class="w-10 h-10 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg flex items-center justify-center"><i data-lucide="receipt"></i></div>
-                <span class="font-bold text-sm">Expense/Salary</span>
-            </button>
-            <button onclick="switchTab('add-vehicle'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-amber-100 dark:border-amber-900 rounded-lg flex flex-col items-center gap-2">
-                <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center"><i data-lucide="truck"></i></div>
-                <span class="font-bold text-sm">Add Vehicle</span>
-            </button>
-            <button onclick="switchTab('add-driver'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-blue-100 dark:border-blue-900 rounded-lg flex flex-col items-center gap-2">
-                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center"><i data-lucide="user-plus"></i></div>
-                <span class="font-bold text-sm">Add Driver</span>
-            </button>
+            <button onclick="alert('Form logic here'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-indigo-100 dark:border-indigo-900 rounded-lg flex flex-col items-center gap-2"><div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center"><i data-lucide="map-pin"></i></div><span class="font-bold text-sm">New Trip</span></button>
+            <button onclick="alert('Form logic here'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-red-100 dark:border-red-900 rounded-lg flex flex-col items-center gap-2"><div class="w-10 h-10 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg flex items-center justify-center"><i data-lucide="receipt"></i></div><span class="font-bold text-sm">Expense/Salary</span></button>
+            <button onclick="alert('Form logic here'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-amber-100 dark:border-amber-900 rounded-lg flex flex-col items-center gap-2"><div class="w-10 h-10 bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center"><i data-lucide="truck"></i></div><span class="font-bold text-sm">Add Vehicle</span></button>
+            <button onclick="alert('Form logic here'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-blue-100 dark:border-blue-900 rounded-lg flex flex-col items-center gap-2"><div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center"><i data-lucide="user-plus"></i></div><span class="font-bold text-sm">Add Driver</span></button>
         </div>
     </div>
 </div>
 
 <script>
+// --- LOCAL DB LOGIC ---
 const today = () => new Date().toISOString().split('T')[0];
 const fmt = n => '₹' + parseFloat(n).toLocaleString('en-IN');
 
@@ -191,35 +210,19 @@ const db = {
 
 let chartInstance = null;
 let currentDetailData = null;
+window.mapInstance = null;
+window.truckMarker = null;
 
+// --- UTILITIES ---
 function updateCompanyName(val) {
     localStorage.setItem('ot_company_name', val);
     const sidebarTitle = document.getElementById('sidebar-company-name');
     if (sidebarTitle) sidebarTitle.innerText = val || 'OmniTransport';
 }
 
-function switchTab(tab) {
-    document.querySelectorAll('#desktop-sidebar button').forEach(b => {
-        b.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400');
-    });
-    const sb = document.getElementById('side-' + tab);
-    if(sb) sb.classList.add('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400');
-
-    let titleText = tab.replace('-', ' ').toUpperCase();
-    if(tab === 'dashboard') titleText = 'HOME';
-    if(tab === 'details' && currentDetailData) titleText = currentDetailData.type.toUpperCase() + ' INFO';
-    
-    document.getElementById('app-title').innerText = titleText;
-    document.getElementById('main-content').innerHTML = `<div class="animate-in w-full space-y-4">${renderPage(tab)}</div>`;
-    lucide.createIcons();
-    updateThemeIcon(); // Sync icon on tab switch
-    if(tab === 'reports') setTimeout(initChart, 100);
-}
-
 function showFabMenu() { document.getElementById('fab-menu').classList.remove('hidden'); }
 function closeFabMenu() { document.getElementById('fab-menu').classList.add('hidden'); }
 
-// THEME TOGGLE
 function toggleTheme() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('ot_theme', isDark ? 'dark' : 'light');
@@ -229,55 +232,58 @@ function toggleTheme() {
 function updateThemeIcon() {
     const isDark = document.documentElement.classList.contains('dark');
     const icon = document.getElementById('theme-icon');
-    if (icon) {
-        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-        lucide.createIcons();
-    }
+    if (icon) { icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon'); lucide.createIcons(); }
 }
 
-// DATA EXPORT/IMPORT
+function viewDetails(type, id) { currentDetailData = { type, id }; switchTab('details'); }
+
+// --- DATA BACKUP ---
 function exportData() {
-    const data = {
-        vehicles: db.get('vehicles'),
-        drivers: db.get('drivers'),
-        trips: db.get('trips'),
-        expenses: db.get('expenses'),
-        companyName: localStorage.getItem('ot_company_name'),
-        gstNo: localStorage.getItem('ot_gst_no')
-    };
+    const data = { vehicles: db.get('vehicles'), drivers: db.get('drivers'), trips: db.get('trips'), expenses: db.get('expenses'), companyName: localStorage.getItem('ot_company_name'), gstNo: localStorage.getItem('ot_gst_no') };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `OmniTransport_Backup_${today()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const a = document.createElement('a'); a.href = url; a.download = `OmniTransport_Backup_${today()}.json`; a.click(); URL.revokeObjectURL(url);
 }
 
 function importData(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
+    const file = event.target.files[0]; if (!file) return; const reader = new FileReader();
     reader.onload = function(e) {
         try {
             const data = JSON.parse(e.target.result);
-            if (data.vehicles) db.set('vehicles', data.vehicles);
-            if (data.drivers) db.set('drivers', data.drivers);
-            if (data.trips) db.set('trips', data.trips);
-            if (data.expenses) db.set('expenses', data.expenses);
-            if (data.companyName) localStorage.setItem('ot_company_name', data.companyName);
-            if (data.gstNo) localStorage.setItem('ot_gst_no', data.gstNo);
-            alert('Data restored successfully!');
-            location.reload();
-        } catch (error) {
-            alert('Invalid backup file. Please try again.');
-        }
+            if (data.vehicles) db.set('vehicles', data.vehicles); if (data.drivers) db.set('drivers', data.drivers);
+            if (data.trips) db.set('trips', data.trips); if (data.expenses) db.set('expenses', data.expenses);
+            if (data.companyName) localStorage.setItem('ot_company_name', data.companyName); if (data.gstNo) localStorage.setItem('ot_gst_no', data.gstNo);
+            alert('Data restored successfully!'); location.reload();
+        } catch (error) { alert('Invalid backup file. Please try again.'); }
     };
     reader.readAsText(file);
 }
 
-function viewDetails(type, id) { currentDetailData = { type, id }; switchTab('details'); }
-function completeTrip(id) { const trips = db.get('trips'); const t = trips.find(x=>x.id===id); if(t) { t.status = 'Completed'; db.set('trips', trips); switchTab('trips'); } }
+// --- NAVIGATION & RENDERING ---
+function switchTab(tab) {
+    document.querySelectorAll('#desktop-sidebar button').forEach(b => {
+        if(b.id !== 'side-tracking') { b.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400'); } 
+        else { b.classList.remove('bg-emerald-50', 'dark:bg-emerald-900/30', 'text-emerald-600', 'dark:text-emerald-400'); b.classList.add('text-slate-500'); }
+    });
+    
+    const sb = document.getElementById('side-' + tab);
+    if(sb) {
+        if(tab === 'tracking') { sb.classList.remove('text-slate-500'); sb.classList.add('bg-emerald-50', 'dark:bg-emerald-900/30', 'text-emerald-600', 'dark:text-emerald-400'); } 
+        else { sb.classList.add('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400'); }
+    }
+
+    let titleText = tab.replace('-', ' ').toUpperCase();
+    if(tab === 'dashboard') titleText = 'HOME';
+    if(tab === 'details' && currentDetailData) titleText = currentDetailData.type.toUpperCase() + ' INFO';
+    if(tab === 'tracking') titleText = 'LIVE TRACKING';
+    
+    document.getElementById('app-title').innerText = titleText;
+    document.getElementById('main-content').innerHTML = `<div class="animate-in w-full space-y-4 flex flex-col h-full">${renderPage(tab)}</div>`;
+    lucide.createIcons(); updateThemeIcon();
+    
+    if(tab === 'reports') setTimeout(initChart, 100);
+    if(tab === 'tracking') setTimeout(initMap, 100);
+}
 
 function renderPage(tab) {
     const vehicles = db.get('vehicles'), drivers = db.get('drivers'), trips = db.get('trips'), expenses = db.get('expenses');
@@ -285,31 +291,29 @@ function renderPage(tab) {
     if (tab === 'dashboard') {
         return `
         <div class="grid grid-cols-2 gap-2 mb-4">
-            <button onclick="switchTab('vehicles')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-indigo-100 dark:border-indigo-900/50">
-                <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center"><i data-lucide="truck" class="w-5 h-5"></i></div>
-                <span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">VEHICLES</span>
-            </button>
-            <button onclick="switchTab('drivers')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-blue-100 dark:border-blue-900/50">
-                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center"><i data-lucide="users" class="w-5 h-5"></i></div>
-                <span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">DRIVERS</span>
-            </button>
-            <button onclick="switchTab('trips')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-emerald-100 dark:border-emerald-900/50">
-                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center"><i data-lucide="route" class="w-5 h-5"></i></div>
-                <span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">TRIPS</span>
-            </button>
-            <button onclick="switchTab('expenses')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-red-100 dark:border-red-900/50">
-                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center"><i data-lucide="banknote" class="w-5 h-5"></i></div>
-                <span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">EXPENSES</span>
+            <button onclick="switchTab('vehicles')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-indigo-100 dark:border-indigo-900/50"><div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center"><i data-lucide="truck" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">VEHICLES</span></button>
+            <button onclick="switchTab('drivers')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-blue-100 dark:border-blue-900/50"><div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center"><i data-lucide="users" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">DRIVERS</span></button>
+            <button onclick="switchTab('trips')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-emerald-100 dark:border-emerald-900/50"><div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center"><i data-lucide="route" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">TRIPS</span></button>
+            <button onclick="switchTab('tracking')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-2 border-2 border-amber-100 dark:border-amber-900/50"><div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center"><i data-lucide="map" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest text-slate-600 dark:text-slate-300">TRACKING</span></button>
+        </div>
+        <h3 class="font-black text-slate-400 pt-1">RECENT TRIPS</h3>
+        <div class="space-y-3">${trips.slice(-3).reverse().map(t=> `<div class="glass-card p-4 rounded-xl flex justify-between items-center shadow-sm cursor-pointer" onclick="viewDetails('trip', '${t.id}')"><div><p class="font-bold text-lg">${t.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${t.dest}</p><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v=>v.id===t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><p class="font-black text-indigo-600">${fmt(t.freightAmount)}</p><span class="badge ${t.status==='Completed'?'bg-emerald-100 text-emerald-600':'bg-amber-100 text-amber-600'} text-xs mt-1 inline-block">${t.status}</span></div></div>`).join('')}</div>`;
+    }
+
+    if (tab === 'tracking') {
+        const defaultTruck = vehicles[0]?.number || 'RJ-14-GD-1234';
+        return `
+        <div class="glass-card p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 flex justify-between items-center shadow-sm mb-2">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Selected Vehicle</p>
+                <h4 class="font-black text-lg text-emerald-600 dark:text-emerald-400">${defaultTruck}</h4>
+            </div>
+            <button onclick="window.connectLiveGPS('D1')" id="sim-btn" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold shadow-md hover:bg-emerald-700 transition-colors">
+                <i data-lucide="satellite" class="inline w-4 h-4 mr-1"></i> Connect Live
             </button>
         </div>
-
-        <h3 class="font-black text-slate-400 pt-1">RECENT TRIPS</h3>
-        <div class="space-y-3">
-            ${trips.slice(-3).reverse().map(t=> `
-                <div class="glass-card p-4 rounded-xl flex justify-between items-center shadow-sm cursor-pointer" onclick="viewDetails('trip', '${t.id}')">
-                    <div><p class="font-bold text-lg">${t.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${t.dest}</p><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v=>v.id===t.vehicleId)?.number || 'N/A'}</p></div>
-                    <div class="text-right"><p class="font-black text-indigo-600">${fmt(t.freightAmount)}</p><span class="badge ${t.status==='Completed'?'bg-emerald-100 text-emerald-600':'bg-amber-100 text-amber-600'} text-xs mt-1 inline-block">${t.status}</span></div>
-                </div>`).join('')}
+        <div class="flex-1 glass-card rounded-xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden relative min-h-[400px]">
+            <div id="transport-map" class="absolute inset-0 w-full h-full bg-slate-100 dark:bg-slate-800"></div>
         </div>`;
     }
 
@@ -322,124 +326,53 @@ function renderPage(tab) {
             <div class="stat-card bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400"><p class="font-bold text-[10px]">Net Income</p><h3 class="font-black text-xl mt-0.5">${fmt(net)}</h3></div>
             <div class="stat-card bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400"><p class="font-bold text-[10px]">Active</p><h3 class="font-black text-xl mt-0.5">${trips.filter(t=>t.status==='Ongoing').length}</h3></div>
         </div>
-        <div class="glass-card p-4 rounded-xl mb-4 border-2 border-slate-200 dark:border-slate-700">
-            <h3 class="font-black text-slate-400 mb-4 text-center">INCOME VS EXPENSE</h3>
-            <div class="chart-container" style="height: 250px;"><canvas id="financeChart"></canvas></div>
+        <div class="glass-card p-4 rounded-xl mb-4 border-2 border-slate-200 dark:border-slate-700"><h3 class="font-black text-slate-400 mb-4 text-center">INCOME VS EXPENSE</h3><div class="chart-container" style="height: 250px;"><canvas id="financeChart"></canvas></div></div>`;
+    }
+
+    if (tab === 'profile') {
+        const companyName = localStorage.getItem('ot_company_name') || 'OmniTransport'; const gstNo = localStorage.getItem('ot_gst_no') || ''; const isDark = document.documentElement.classList.contains('dark');
+        return `
+        <div class="space-y-4">
+            <div class="glass-card rounded-xl p-6 text-center border-2 border-slate-200 dark:border-slate-700"><div class="w-24 h-24 mx-auto bg-indigo-100 rounded-full border-4 border-indigo-500 overflow-hidden mb-4"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AksharChaudhary" class="w-full h-full"></div><h2 class="font-black text-2xl">Akshar Chaudhary</h2><p class="font-bold text-indigo-600 dark:text-indigo-400">XRV LABS · Transport Admin</p></div>
+            <div class="glass-card rounded-xl p-5 border-2 border-slate-200 dark:border-slate-700"><h3 class="font-black text-slate-400 mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5"></i> BUSINESS DETAILS</h3><div class="space-y-4"><div><label class="text-xs font-bold text-slate-500 uppercase">Company Name</label><input type="text" value="${companyName}" class="field-input w-full mt-1" oninput="updateCompanyName(this.value)"></div><div><label class="text-xs font-bold text-slate-500 uppercase">GST Number</label><input type="text" value="${gstNo}" placeholder="Enter GSTIN" class="field-input w-full mt-1" onchange="localStorage.setItem('ot_gst_no', this.value)"></div></div></div>
+            <div class="glass-card rounded-xl p-5 border-2 border-slate-200 dark:border-slate-700"><h3 class="font-black text-slate-400 mb-4 flex items-center gap-2"><i data-lucide="sliders" class="w-5 h-5"></i> PREFERENCES</h3><div class="space-y-3"><div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded flex items-center justify-center"><i data-lucide="moon" class="w-4 h-4"></i></div><span class="font-bold">Dark Mode</span></div><button onclick="toggleTheme(); switchTab('profile');" class="px-4 py-2 ${isDark ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-800'} rounded-lg font-bold text-sm transition-colors">${isDark ? 'Enabled' : 'Disabled'}</button></div></div></div>
+            <div class="glass-card rounded-xl p-5 border-2 border-slate-200 dark:border-slate-700"><h3 class="font-black text-slate-400 mb-4 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5"></i> DATA MANAGEMENT</h3><div class="grid grid-cols-2 gap-3 mb-3"><button onclick="exportData()" class="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg font-bold flex flex-col items-center justify-center gap-2 border border-blue-200 dark:border-blue-800 transition-colors hover:bg-blue-100"><i data-lucide="download"></i> <span class="text-sm">Export Backup</span></button><label class="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg font-bold flex flex-col items-center justify-center gap-2 border border-emerald-200 dark:border-emerald-800 cursor-pointer transition-colors hover:bg-emerald-100"><i data-lucide="upload"></i> <span class="text-sm">Import Backup</span><input type="file" class="hidden" accept=".json" onchange="importData(event)"></label></div><button onclick="if(confirm('Are you sure you want to wipe all data? This cannot be undone.')){localStorage.clear();location.reload();}" class="w-full p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg font-bold flex items-center justify-center gap-2 border border-red-200 dark:border-red-800 transition-colors hover:bg-red-100"><i data-lucide="trash-2" class="w-5 h-5"></i> Erase All Database Records</button></div>
+            <div class="text-center pb-4"><p class="text-slate-400 font-bold text-sm">OmniTransport v1.2.0</p><p class="text-slate-500 text-xs">Developed by XRV LABS</p></div>
         </div>`;
     }
 
-    if (tab === 'vehicles') {
-        return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">FLEET (${vehicles.length})</h3><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div>
-        <div class="space-y-4">${vehicles.map(v=>`<div class="glass-card p-4 rounded-xl shadow-sm border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('vehicle', '${v.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600 dark:text-indigo-400">${v.type}</p></div><div class="text-right"><span class="badge bg-emerald-100 text-emerald-600">${v.status}</span></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">Capacity: ${v.capacity}</span><span class="text-xs font-bold text-slate-400">ID: ${v.id}</span></div></div>`).join('')}</div>`;
-    }
-
-    if (tab === 'drivers') {
-        return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">STAFF (${drivers.length})</h3><button onclick="switchTab('add-driver')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div>
-        <div class="space-y-4">${drivers.map(d=>`<div class="glass-card p-4 rounded-xl shadow-sm border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('driver', '${d.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg">${d.name}</h4><p class="font-bold text-indigo-600 dark:text-indigo-400"><i data-lucide="phone" class="inline w-3 h-3"></i> ${d.phone}</p></div><div class="text-right"><span class="badge bg-blue-100 text-blue-600">${d.salaryType}</span></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">Lic: ${d.license || 'N/A'}</span><span class="text-xs font-bold text-slate-400">Base: ${fmt(d.baseSalary)}</span></div></div>`).join('')}</div>`;
-    }
-
-    if (tab === 'trips' || tab === 'payments') {
-        return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">ROUTE DETAILS</h3><button onclick="switchTab('add-trip')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Record</button></div>
-        <div class="space-y-4">${[...trips].reverse().map(t=>`<div class="glass-card p-4 rounded-xl shadow-sm border-2 ${t.status==='Ongoing'?'border-amber-200 dark:border-amber-900/50':'border-slate-200 dark:border-slate-700'} cursor-pointer" onclick="viewDetails('trip', '${t.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg">${t.origin} TO ${t.dest}</h4><p class="font-bold text-indigo-600 dark:text-indigo-400 mt-1">${vehicles.find(v=>v.id===t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><h3 class="font-black text-xl text-emerald-600 dark:text-emerald-400">${fmt(t.freightAmount)}</h3><p class="text-xs font-bold text-slate-400">Adv: ${fmt(t.advance)}</p></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${t.date}</span>${t.status==='Ongoing'?`<button onclick="event.stopPropagation(); completeTrip('${t.id}')" class="badge bg-amber-500 text-white border-0">Mark Done</button>`:`<span class="badge bg-emerald-100 text-emerald-600">Settled</span>`}</div></div>`).join('')}</div>`;
-    }
-
-    if (tab === 'expenses') {
-        return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">EXPENSES</h3><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">+ Add</button></div>
-        <div class="space-y-4">${[...expenses].reverse().map(e=>{ const isSal = e.type === 'Salary'; const hoverColor = isSal ? 'blue' : 'red'; return `<div class="glass-card p-4 rounded-xl shadow-sm border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('expense', '${e.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg">${e.type.toUpperCase()}</h4><p class="font-bold text-${hoverColor}-600 dark:text-${hoverColor}-400 mt-1">${isSal ? (drivers.find(d=>d.id===e.driverId)?.name || 'N/A') : (vehicles.find(v=>v.id===e.vehicleId)?.number || 'General Expense')}</p></div><div class="text-right"><h3 class="font-black text-xl text-red-600 dark:text-red-400">-${fmt(e.amount)}</h3></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400 truncate max-w-[120px] text-right">${e.notes || 'ID: ' + e.id}</span></div></div>`}).join('')}</div>`;
-    }
-
+    if (tab === 'vehicles') return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">FLEET (${vehicles.length})</h3><button onclick="alert('Add vehicle dialog')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-4">${vehicles.map(v=>`<div class="glass-card p-4 rounded-xl shadow-sm border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('vehicle', '${v.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600 dark:text-indigo-400">${v.type}</p></div><div class="text-right"><span class="badge bg-emerald-100 text-emerald-600">${v.status}</span></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">Capacity: ${v.capacity}</span><span class="text-xs font-bold text-slate-400">ID: ${v.id}</span></div></div>`).join('')}</div>`;
+    if (tab === 'drivers') return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">STAFF (${drivers.length})</h3><button onclick="alert('Add driver dialog')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-4">${drivers.map(d=>`<div class="glass-card p-4 rounded-xl shadow-sm border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('driver', '${d.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg">${d.name}</h4><p class="font-bold text-indigo-600 dark:text-indigo-400"><i data-lucide="phone" class="inline w-3 h-3"></i> ${d.phone}</p></div><div class="text-right"><span class="badge bg-blue-100 text-blue-600">${d.salaryType}</span></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">Lic: ${d.license || 'N/A'}</span><span class="text-xs font-bold text-slate-400">Base: ${fmt(d.baseSalary)}</span></div></div>`).join('')}</div>`;
+    if (tab === 'trips' || tab === 'payments') return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">ROUTE DETAILS</h3><button onclick="alert('Add trip dialog')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Record</button></div><div class="space-y-4">${[...trips].reverse().map(t=>`<div class="glass-card p-4 rounded-xl shadow-sm border-2 ${t.status==='Ongoing'?'border-amber-200 dark:border-amber-900/50':'border-slate-200 dark:border-slate-700'} cursor-pointer" onclick="viewDetails('trip', '${t.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg">${t.origin} TO ${t.dest}</h4><p class="font-bold text-indigo-600 dark:text-indigo-400 mt-1">${vehicles.find(v=>v.id===t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><h3 class="font-black text-xl text-emerald-600 dark:text-emerald-400">${fmt(t.freightAmount)}</h3><p class="text-xs font-bold text-slate-400">Adv: ${fmt(t.advance)}</p></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${t.date}</span>${t.status==='Ongoing'?`<button onclick="event.stopPropagation(); alert('Marked Done');" class="badge bg-amber-500 text-white border-0">Mark Done</button>`:`<span class="badge bg-emerald-100 text-emerald-600">Settled</span>`}</div></div>`).join('')}</div>`;
+    if (tab === 'expenses') return `<div class="flex justify-between items-center mb-4"><h3 class="font-black text-slate-400">EXPENSES</h3><button onclick="alert('Add expense dialog')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-4">${[...expenses].reverse().map(e=>{ const isSal = e.type === 'Salary'; const hoverColor = isSal ? 'blue' : 'red'; return `<div class="glass-card p-4 rounded-xl shadow-sm border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('expense', '${e.id}')"><div class="flex justify-between items-start mb-2"><div class="flex-1"><h4 class="font-black text-lg">${e.type.toUpperCase()}</h4><p class="font-bold text-${hoverColor}-600 dark:text-${hoverColor}-400 mt-1">${isSal ? (drivers.find(d=>d.id===e.driverId)?.name || 'N/A') : (vehicles.find(v=>v.id===e.vehicleId)?.number || 'General Expense')}</p></div><div class="text-right"><h3 class="font-black text-xl text-red-600 dark:text-red-400">-${fmt(e.amount)}</h3></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400 truncate max-w-[120px] text-right">${e.notes || 'ID: ' + e.id}</span></div></div>`}).join('')}</div>`;
+    
     if (tab === 'details') {
-        if (!currentDetailData) return `<p>Error loading.</p>`;
-        const list = db.get(currentDetailData.type + 's');
-        const item = list.find(x => x.id === currentDetailData.id);
-        if (!item) return `<p>Record not found.</p>`;
-        let backTab = currentDetailData.type === 'expense' ? 'expenses' : currentDetailData.type + 's';
-        let chunksHtml = ''; const entries = Object.entries(item);
+        if (!currentDetailData) return `<p>Error loading.</p>`; const list = db.get(currentDetailData.type + 's'); const item = list.find(x => x.id === currentDetailData.id); if (!item) return `<p>Record not found.</p>`;
+        let backTab = currentDetailData.type === 'expense' ? 'expenses' : currentDetailData.type + 's'; let chunksHtml = ''; const entries = Object.entries(item);
         for (let i = 0; i < entries.length; i += 2) {
-            const chunk = entries.slice(i, i + 2);
-            chunksHtml += '<div class="grid grid-cols-2 gap-4 p-5 border-b-2 border-slate-100 dark:border-slate-800 last:border-b-0">';
-            chunk.forEach(([key, val]) => { let displayVal = typeof val === 'number' ? fmt(val) : (val || 'N/A');
-                chunksHtml += `<div><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">${key.replace('Id', ' ID')}</p><p class="font-black text-lg break-words">${displayVal}</p></div>`;
-            }); chunksHtml += '</div>';
+            const chunk = entries.slice(i, i + 2); chunksHtml += '<div class="grid grid-cols-2 gap-4 p-5 border-b-2 border-slate-100 dark:border-slate-800 last:border-b-0">';
+            chunk.forEach(([key, val]) => { let displayVal = typeof val === 'number' ? fmt(val) : (val || 'N/A'); chunksHtml += `<div><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">${key.replace('Id', ' ID')}</p><p class="font-black text-lg break-words">${displayVal}</p></div>`; }); chunksHtml += '</div>';
         }
         return `<div class="flex items-center gap-3 mb-6"><button onclick="switchTab('${backTab}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl transition-colors"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl text-slate-700 dark:text-white">RECORD DETAILS</h3></div><div class="glass-card rounded-xl flex flex-col">${chunksHtml}</div>`;
     }
 
-    if (tab === 'profile') {
-        const companyName = localStorage.getItem('ot_company_name') || 'OmniTransport';
-        const gstNo = localStorage.getItem('ot_gst_no') || '';
-        const isDark = document.documentElement.classList.contains('dark');
+    return `<div class="p-6 text-center text-slate-500 font-bold">Work in progress...</div>`;
+}
 
-        return `
-        <div class="space-y-4">
-            <div class="glass-card rounded-xl p-6 text-center border-2 border-slate-200 dark:border-slate-700">
-                <div class="w-24 h-24 mx-auto bg-indigo-100 rounded-full border-4 border-indigo-500 overflow-hidden mb-4">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AksharChaudhary" class="w-full h-full">
-                </div>
-                <h2 class="font-black text-2xl">Akshar Chaudhary</h2>
-                <p class="font-bold text-indigo-600 dark:text-indigo-400">XRV LABS · Transport Admin</p>
-            </div>
+// --- LEAFLET MAP INITIALIZATION ---
+function initMap() {
+    if (window.mapInstance) { window.mapInstance.remove(); }
+    const startCoords = [26.9124, 75.7873]; // Default Map Location
+    
+    window.mapInstance = L.map('transport-map', { zoomControl: false }).setView(startCoords, 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(window.mapInstance);
 
-            <div class="glass-card rounded-xl p-5 border-2 border-slate-200 dark:border-slate-700">
-                <h3 class="font-black text-slate-400 mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5"></i> BUSINESS DETAILS</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase">Company Name</label>
-                        <input type="text" value="${companyName}" class="field-input w-full mt-1" oninput="updateCompanyName(this.value)">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase">GST Number</label>
-                        <input type="text" value="${gstNo}" placeholder="Enter GSTIN" class="field-input w-full mt-1" onchange="localStorage.setItem('ot_gst_no', this.value)">
-                    </div>
-                </div>
-            </div>
+    const customIcon = L.divIcon({
+        html: '<div class="w-10 h-10 bg-white border-2 border-emerald-500 rounded-full flex items-center justify-center shadow-lg text-lg animate-pulse">🚚</div>',
+        className: '', iconSize: [40, 40], iconAnchor: [20, 20]
+    });
 
-            <div class="glass-card rounded-xl p-5 border-2 border-slate-200 dark:border-slate-700">
-                <h3 class="font-black text-slate-400 mb-4 flex items-center gap-2"><i data-lucide="sliders" class="w-5 h-5"></i> PREFERENCES</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded flex items-center justify-center"><i data-lucide="moon" class="w-4 h-4"></i></div>
-                            <span class="font-bold">Dark Mode</span>
-                        </div>
-                        <button onclick="toggleTheme(); switchTab('profile');" class="px-4 py-2 ${isDark ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-800'} rounded-lg font-bold text-sm transition-colors">
-                            ${isDark ? 'Enabled' : 'Disabled'}
-                        </button>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 rounded flex items-center justify-center"><i data-lucide="bell" class="w-4 h-4"></i></div>
-                            <span class="font-bold">Notifications</span>
-                        </div>
-                        <button onclick="alert('Notification permissions requested.')" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-lg font-bold text-sm">Enable</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-5 border-2 border-slate-200 dark:border-slate-700">
-                <h3 class="font-black text-slate-400 mb-4 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5"></i> DATA MANAGEMENT</h3>
-                <div class="grid grid-cols-2 gap-3 mb-3">
-                    <button onclick="exportData()" class="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg font-bold flex flex-col items-center justify-center gap-2 border border-blue-200 dark:border-blue-800 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900/40">
-                        <i data-lucide="download"></i> <span class="text-sm">Export Backup</span>
-                    </button>
-                    <label class="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg font-bold flex flex-col items-center justify-center gap-2 border border-emerald-200 dark:border-emerald-800 cursor-pointer transition-colors hover:bg-emerald-100 dark:hover:bg-emerald-900/40">
-                        <i data-lucide="upload"></i> <span class="text-sm">Import Backup</span>
-                        <input type="file" class="hidden" accept=".json" onchange="importData(event)">
-                    </label>
-                </div>
-                <button onclick="if(confirm('Are you sure you want to wipe all data? This cannot be undone.')){localStorage.clear();location.reload();}" class="w-full p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg font-bold flex items-center justify-center gap-2 border border-red-200 dark:border-red-800 transition-colors hover:bg-red-100 dark:hover:bg-red-900/40">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i> Erase All Database Records
-                </button>
-            </div>
-            
-            <div class="text-center pb-4">
-                <p class="text-slate-400 font-bold text-sm">OmniTransport v1.1.0</p>
-                <p class="text-slate-500 text-xs">Developed by XRV LABS</p>
-            </div>
-        </div>`;
-    }
-
-    return `<p>Not found</p>`;
+    window.truckMarker = L.marker(startCoords, { icon: customIcon }).addTo(window.mapInstance);
 }
 
 function initChart() {
