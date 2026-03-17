@@ -28,7 +28,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Tumhari Firebase Config
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDLSOpqIBUdvCFy8C2drX16aKzeUO9Wps4",
             authDomain: "omnicrm-0611.firebaseapp.com",
@@ -44,35 +44,58 @@
         
         const driverId = "D1"; 
         let watchId = null;
+        let lastSentTime = 0; 
+        const UPDATE_INTERVAL = 10000; // 10 Seconds ka delay
+        let wakeLock = null; 
 
-        document.getElementById('start-btn').addEventListener('click', () => {
+        async function requestWakeLock() {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+            } catch (err) {
+                console.error('Wake Lock error:', err);
+            }
+        }
+
+        document.getElementById('start-btn').addEventListener('click', async () => {
             if (navigator.geolocation) {
-                document.getElementById('start-btn').innerText = "Sharing Live...";
+                document.getElementById('start-btn').innerText = "Tracking Active...";
                 document.getElementById('start-btn').classList.replace('bg-blue-600', 'bg-emerald-600');
+                
+                await requestWakeLock(); // Screen off hone se roko
                 
                 watchId = navigator.geolocation.watchPosition((position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    const accuracy = position.coords.accuracy; // Ye naya add kiya hai
+                    const accuracy = position.coords.accuracy; // Error margin in meters
+                    const now = Date.now();
                     
-                    // Agar accuracy 50 meter se achi hai, tabhi Firebase par bhejo
-                    if (accuracy <= 50) {
-                        set(ref(db, 'tracking/' + driverId), {
-                            lat: lat,
-                            lng: lng,
-                            timestamp: Date.now()
-                        });
+                    // RULE 1: Accuracy 100m ya usse kam (better) honi chahiye
+                    if (accuracy <= 100) {
                         
-                        document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-emerald-400 font-bold">Accuracy: ${Math.round(accuracy)}m</span><br><span class="text-slate-500 text-xs">Updated just now</span>`;
+                        // RULE 2: Pichli location bheje hue 10 seconds ho chuke hon
+                        if (now - lastSentTime >= UPDATE_INTERVAL) {
+                            
+                            set(ref(db, 'tracking/' + driverId), {
+                                lat: lat,
+                                lng: lng,
+                                timestamp: now
+                            });
+                            
+                            lastSentTime = now; 
+                            document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-emerald-400 font-bold">Accuracy: ${Math.round(accuracy)}m</span><br><span class="text-slate-500 text-xs">Sent to Server</span>`;
+                        } else {
+                            // 10 second nahi hue, sirf UI update karo
+                            document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-amber-400 font-bold">Accuracy: ${Math.round(accuracy)}m</span><br><span class="text-slate-500 text-xs">Waiting for interval...</span>`;
+                        }
                     } else {
-                        // Agar GPS signal weak hai (indoors), toh ignore karo
-                        document.getElementById('status-text').innerHTML = `Lat: ${lat.toFixed(5)}<br>Lng: ${lng.toFixed(5)}<br><span class="text-amber-500 font-bold">Weak GPS (Accuracy: ${Math.round(accuracy)}m)</span><br><span class="text-slate-500 text-xs">Waiting for better signal...</span>`;
+                        // Agar accuracy 100m se zyada kharab hai, toh data mat bhejo
+                        document.getElementById('status-text').innerHTML = `<span class="text-red-500 font-bold">Poor GPS (Error: ${Math.round(accuracy)}m)</span><br><span class="text-slate-500 text-xs">Searching for better satellites...</span>`;
                     }
                     
                 }, (error) => {
-                    document.getElementById('status-text').innerHTML = `<span class="text-red-500">Error: ${error.message}<br>Please turn on GPS.</span>`;
+                    document.getElementById('status-text').innerHTML = `<span class="text-red-500">Error: ${error.message}<br>Please check GPS permissions.</span>`;
                 }, {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: true, // Forces phone to use real GPS, not just cell towers
                     maximumAge: 0,
                     timeout: 10000
                 });
