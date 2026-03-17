@@ -10,32 +10,21 @@
 
     <div class="bg-slate-800 p-8 rounded-3xl border-2 border-slate-700 shadow-2xl max-w-sm w-full relative overflow-hidden">
         
-        <div class="absolute top-4 right-4 flex items-center gap-2">
-            <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-            <span class="text-xs font-bold text-slate-400">GPS ACTIVE</span>
-        </div>
-
         <h2 class="text-2xl font-black mt-2 mb-1 text-emerald-400 uppercase tracking-wider">Driver Console</h2>
         <p class="text-slate-400 font-bold mb-6 text-sm">Vehicle: RJ-14-GD-1234</p>
         
-        <div class="bg-slate-900 border-2 border-slate-700 rounded-2xl p-6 mb-6">
-            <h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Current Speed</h3>
-            <div class="flex items-end justify-center gap-1">
-                <span id="speed-display" class="text-5xl font-black text-white">0</span>
-                <span class="text-lg font-bold text-slate-500 mb-1">km/h</span>
-            </div>
+        <div class="w-24 h-24 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-slate-600 relative">
+            <span id="radar-pulse" class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-0 transition-opacity duration-300"></span>
+            <span class="text-4xl relative z-10">📡</span>
         </div>
         
-        <div id="status-text" class="p-4 bg-slate-900 rounded-xl text-xs font-mono text-emerald-400 break-words mb-6 border border-slate-700 text-left h-32 overflow-y-auto">
-            > System initialized...<br>
-            > Waiting for GPS fix...
+        <div id="status-text" class="p-4 bg-slate-900 rounded-xl text-xs font-mono text-emerald-400 break-words mb-6 border border-slate-700 text-left h-32 overflow-y-auto flex flex-col justify-end">
+            > Standby mode...<br>
+            > Ready for dispatch.
         </div>
 
         <button id="start-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 px-6 rounded-xl uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-blue-900/50">
-            Connect GPS System
+            Activate System
         </button>
     </div>
 
@@ -57,81 +46,72 @@
         const db = getDatabase(app);
         
         const driverId = "D1"; 
-        const UPDATE_INTERVAL = 15000; // 15 Seconds delay
-        let watchId = null;
         let lastSentTime = 0; 
         let wakeLock = null; 
-        
-        let currentPos = { lat: 0, lng: 0, speed: 0, accuracy: 0 };
+        let currentPos = { lat: 0, lng: 0, accuracy: 0 };
 
         const statusBox = document.getElementById('status-text');
-        const speedBox = document.getElementById('speed-display');
+        const radarPulse = document.getElementById('radar-pulse');
 
         function logStatus(msg, color = 'emerald-400') {
-            statusBox.innerHTML = `<span class="text-${color}">> ${msg}</span><br>` + statusBox.innerHTML;
+            statusBox.innerHTML += `<span class="text-${color} mt-1 block">> ${msg}</span>`;
+            statusBox.scrollTop = statusBox.scrollHeight;
         }
 
-        // Ping-Pong Listener: Owner ka Manual Sync sunna
+        // PING LISTENER: Wait for Owner to click "SYNC NOW"
         onValue(ref(db, 'requests/' + driverId), (snapshot) => {
             const reqTime = snapshot.val();
-            // Agar naya request aaya hai aur hamare paas location hai
-            if (reqTime && reqTime > lastSentTime && currentPos.lat !== 0) {
-                logStatus("Manual Sync Requested by Admin!", "blue-400");
-                sendLocationToFirebase(true); // Force send location instantly
+            // Agar naya request aaya hai
+            if (reqTime && reqTime > lastSentTime) {
+                if (currentPos.lat !== 0 && currentPos.accuracy <= 100) {
+                    logStatus("⚡ PING RECEIVED! Sending Coordinates...", "blue-400");
+                    
+                    // Visual Ping Effect
+                    radarPulse.classList.replace('opacity-0', 'animate-ping');
+                    setTimeout(() => radarPulse.classList.replace('animate-ping', 'opacity-0'), 1500);
+
+                    // Turant Firebase par current GPS lock bhej do
+                    const now = Date.now();
+                    set(ref(db, 'tracking/' + driverId), {
+                        lat: currentPos.lat,
+                        lng: currentPos.lng,
+                        timestamp: now
+                    });
+                    lastSentTime = now;
+                    logStatus("📍 Location dispatched to Owner.", "emerald-400");
+                } else {
+                    logStatus("⚠️ Ping received, but GPS signal is weak/searching.", "amber-400");
+                }
             }
         });
 
         async function requestWakeLock() {
-            try { wakeLock = await navigator.wakeLock.request('screen'); logStatus("Screen WakeLock Active"); } 
+            try { wakeLock = await navigator.wakeLock.request('screen'); } 
             catch (err) { console.error('Wake Lock error:', err); }
-        }
-
-        function sendLocationToFirebase(isForced = false) {
-            const now = Date.now();
-            set(ref(db, 'tracking/' + driverId), {
-                lat: currentPos.lat,
-                lng: currentPos.lng,
-                speed: currentPos.speed,
-                timestamp: now,
-                type: isForced ? 'manual' : 'auto'
-            });
-            lastSentTime = now;
-            logStatus(isForced ? "Forced Location Sent 📍" : "Auto Location Sent 📍");
         }
 
         document.getElementById('start-btn').addEventListener('click', async () => {
             if (navigator.geolocation) {
-                document.getElementById('start-btn').style.display = 'none'; // Hide button after start
+                document.getElementById('start-btn').style.display = 'none';
                 await requestWakeLock();
-                logStatus("Searching for satellites...");
+                logStatus("Radar ON. Locking GPS...");
                 
-                watchId = navigator.geolocation.watchPosition((position) => {
-                    const coords = position.coords;
-                    currentPos.lat = coords.latitude;
-                    currentPos.lng = coords.longitude;
-                    currentPos.accuracy = coords.accuracy;
+                // GPS continuously track karega, par automatic BHEJEGA NAHI.
+                // Ye zaroori hai taaki 'Sync Now' dabate hi turant location mil jaye (bina 5 sec wait kiye).
+                navigator.geolocation.watchPosition((position) => {
+                    currentPos.lat = position.coords.latitude;
+                    currentPos.lng = position.coords.longitude;
+                    currentPos.accuracy = position.coords.accuracy;
                     
-                    // Convert m/s to km/h. If null (stationary), show 0.
-                    currentPos.speed = coords.speed ? Math.round(coords.speed * 3.6) : 0;
-                    
-                    // Update Speedometer UI
-                    speedBox.innerText = currentPos.speed;
-
-                    // Auto-Update Logic (Accuracy <= 100m AND 15 seconds passed)
-                    if (currentPos.accuracy <= 100) {
-                        if (Date.now() - lastSentTime >= UPDATE_INTERVAL) {
-                            sendLocationToFirebase();
-                        }
+                    // Bas UI par lock status dikhayenge
+                    if(document.getElementById('lock-status')) {
+                        document.getElementById('lock-status').innerText = `Locked (${Math.round(currentPos.accuracy)}m)`;
                     } else {
-                        logStatus(`Weak GPS (${Math.round(currentPos.accuracy)}m). Waiting...`, 'amber-500');
+                        logStatus(`GPS Ready. <span id="lock-status" class="text-slate-400 text-xs ml-2">Locked (${Math.round(currentPos.accuracy)}m)</span>`);
                     }
                 }, (error) => {
                     logStatus(`GPS Error: ${error.message}`, 'red-500');
-                }, {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: 10000
-                });
+                }, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
             } else {
                 alert("Geolocation not supported.");
             }
