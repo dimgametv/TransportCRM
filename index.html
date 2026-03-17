@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver App | OmniTransport</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Toggle Switch CSS */
-        .toggle-checkbox:checked { right: 0; border-color: #10b981; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
-        .toggle-checkbox { right: 4px; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
-        .toggle-label { background-color: #cbd5e1; transition: all 0.3s; }
-    </style>
 </head>
 <body class="bg-slate-900 text-white flex flex-col items-center justify-center min-h-screen p-6 text-center font-sans">
 
@@ -33,17 +26,6 @@
             <div class="flex items-end justify-center gap-1">
                 <span id="speed-display" class="text-5xl font-black text-white">0</span>
                 <span class="text-lg font-bold text-slate-500 mb-1">km/h</span>
-            </div>
-        </div>
-
-        <div class="flex items-center justify-between bg-slate-700/50 p-4 rounded-xl mb-6 border border-slate-600">
-            <div class="text-left">
-                <p class="font-bold text-sm">Auto-Share Location</p>
-                <p class="text-xs text-slate-400">Updates every 15 secs</p>
-            </div>
-            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" name="toggle" id="auto-share-toggle" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                <label for="auto-share-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
             </div>
         </div>
         
@@ -80,23 +62,14 @@
         let lastSentTime = 0; 
         let wakeLock = null; 
         
-        // State variables
-        let isAutoShare = true;
         let currentPos = { lat: 0, lng: 0, speed: 0, accuracy: 0 };
 
         const statusBox = document.getElementById('status-text');
         const speedBox = document.getElementById('speed-display');
-        const toggleBtn = document.getElementById('auto-share-toggle');
 
         function logStatus(msg, color = 'emerald-400') {
             statusBox.innerHTML = `<span class="text-${color}">> ${msg}</span><br>` + statusBox.innerHTML;
         }
-
-        // Handle Toggle
-        toggleBtn.addEventListener('change', (e) => {
-            isAutoShare = e.target.checked;
-            logStatus(`Auto-Share set to: ${isAutoShare ? 'ON' : 'OFF'}`, isAutoShare ? 'emerald-400' : 'amber-400');
-        });
 
         // Ping-Pong Listener: Owner ka Manual Sync sunna
         onValue(ref(db, 'requests/' + driverId), (snapshot) => {
@@ -104,7 +77,7 @@
             // Agar naya request aaya hai aur hamare paas location hai
             if (reqTime && reqTime > lastSentTime && currentPos.lat !== 0) {
                 logStatus("Manual Sync Requested by Admin!", "blue-400");
-                sendLocationToFirebase(true); // Force send
+                sendLocationToFirebase(true); // Force send location instantly
             }
         });
 
@@ -141,18 +114,16 @@
                     // Convert m/s to km/h. If null (stationary), show 0.
                     currentPos.speed = coords.speed ? Math.round(coords.speed * 3.6) : 0;
                     
-                    // Update UI
+                    // Update Speedometer UI
                     speedBox.innerText = currentPos.speed;
 
-                    // Logic: Send data
-                    if (currentPos.accuracy <= 100) { // Accuracy Filter
-                        if (isAutoShare) {
-                            if (Date.now() - lastSentTime >= UPDATE_INTERVAL) {
-                                sendLocationToFirebase();
-                            }
+                    // Auto-Update Logic (Accuracy <= 100m AND 15 seconds passed)
+                    if (currentPos.accuracy <= 100) {
+                        if (Date.now() - lastSentTime >= UPDATE_INTERVAL) {
+                            sendLocationToFirebase();
                         }
                     } else {
-                        logStatus(`Weak GPS (${Math.round(currentPos.accuracy)}m). Not sharing.`, 'amber-500');
+                        logStatus(`Weak GPS (${Math.round(currentPos.accuracy)}m). Waiting...`, 'amber-500');
                     }
                 }, (error) => {
                     logStatus(`GPS Error: ${error.message}`, 'red-500');
