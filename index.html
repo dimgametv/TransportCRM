@@ -190,8 +190,8 @@ const formatMonthStr = (ym) => {
 let activeStaffTab = 'drivers';
 
 function seedDB() {
-    if (localStorage.getItem('ot_seeded_v18')) return;
-    ['ot_seeded', 'ot_seeded_v2', 'ot_seeded_v3', 'ot_seeded_v4', 'ot_seeded_v5', 'ot_seeded_v6', 'ot_seeded_v7', 'ot_seeded_v8', 'ot_seeded_v9', 'ot_seeded_v10', 'ot_seeded_v11', 'ot_seeded_v12', 'ot_seeded_v13', 'ot_seeded_v14', 'ot_seeded_v15', 'ot_seeded_v16', 'ot_seeded_v17'].forEach(k => localStorage.removeItem(k));
+    if (localStorage.getItem('ot_seeded_v21')) return;
+    for (let i=1; i<21; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
     const data = {
         vehicles: [
             { 
@@ -212,12 +212,12 @@ function seedDB() {
             }
         ],
         drivers: [
-            { id: 'D1', name: 'Ramesh Singh', phone: '9876543210', license: 'RJ142010123', salaryType: 'Fixed', baseSalary: 15000, salaryHistory: [{ month: '2026-03', total: 15000, paid: 5000, incentive: 1200 }, { month: '2026-02', total: 15000, paid: 15000, incentive: 0 }], role: 'Driver' },
-            { id: 'D2', name: 'Suresh Kumar', phone: '9876543211', license: 'RJ142010124', salaryType: 'Per Trip', baseSalary: 12000, salaryHistory: [{ month: '2026-03', total: 12000, paid: 12000, incentive: 500 }], role: 'Driver' },
-            { id: 'D3', name: 'Mahesh Yadav', phone: '9876543214', license: 'RJ142010125', salaryType: 'Fixed', baseSalary: 14000, salaryHistory: [], role: 'Driver' },
-            { id: 'W1', name: 'Priya Sharma', phone: '9876543212', license: '', salaryType: 'Fixed', baseSalary: 18000, salaryHistory: [{ month: '2026-03', total: 18000, paid: 10000, incentive: 200 }], role: 'Worker' },
-            { id: 'W2', name: 'Amit Verma', phone: '9876543213', license: '', salaryType: 'Fixed', baseSalary: 20000, salaryHistory: [{ month: '2026-03', total: 20000, paid: 20000, incentive: 1000 }], role: 'Worker' },
-            { id: 'W3', name: 'Neha Gupta', phone: '9876543215', license: '', salaryType: 'Fixed', baseSalary: 22000, salaryHistory: [], role: 'Worker' }
+            { id: 'D1', name: 'Ramesh Singh', phone: '9876543210', email: 'ramesh@xrvlabs.com', aadhaar: '1234 5678 9012', epfo: 'Activated', license: 'RJ142010123', salaryType: 'Fixed', baseSalary: 15000, salaryHistory: [{ month: '2026-03', total: 15000, paid: 5000, incentive: 1200, epfoSettled: true }, { month: '2026-02', total: 15000, paid: 15000, incentive: 0, epfoSettled: true }], role: 'Driver' },
+            { id: 'D2', name: 'Suresh Kumar', phone: '9876543211', email: '', aadhaar: '', epfo: 'Not Activated', license: 'RJ142010124', salaryType: 'Per Trip', baseSalary: 12000, salaryHistory: [{ month: '2026-03', total: 12000, paid: 12000, incentive: 500, epfoSettled: false }], role: 'Driver' },
+            { id: 'D3', name: 'Mahesh Yadav', phone: '9876543214', email: '', aadhaar: '', epfo: 'Not Activated', license: 'RJ142010125', salaryType: 'Fixed', baseSalary: 14000, salaryHistory: [], role: 'Driver' },
+            { id: 'W1', name: 'Priya Sharma', phone: '9876543212', email: 'priya@xrvlabs.com', aadhaar: '0987 6543 2109', epfo: 'Activated', license: '', salaryType: 'Fixed', baseSalary: 18000, salaryHistory: [{ month: '2026-03', total: 18000, paid: 10000, incentive: 200, epfoSettled: true }], role: 'Worker' },
+            { id: 'W2', name: 'Amit Verma', phone: '9876543213', email: '', aadhaar: '', epfo: 'Not Activated', license: '', salaryType: 'Fixed', baseSalary: 20000, salaryHistory: [{ month: '2026-03', total: 20000, paid: 20000, incentive: 1000, epfoSettled: false }], role: 'Worker' },
+            { id: 'W3', name: 'Neha Gupta', phone: '9876543215', email: '', aadhaar: '', epfo: 'Not Activated', license: '', salaryType: 'Fixed', baseSalary: 22000, salaryHistory: [], role: 'Worker' }
         ],
         trips: [
             { id: 'T1', vehicleId: 'V1', driverId: 'D1', origin: 'Jaipur', dest: 'Delhi', freightAmount: 25000, advance: 5000, date: today(), status: 'Completed' },
@@ -231,7 +231,7 @@ function seedDB() {
     };
     Object.keys(data).forEach(k => localStorage.setItem('ot_' + k, JSON.stringify(data[k])));
     localStorage.setItem('ot_company_name', 'OmniTransport');
-    localStorage.setItem('ot_seeded_v18', '1');
+    localStorage.setItem('ot_seeded_v21', '1');
 }
 seedDB();
 
@@ -244,18 +244,30 @@ const db = {
 
 let chartInstance = null, currentDetailData = null;
 
-window.addSalaryRow = (m='', t='', p='', i='') => {
+window.addSalaryRow = (m='', t='', p='', i='', epfoSettled=true) => {
     const container = document.getElementById('monthly-salaries-container');
     if (!container) return;
     const currentM = m || today().slice(0,7);
+    const isEpfoActive = document.getElementById('d-epfo')?.value === 'Activated';
+    
     container.insertAdjacentHTML('beforeend', `
         <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 mb-3 bg-slate-50 dark:bg-slate-800/50 salary-row relative animate-slide-up">
             <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-rose-500 w-6 h-6 flex items-center justify-center bg-rose-100 rounded-[5px]"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <div class="grid grid-cols-2 gap-2 mt-4">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">MONTH</label><input type="month" class="field-input w-full p-2 text-xs uppercase s-month" value="${currentM}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">TOTAL (₹)</label><input type="number" placeholder="0" class="field-input w-full p-2 text-xs uppercase s-total" value="${t}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">PAID (₹)</label><input type="number" placeholder="0" class="field-input w-full p-2 text-xs uppercase s-paid" value="${p}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">INCENTIVE (₹)</label><input type="number" placeholder="0" class="field-input w-full p-2 text-xs uppercase s-incentive" value="${i}"></div>
+            <div class="grid grid-cols-2 gap-3 mt-4 items-end">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">MONTH</label><input type="month" class="field-input w-full mt-1 uppercase s-month" value="${currentM}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">TOTAL (₹)</label><input type="number" placeholder="0" class="field-input w-full mt-1 uppercase s-total" value="${t}"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3 items-end">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">PAID (₹)</label><input type="number" placeholder="0" class="field-input w-full mt-1 uppercase s-paid" value="${p}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">INCENTIVE (₹)</label><input type="number" placeholder="0" class="field-input w-full mt-1 uppercase s-incentive" value="${i}"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3 epfo-col ${isEpfoActive ? '' : 'hidden'}">
+                <div class="col-span-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2 p-3 bg-white dark:bg-slate-800 rounded-[5px] border border-slate-200 dark:border-slate-700 cursor-pointer">
+                        <input type="checkbox" class="s-epfo w-4 h-4 rounded text-blue-600 focus:ring-blue-500" ${epfoSettled ? 'checked' : ''}>
+                        <span class="text-blue-500 flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> EPFO SETTLED FOR MONTH</span>
+                    </label>
+                </div>
             </div>
         </div>
     `);
@@ -556,23 +568,27 @@ function renderPage(tab) {
                 sh.forEach(s => {
                     const pending = Math.max(0, s.total - s.paid);
                     const percent = s.total > 0 ? Math.min(100, (s.paid / s.total) * 100) : 0;
+                    
+                    const epfoBadge = (d.epfo === 'Activated' && s.epfoSettled) ? `<div class="text-[10px] font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 uppercase flex items-center gap-1 text-blue-500"><i data-lucide="check-circle" class="w-3 h-3"></i> EPFO SETTLED</div>` : '';
+
                     historyHtml += `
                         <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50 mb-3">
                             <div class="flex justify-between items-center mb-2">
                                 <h5 class="font-black text-sm uppercase">${formatMonthStr(s.month)}</h5>
                                 <span class="badge ${pending === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase">${pending === 0 ? 'CLEARED' : 'PENDING'}</span>
                             </div>
-                            <div class="flex justify-between text-xs font-bold mb-1 uppercase">
-                                <span class="text-emerald-500"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span>${fmt(s.paid)}</span> PAID</span>
-                                <span class="text-amber-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span>${fmt(pending)}</span> DUE</span>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-emerald-500 !text-[10px] font-bold uppercase"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span class="!text-[10px]">${fmt(s.paid)}</span> PAID</span>
+                                <span class="text-amber-500 !text-[10px] font-bold uppercase"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span class="!text-[10px]">${fmt(pending)}</span> DUE</span>
                             </div>
-                            <div class="flex justify-between text-[9px] font-bold mb-2 uppercase text-slate-400 tracking-wider">
-                                <span>TOT: ${fmt(s.total)}</span>
-                                <span class="text-indigo-500">INC: ${fmt(s.incentive || 0)}</span>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-slate-400 !text-[9px] font-bold uppercase tracking-tight">TOTAL: ${fmt(s.total)}</span>
+                                <span class="text-indigo-500 !text-[9px] font-bold uppercase tracking-tight">INCENTIVE: ${fmt(s.incentive || 0)}</span>
                             </div>
-                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mt-1">
                                 <div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div>
                             </div>
+                            ${epfoBadge}
                         </div>
                     `;
                 });
@@ -582,7 +598,7 @@ function renderPage(tab) {
                     <div class="px-4 pb-4">
                         <div class="flex justify-between items-end mb-3">
                             <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">MONTHLY RECORDS</h4>
-                            <span class="text-[10px] font-bold ${pendingOverall > 0 ? 'text-amber-500' : 'text-emerald-500'} uppercase">TOTAL DUE: ${fmt(pendingOverall)}</span>
+                            <span class="text-xs font-bold ${pendingOverall > 0 ? 'text-amber-500' : 'text-emerald-500'} uppercase">TOTAL DUE: ${fmt(pendingOverall)}</span>
                         </div>
                         ${historyHtml}
                     </div>
@@ -610,13 +626,33 @@ function renderPage(tab) {
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">LICENSE</p>
                             <p class="font-black text-sm uppercase">${d.license || 'N/A'}</p>
                         </div>` : ''}
+                        
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">AADHAAR</p>
+                            <p class="font-black text-sm uppercase">${d.aadhaar || 'N/A'}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">EMAIL</p>
+                            <p class="font-black text-sm">${d.email || 'N/A'}</p>
+                        </div>
+                        
                         <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">BASE SALARY</p>
                             <p class="font-black text-sm uppercase">${fmt(d.baseSalary)}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">SALARY TYPE</p>
-                            <p class="font-black text-sm uppercase">${d.salaryType}</p>
+                        
+                        <div class="col-span-2 grid grid-cols-2 gap-3">
+                            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">SALARY TYPE</p>
+                                <p class="font-black text-sm uppercase">${d.salaryType}</p>
+                            </div>
+                            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 flex justify-between items-center">
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">EPFO</p>
+                                    <p class="font-black text-sm uppercase ${d.epfo === 'Activated' ? 'text-blue-600' : ''}">${d.epfo || 'Not Activated'}</p>
+                                </div>
+                                ${d.epfo === 'Activated' ? `<i data-lucide="check-circle" class="w-5 h-5 text-blue-500"></i>` : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -655,15 +691,15 @@ function renderPage(tab) {
         if (isEdit && currentDetailData) v = db.get('vehicles').find(x => x.id === currentDetailData.id) || v;
         
         const editCompBox = (title, idPrefix, status, issue, expiry) => `
-            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 mb-3">
+            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
                 <label class="text-xs font-bold text-slate-500 uppercase">${title}</label>
                 <select id="${idPrefix}" class="field-input w-full mt-1 mb-2 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('${idPrefix}-dates').classList.toggle('hidden', this.value === 'Not Available')">
                     <option ${status === 'Available' ? 'selected' : ''}>Available</option>
                     <option ${status === 'Not Available' ? 'selected' : ''}>Not Available</option>
                 </select>
-                <div id="${idPrefix}-dates" class="grid grid-cols-2 gap-2 ${status === 'Not Available' ? 'hidden' : ''}">
-                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">ISSUE DATE</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="field-input w-full mt-1 uppercase"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">EXPIRY DATE</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="field-input w-full mt-1 uppercase"></div>
+                <div id="${idPrefix}-dates" class="${status === 'Not Available' ? 'hidden' : ''}">
+                    <div class="mt-2"><label class="text-[10px] font-bold text-slate-400 uppercase">ISSUE DATE</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="field-input w-full mt-1 uppercase"></div>
+                    <div class="mt-2"><label class="text-[10px] font-bold text-slate-400 uppercase">EXPIRY DATE</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="field-input w-full mt-1 uppercase"></div>
                 </div>
             </div>
         `;
@@ -675,49 +711,58 @@ function renderPage(tab) {
         </div>
         <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
             
-            <div><label class="text-xs font-bold text-slate-500 uppercase">NUMBER</label><input type="text" id="v-number" value="${v.number}" class="field-input w-full mt-1 uppercase"></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="v-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select></div>
             <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">NUMBER</label><input type="text" id="v-number" value="${v.number}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="v-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
                 <div><label class="text-xs font-bold text-slate-500 uppercase">CAPACITY</label><input type="text" id="v-capacity" value="${v.capacity}" class="field-input w-full mt-1 uppercase"></div>
                 <div><label class="text-xs font-bold text-slate-500 uppercase">CABIN</label><select id="v-cabin" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.cabin === '1 PERSON' ? 'selected' : ''}>1 PERSON</option><option ${v.cabin === '2 PERSON' ? 'selected' : ''}>2 PERSON</option><option ${v.cabin === '3 PERSON' ? 'selected' : ''}>3 PERSON</option><option ${v.cabin === '4 PERSON' ? 'selected' : ''}>4 PERSON</option></select></div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3 mt-3">
                 <div><label class="text-xs font-bold text-slate-500 uppercase">FUEL TYPE</label><select id="v-fuelType" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option><option ${v.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option><option ${v.fuelType === 'CNG' ? 'selected' : ''}>CNG</option><option ${v.fuelType === 'EV' ? 'selected' : ''}>EV</option></select></div>
                 <div><label class="text-xs font-bold text-slate-500 uppercase">RUNNING STATUS</label><select id="v-runningStatus" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.runningStatus === 'Stopped' ? 'selected' : ''}>Stopped</option><option ${v.runningStatus === 'On Trip' ? 'selected' : ''}>On Trip</option><option ${v.runningStatus === 'Maintenance' ? 'selected' : ''}>Maintenance</option></select></div>
             </div>
             
             <h4 class="text-xs font-black text-slate-400 mt-4 border-b-2 border-slate-100 dark:border-slate-800 pb-2 uppercase mb-3">COMPLIANCE</h4>
-            ${editCompBox('NAT. PERMIT', 'v-permit', v.nationalPermit, v.nationalPermitIssue, v.nationalPermitExpiry)}
-            ${editCompBox('FITNESS', 'v-fitness', v.fitness, v.fitnessIssue, v.fitnessExpiry)}
-            ${editCompBox('POLLUTION', 'v-pollution', v.pollution, v.pollutionIssue, v.pollutionExpiry)}
-            ${editCompBox('INSURANCE', 'v-insurance', v.insurance, v.insuranceIssue, v.insuranceExpiry)}
+            <div class="grid grid-cols-2 gap-3">
+                ${editCompBox('NAT. PERMIT', 'v-permit', v.nationalPermit, v.nationalPermitIssue, v.nationalPermitExpiry)}
+                ${editCompBox('FITNESS', 'v-fitness', v.fitness, v.fitnessIssue, v.fitnessExpiry)}
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                ${editCompBox('POLLUTION', 'v-pollution', v.pollution, v.pollutionIssue, v.pollutionExpiry)}
+                ${editCompBox('INSURANCE', 'v-insurance', v.insurance, v.insuranceIssue, v.insuranceExpiry)}
+            </div>
 
             <h4 class="font-black text-slate-400 mt-4 border-b-2 border-slate-100 dark:border-slate-800 pb-2 uppercase">FINANCE DETAILS</h4>
-            <div>
-                <label class="text-xs font-bold text-slate-500 uppercase">IS VEHICLE FINANCED?</label>
-                <select id="v-hasFinance" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('finance-fields').classList.toggle('hidden', this.value === 'No')">
-                    <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>No (Cleared)</option>
-                    <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>Yes (EMI Active)</option>
-                </select>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">IS VEHICLE FINANCED?</label>
+                    <select id="v-hasFinance" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('finance-fields').classList.toggle('hidden', this.value === 'No')">
+                        <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>No (Cleared)</option>
+                        <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>Yes (EMI Active)</option>
+                    </select>
+                </div>
+                <div></div>
             </div>
             
-            <div id="finance-fields" class="space-y-3 mt-3 ${v.hasFinance === 'Yes' ? '' : 'hidden'} border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase">EMI AMOUNT (₹)</label>
-                    <div class="flex items-center gap-2 mt-1">
-                        <input type="range" min="0" max="100000" step="500" value="${v.emiAmount || 0}" class="flex-1" oninput="document.getElementById('v-emiAmount').value = this.value">
-                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="e.g. 15000" class="field-input w-24 uppercase" oninput="document.querySelector('#finance-fields input[type=range]').value = this.value || 0">
+            <div id="finance-fields" class="mt-3 ${v.hasFinance === 'Yes' ? '' : 'hidden'} border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">EMI AMOUNT (₹)</label>
+                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" class="field-input w-full mt-1 uppercase">
                     </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-2">
                     <div>
                         <label class="text-xs font-bold text-slate-500 uppercase">TOTAL EMIs</label>
-                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="e.g. 60" class="field-input w-full mt-1 uppercase">
+                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" class="field-input w-full mt-1 uppercase">
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
                     <div>
                         <label class="text-xs font-bold text-slate-500 uppercase">PAID EMIs</label>
-                        <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" placeholder="e.g. 12" class="field-input w-full mt-1 uppercase">
+                        <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" class="field-input w-full mt-1 uppercase">
                     </div>
+                    <div></div>
                 </div>
             </div>
 
@@ -727,34 +772,53 @@ function renderPage(tab) {
 
     if (tab === 'add-driver' || tab === 'edit-driver') {
         const isEdit = tab.startsWith('edit'); 
-        let d = { name: '', phone: '', license: '', salaryType: 'Fixed', baseSalary: '', salaryHistory: [], role: 'Driver' };
+        let d = { name: '', phone: '', email: '', aadhaar: '', epfo: 'Not Activated', license: '', salaryType: 'Fixed', baseSalary: '', salaryHistory: [], role: 'Driver' };
         if (isEdit && currentDetailData) d = db.get('drivers').find(x => x.id === currentDetailData.id) || d;
         
         setTimeout(() => {
             const sh = d.salaryHistory || [];
             if(sh.length > 0) {
-                sh.forEach(s => window.addSalaryRow(s.month, s.total, s.paid, s.incentive || ''));
+                sh.forEach(s => window.addSalaryRow(s.month, s.total, s.paid, s.incentive || '', s.epfoSettled !== false));
             } else if (!isEdit) {
-                window.addSalaryRow(today().slice(0,7), d.baseSalary || '', '', '');
+                window.addSalaryRow(today().slice(0,7), d.baseSalary || '', '', '', true);
             }
         }, 50);
 
         return `
         <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('drivers')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} STAFF</h3></div>
         <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
-            <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="d-role" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('license-field').classList.toggle('hidden',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>Driver</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>Worker</option></select></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">NAME</label><input type="text" id="d-name" value="${d.name}" class="field-input w-full mt-1 uppercase"></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">PHONE</label><input type="tel" id="d-phone" value="${d.phone}" class="field-input w-full mt-1 uppercase"></div>
-            <div id="license-field" ${d.role === 'Worker' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500 uppercase">LICENSE</label><input type="text" id="d-license" value="${d.license}" class="field-input w-full mt-1 uppercase"></div>
+            
             <div class="grid grid-cols-2 gap-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">BASE SALARY</label><input type="number" id="d-baseSalary" value="${d.baseSalary}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="d-role" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('license-field').classList.toggle('invisible',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>Driver</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>Worker</option></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">NAME</label><input type="text" id="d-name" value="${d.name}" class="field-input w-full mt-1 uppercase"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">PHONE</label><input type="tel" id="d-phone" value="${d.phone}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">EMAIL ID</label><input type="email" id="d-email" value="${d.email || ''}" class="field-input w-full mt-1"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">AADHAAR NUMBER</label><input type="text" id="d-aadhaar" value="${d.aadhaar || ''}" class="field-input w-full mt-1 uppercase"></div>
+                <div id="license-field" class="${d.role === 'Worker' ? 'invisible' : ''}"><label class="text-xs font-bold text-slate-500 uppercase">LICENSE</label><input type="text" id="d-license" value="${d.license}" class="field-input w-full mt-1 uppercase"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">EPFO</label>
+                    <select id="d-epfo" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.querySelectorAll('.epfo-col').forEach(el => el.classList.toggle('hidden', this.value !== 'Activated'))">
+                        <option value="Not Activated" ${d.epfo !== 'Activated' ? 'selected' : ''}>Not Activated</option>
+                        <option value="Activated" ${d.epfo === 'Activated' ? 'selected' : ''}>Activated</option>
+                    </select>
+                </div>
                 <div><label class="text-xs font-bold text-slate-500 uppercase">SALARY TYPE</label><select id="d-salaryType" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="Fixed" ${d.salaryType === 'Fixed' ? 'selected' : ''}>Fixed</option><option value="Per Trip" ${d.salaryType === 'Per Trip' ? 'selected' : ''} class="trip-opt ${d.role === 'Worker' ? 'hidden' : ''}">Per Trip</option></select></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">BASE SALARY</label><input type="number" id="d-baseSalary" value="${d.baseSalary}" class="field-input w-full mt-1 uppercase"></div>
+                <div></div>
             </div>
 
             <div class="border-t-2 border-slate-100 dark:border-slate-800 my-3 pt-3">
                 <div class="flex justify-between items-center mb-2">
                     <label class="text-xs font-bold text-slate-500 uppercase">MONTHLY SALARY RECORDS</label>
-                    <button type="button" onclick="window.addSalaryRow('', document.getElementById('d-baseSalary').value || 0, '', '')" class="text-[10px] font-bold bg-indigo-100 text-indigo-600 px-2 py-1 rounded-[5px] uppercase">+ Add Month</button>
+                    <button type="button" onclick="window.addSalaryRow('', document.getElementById('d-baseSalary').value || 0, '', '', true)" class="text-[10px] font-bold bg-indigo-100 text-indigo-600 px-2 py-1 rounded-[5px] uppercase">+ Add Month</button>
                 </div>
                 <div id="monthly-salaries-container"></div>
             </div>
@@ -767,13 +831,51 @@ function renderPage(tab) {
         const isEdit = tab.startsWith('edit'); let t = { vehicleId: '', driverId: '', origin: '', dest: '', freightAmount: '', advance: '', date: today(), status: 'Ongoing' };
         if (isEdit && currentDetailData) t = db.get('trips').find(x => x.id === currentDetailData.id) || t;
         const dList = drivers.filter(d => d.role === 'Driver');
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'NEW'} TRIP</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="t-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${vehicles.map(v => `<option value="${v.id}" ${t.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div><div><label class="text-xs font-bold text-slate-500 uppercase">DRIVER</label><select id="t-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${dList.map(d => `<option value="${d.id}" ${t.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500 uppercase">ORIGIN</label><input type="text" id="t-origin" value="${t.origin}" class="field-input w-full mt-1 uppercase"></div><div><label class="text-xs font-bold text-slate-500 uppercase">DEST</label><input type="text" id="t-dest" value="${t.dest}" class="field-input w-full mt-1 uppercase"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500 uppercase">FREIGHT</label><input type="number" id="t-freight" value="${t.freightAmount}" class="field-input w-full mt-1 uppercase"></div><div><label class="text-xs font-bold text-slate-500 uppercase">ADVANCE</label><input type="number" id="t-advance" value="${t.advance}" class="field-input w-full mt-1 uppercase"></div></div><div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="t-date" value="${t.date}" class="field-input w-full mt-1 uppercase"></div><button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase">${isEdit ? 'Update' : 'Save'}</button></div>`;
+        return `
+        <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'NEW'} TRIP</h3></div>
+        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="t-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${vehicles.map(v => `<option value="${v.id}" ${t.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">DRIVER</label><select id="t-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${dList.map(d => `<option value="${d.id}" ${t.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">ORIGIN</label><input type="text" id="t-origin" value="${t.origin}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">DEST</label><input type="text" id="t-dest" value="${t.dest}" class="field-input w-full mt-1 uppercase"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">FREIGHT</label><input type="number" id="t-freight" value="${t.freightAmount}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">ADVANCE</label><input type="number" id="t-advance" value="${t.advance}" class="field-input w-full mt-1 uppercase"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="t-date" value="${t.date}" class="field-input w-full mt-1 uppercase"></div>
+                <div></div>
+            </div>
+            <button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-2">${isEdit ? 'Update' : 'Save'}</button>
+        </div>`;
     }
 
     if (tab === 'add-expense' || tab === 'edit-expense') {
         const isEdit = tab.startsWith('edit'); let e = { type: 'Fuel', amount: '', vehicleId: '', driverId: '', date: today(), notes: '' };
         if (isEdit && currentDetailData) e = db.get('expenses').find(x => x.id === currentDetailData.id) || e;
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} EXPENSE</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="e-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select></div><div><label class="text-xs font-bold text-slate-500 uppercase">AMOUNT</label><input type="number" id="e-amount" value="${e.amount}" class="field-input w-full mt-1 uppercase"></div><div id="vehicle-field" ${e.type === 'Salary' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="e-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div><div id="driver-field" ${e.type !== 'Salary' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500 uppercase">STAFF</label><select id="e-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div><div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="e-date" value="${e.date}" class="field-input w-full mt-1 uppercase"></div><div><label class="text-xs font-bold text-slate-500 uppercase">NOTES</label><textarea id="e-notes" class="field-input w-full mt-1 h-16 resize-none uppercase">${e.notes}</textarea></div><button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full uppercase">${isEdit ? 'Update' : 'Save'}</button></div>`;
+        return `
+        <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} EXPENSE</h3></div>
+        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="e-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">AMOUNT</label><input type="number" id="e-amount" value="${e.amount}" class="field-input w-full mt-1 uppercase"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div>
+                    <div id="vehicle-field" class="${e.type === 'Salary' ? 'hidden' : ''}"><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="e-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
+                    <div id="driver-field" class="${e.type !== 'Salary' ? 'hidden' : ''}"><label class="text-xs font-bold text-slate-500 uppercase">STAFF</label><select id="e-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
+                </div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="e-date" value="${e.date}" class="field-input w-full mt-1 uppercase"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+                <div class="col-span-2"><label class="text-xs font-bold text-slate-500 uppercase">NOTES</label><textarea id="e-notes" class="field-input w-full mt-1 h-16 resize-none uppercase">${e.notes}</textarea></div>
+            </div>
+            <button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full uppercase mt-2">${isEdit ? 'Update' : 'Save'}</button>
+        </div>`;
     }
 
     return '<p>Page not found</p>';
@@ -825,7 +927,9 @@ function saveDriver(isEdit) {
         const t = +row.querySelector('.s-total').value || 0;
         const p = +row.querySelector('.s-paid').value || 0;
         const i = +row.querySelector('.s-incentive').value || 0;
-        if (m) salaryHistory.push({ month: m, total: t, paid: p, incentive: i });
+        const epfo = row.querySelector('.s-epfo') ? row.querySelector('.s-epfo').checked : false;
+
+        if (m) salaryHistory.push({ month: m, total: t, paid: p, incentive: i, epfoSettled: epfo });
     });
     salaryHistory.sort((a,b) => b.month.localeCompare(a.month)); // Newest month first
 
@@ -833,6 +937,9 @@ function saveDriver(isEdit) {
         id: isEdit && currentDetailData ? currentDetailData.id : (role === 'Driver' ? 'D' : 'W') + Date.now(), 
         name: document.getElementById('d-name').value, 
         phone: document.getElementById('d-phone').value, 
+        email: document.getElementById('d-email').value,
+        aadhaar: document.getElementById('d-aadhaar').value,
+        epfo: document.getElementById('d-epfo').value,
         license: role === 'Driver' ? document.getElementById('d-license').value : '', 
         salaryType: document.getElementById('d-salaryType').value, 
         baseSalary: +document.getElementById('d-baseSalary').value || 0, 
