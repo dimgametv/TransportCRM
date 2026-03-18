@@ -51,7 +51,7 @@
         .btn-primary { padding: clamp(10px, 3vw, 16px); font-weight: 700; border-radius: 5px; }
         .btn-primary:active { transform: translateY(2px); }
         
-        /* Updated Badge Size for Mobile and Desktop */
+        /* Compact Badge Size */
         .badge { padding: 3px 6px; font-size: 11px !important; font-weight: 700; text-transform: uppercase; white-space: nowrap; border-radius: 4px; }
         @media (min-width: 768px) {
             .badge { padding: 4px 8px; font-size: 13px !important; border-radius: 5px; }
@@ -80,6 +80,12 @@
         .tab-btn { flex: 1; padding: 10px 16px; border-radius: 5px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; color: #64748b; }
         .tab-btn.active { background: white; color: #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .dark .tab-btn.active { background: #334155; color: #818cf8; }
+
+        /* Static Skeleton */
+        .skeleton-card { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 5px; overflow: hidden; }
+        .dark .skeleton-card { background: #1e293b; border-color: #334155; }
+        .skeleton-bar { background: #e2e8f0; border-radius: 5px; }
+        .dark .skeleton-bar { background: #334155; }
 
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
         .confetti { position: absolute; opacity: 0; }
@@ -174,23 +180,44 @@
 <script>
 const today = () => new Date().toISOString().split('T')[0];
 const fmt = n => '₹' + parseFloat(n).toLocaleString('en-IN');
+const formatMonthStr = (ym) => {
+    if(!ym) return 'N/A';
+    const [y, m] = ym.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[parseInt(m, 10)-1]} ${y}`;
+};
+
 let activeStaffTab = 'drivers';
 
 function seedDB() {
-    if (localStorage.getItem('ot_seeded_v5')) return;
-    ['ot_seeded', 'ot_seeded_v2', 'ot_seeded_v3', 'ot_seeded_v4'].forEach(k => localStorage.removeItem(k));
+    if (localStorage.getItem('ot_seeded_v18')) return;
+    ['ot_seeded', 'ot_seeded_v2', 'ot_seeded_v3', 'ot_seeded_v4', 'ot_seeded_v5', 'ot_seeded_v6', 'ot_seeded_v7', 'ot_seeded_v8', 'ot_seeded_v9', 'ot_seeded_v10', 'ot_seeded_v11', 'ot_seeded_v12', 'ot_seeded_v13', 'ot_seeded_v14', 'ot_seeded_v15', 'ot_seeded_v16', 'ot_seeded_v17'].forEach(k => localStorage.removeItem(k));
     const data = {
         vehicles: [
-            { id: 'V1', number: 'RJ-14-GD-1234', type: '10-Wheeler', capacity: '15 Ton', status: 'Active' },
-            { id: 'V2', number: 'RJ-14-GD-5678', type: '14-Wheeler', capacity: '25 Ton', status: 'Active' }
+            { 
+                id: 'V1', number: 'RJ-14-GD-1234', type: '10-Wheeler', capacity: '15 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'On Trip', 
+                nationalPermit: 'Available', nationalPermitIssue: '2025-01-10', nationalPermitExpiry: '2026-01-10', 
+                fitness: 'Available', fitnessIssue: '2025-02-15', fitnessExpiry: '2026-02-15',
+                pollution: 'Available', pollutionIssue: '2025-06-01', pollutionExpiry: '2025-12-01',
+                insurance: 'Available', insuranceIssue: '2025-03-20', insuranceExpiry: '2026-03-20',
+                hasFinance: 'Yes', emiAmount: 15500, totalEmis: 60, paidEmis: 24, status: 'Active' 
+            },
+            { 
+                id: 'V2', number: 'RJ-14-GD-5678', type: '14-Wheeler', capacity: '25 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'Stopped', 
+                nationalPermit: 'Not Available', nationalPermitIssue: '', nationalPermitExpiry: '', 
+                fitness: 'Available', fitnessIssue: '2025-01-05', fitnessExpiry: '2026-01-05',
+                pollution: 'Available', pollutionIssue: '2025-05-10', pollutionExpiry: '2025-11-10',
+                insurance: 'Available', insuranceIssue: '2025-04-12', insuranceExpiry: '2026-04-12',
+                hasFinance: 'No', emiAmount: 0, totalEmis: 0, paidEmis: 0, status: 'Active' 
+            }
         ],
         drivers: [
-            { id: 'D1', name: 'Ramesh Singh', phone: '9876543210', license: 'RJ142010123', salaryType: 'Fixed', baseSalary: 15000, role: 'Driver' },
-            { id: 'D2', name: 'Suresh Kumar', phone: '9876543211', license: 'RJ142010124', salaryType: 'Per Trip', baseSalary: 12000, role: 'Driver' },
-            { id: 'D3', name: 'Mahesh Yadav', phone: '9876543214', license: 'RJ142010125', salaryType: 'Fixed', baseSalary: 14000, role: 'Driver' },
-            { id: 'W1', name: 'Priya Sharma', phone: '9876543212', license: '', salaryType: 'Fixed', baseSalary: 18000, role: 'Worker' },
-            { id: 'W2', name: 'Amit Verma', phone: '9876543213', license: '', salaryType: 'Fixed', baseSalary: 20000, role: 'Worker' },
-            { id: 'W3', name: 'Neha Gupta', phone: '9876543215', license: '', salaryType: 'Fixed', baseSalary: 22000, role: 'Worker' }
+            { id: 'D1', name: 'Ramesh Singh', phone: '9876543210', license: 'RJ142010123', salaryType: 'Fixed', baseSalary: 15000, salaryHistory: [{ month: '2026-03', total: 15000, paid: 5000, incentive: 1200 }, { month: '2026-02', total: 15000, paid: 15000, incentive: 0 }], role: 'Driver' },
+            { id: 'D2', name: 'Suresh Kumar', phone: '9876543211', license: 'RJ142010124', salaryType: 'Per Trip', baseSalary: 12000, salaryHistory: [{ month: '2026-03', total: 12000, paid: 12000, incentive: 500 }], role: 'Driver' },
+            { id: 'D3', name: 'Mahesh Yadav', phone: '9876543214', license: 'RJ142010125', salaryType: 'Fixed', baseSalary: 14000, salaryHistory: [], role: 'Driver' },
+            { id: 'W1', name: 'Priya Sharma', phone: '9876543212', license: '', salaryType: 'Fixed', baseSalary: 18000, salaryHistory: [{ month: '2026-03', total: 18000, paid: 10000, incentive: 200 }], role: 'Worker' },
+            { id: 'W2', name: 'Amit Verma', phone: '9876543213', license: '', salaryType: 'Fixed', baseSalary: 20000, salaryHistory: [{ month: '2026-03', total: 20000, paid: 20000, incentive: 1000 }], role: 'Worker' },
+            { id: 'W3', name: 'Neha Gupta', phone: '9876543215', license: '', salaryType: 'Fixed', baseSalary: 22000, salaryHistory: [], role: 'Worker' }
         ],
         trips: [
             { id: 'T1', vehicleId: 'V1', driverId: 'D1', origin: 'Jaipur', dest: 'Delhi', freightAmount: 25000, advance: 5000, date: today(), status: 'Completed' },
@@ -204,7 +231,7 @@ function seedDB() {
     };
     Object.keys(data).forEach(k => localStorage.setItem('ot_' + k, JSON.stringify(data[k])));
     localStorage.setItem('ot_company_name', 'OmniTransport');
-    localStorage.setItem('ot_seeded_v5', '1');
+    localStorage.setItem('ot_seeded_v18', '1');
 }
 seedDB();
 
@@ -216,6 +243,41 @@ const db = {
 };
 
 let chartInstance = null, currentDetailData = null;
+
+window.addSalaryRow = (m='', t='', p='', i='') => {
+    const container = document.getElementById('monthly-salaries-container');
+    if (!container) return;
+    const currentM = m || today().slice(0,7);
+    container.insertAdjacentHTML('beforeend', `
+        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 mb-3 bg-slate-50 dark:bg-slate-800/50 salary-row relative animate-slide-up">
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-rose-500 w-6 h-6 flex items-center justify-center bg-rose-100 rounded-[5px]"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="grid grid-cols-2 gap-2 mt-4">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">MONTH</label><input type="month" class="field-input w-full p-2 text-xs uppercase s-month" value="${currentM}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">TOTAL (₹)</label><input type="number" placeholder="0" class="field-input w-full p-2 text-xs uppercase s-total" value="${t}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">PAID (₹)</label><input type="number" placeholder="0" class="field-input w-full p-2 text-xs uppercase s-paid" value="${p}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">INCENTIVE (₹)</label><input type="number" placeholder="0" class="field-input w-full p-2 text-xs uppercase s-incentive" value="${i}"></div>
+            </div>
+        </div>
+    `);
+    lucide.createIcons();
+};
+
+function renderSkeleton(type, count) {
+    let html = '';
+    if (type === 'dashboard') {
+        html += `<div class="grid grid-cols-2 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4 flex flex-col items-center gap-2"><div class="skeleton-bar w-10 h-10 rounded-full"></div><div class="skeleton-bar h-3 w-16 mt-1"></div></div>`).join('')}</div>`;
+        html += `<div class="skeleton-bar h-5 w-32 mb-3"></div><div class="space-y-3">${[0,1,2].map(i => `<div class="skeleton-card p-4"><div class="flex justify-between"><div><div class="skeleton-bar h-6 w-40 mb-2"></div><div class="skeleton-bar h-4 w-28"></div></div><div><div class="skeleton-bar h-6 w-20 mb-2"></div><div class="skeleton-bar h-5 w-16 rounded-[5px]"></div></div></div></div>`).join('')}</div>`;
+    } else if (type === 'stats') {
+        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4"><div class="skeleton-bar h-3 w-16 mb-2"></div><div class="skeleton-bar h-8 w-24"></div></div>`).join('')}</div>`;
+        html += `<div class="skeleton-card p-4"><div class="skeleton-bar h-5 w-40 mx-auto mb-4"></div><div class="flex items-end justify-center gap-4 h-[200px]"><div class="skeleton-bar w-20 h-[60%]"></div><div class="skeleton-bar w-20 h-[80%]"></div></div></div>`;
+    } else if (type === 'staff') {
+        html += `<div class="skeleton-card p-2 mb-3"><div class="flex gap-2"><div class="skeleton-bar flex-1 h-12 rounded-[5px]"></div><div class="skeleton-bar flex-1 h-12 rounded-[5px]"></div></div></div>`;
+        html += `<div class="space-y-3">${Array(count).fill(0).map(() => `<div class="skeleton-card p-4"><div class="flex justify-between"><div><div class="skeleton-bar h-6 w-3/4 mb-2"></div><div class="skeleton-bar h-4 w-1/2"></div></div><div class="skeleton-bar h-8 w-20 rounded-[5px]"></div></div></div>`).join('')}</div>`;
+    } else {
+        html += `<div class="space-y-3">${Array(count).fill(0).map(() => `<div class="skeleton-card p-4"><div class="flex justify-between mb-3"><div><div class="skeleton-bar h-6 w-3/4 mb-2"></div><div class="skeleton-bar h-4 w-1/2"></div></div><div class="skeleton-bar h-8 w-20 rounded-[5px]"></div></div><div class="flex justify-between pt-3 border-t-2 border-slate-100 dark:border-slate-700"><div class="skeleton-bar h-4 w-24"></div><div class="skeleton-bar h-4 w-16"></div></div></div>`).join('')}</div>`;
+    }
+    return html;
+}
 
 function createConfetti() {
     const c = document.getElementById('confetti-container'), colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -274,7 +336,7 @@ function deleteItem(t, id) { if (confirm('Delete?')) { db.delete(t + 's', id); s
 
 function updateCompanyName(v) { localStorage.setItem('ot_company_name', v); const el = document.getElementById('sidebar-company-name'); if (el) el.innerText = v || 'OmniTransport'; }
 
-function switchTab(tab) {
+function switchTab(tab, loader = true) {
     document.querySelectorAll('#desktop-sidebar button').forEach(b => b.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400'));
     document.getElementById('side-' + tab)?.classList.add('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400');
     let title = tab.replace('-', ' ').toUpperCase();
@@ -283,11 +345,22 @@ function switchTab(tab) {
     if (tab === 'details' && currentDetailData) title = currentDetailData.type.toUpperCase() + ' INFO';
     document.getElementById('app-title').innerText = title;
     
-    // Instant rendering without loader/shimmer
-    document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`;
-    lucide.createIcons(); 
-    if (tab === 'reports') setTimeout(initChart, 50);
-    
+    if (loader && ['dashboard', 'vehicles', 'drivers', 'trips', 'expenses', 'reports'].includes(tab)) {
+        const type = tab === 'dashboard' ? 'dashboard' : tab === 'reports' ? 'stats' : tab === 'drivers' ? 'staff' : 'list';
+        const count = Math.min(db.get(tab).length || 3, 4);
+        
+        document.getElementById('main-content').innerHTML = `<div class="w-full">${renderSkeleton(type, count)}</div>`;
+        
+        setTimeout(() => {
+            document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`;
+            lucide.createIcons(); 
+            if (tab === 'reports') setTimeout(initChart, 50);
+        }, 1000);
+    } else {
+        document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`;
+        lucide.createIcons();
+        if (tab === 'reports') setTimeout(initChart, 50);
+    }
     updateThemeIcon();
 }
 
@@ -298,7 +371,7 @@ function toggleTheme() { const d = document.documentElement.classList.toggle('da
 function updateThemeIcon() { const i = document.getElementById('theme-icon'); if (i) { i.setAttribute('data-lucide', document.documentElement.classList.contains('dark') ? 'sun' : 'moon'); lucide.createIcons(); } }
 function exportData() { const d = { vehicles: db.get('vehicles'), drivers: db.get('drivers'), trips: db.get('trips'), expenses: db.get('expenses'), companyName: localStorage.getItem('ot_company_name') }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = `OmniTransport_${today()}.json`; a.click(); }
 function importData(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); ['vehicles', 'drivers', 'trips', 'expenses'].forEach(k => d[k] && db.set(k, d[k])); if (d.companyName) localStorage.setItem('ot_company_name', d.companyName); createConfetti(); location.reload(); } catch { alert('Invalid file'); } }; r.readAsText(f); }
-function viewDetails(t, id) { currentDetailData = { type: t, id }; switchTab('details'); }
+function viewDetails(t, id) { currentDetailData = { type: t, id }; switchTab('details', false); }
 function completeTrip(id) { const arr = db.get('trips'), t = arr.find(x => x.id === id); if (t) { t.status = 'Completed'; db.set('trips', arr); createConfetti(); switchTab('trips'); } }
 
 function renderListCard(type, id, content) {
@@ -322,7 +395,7 @@ function renderPage(tab) {
     if (tab === 'dashboard') {
         const btns = [['vehicles', 'truck', 'indigo', 'VEHICLES'], ['drivers', 'users', 'blue', 'STAFF'], ['trips', 'route', 'emerald', 'TRIPS'], ['expenses', 'banknote', 'red', 'EXPENSES']];
         if (!trips.length && !vehicles.length) return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l]) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div>${renderEmptyState('trips')}`;
-        return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l]) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div><h3 class="font-black text-slate-400 mb-3">RECENT TRIPS</h3><div class="space-y-3">${trips.slice(-3).reverse().map((t) => `${renderListCard('trip', t.id, `<div class="flex justify-between items-center"><div><p class="font-bold text-lg">${t.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${t.dest}</p><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v => v.id === t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><p class="font-black text-indigo-600">${fmt(t.freightAmount)}</p><span class="badge ${t.status === 'Completed' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} text-xs mt-1">${t.status}</span></div></div>`)}`).join('')}</div>`;
+        return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l]) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div><h3 class="font-black text-slate-400 mb-3">RECENT TRIPS</h3><div class="space-y-3">${trips.slice(-3).reverse().map((t) => `${renderListCard('trip', t.id, `<div class="flex justify-between items-center"><div><p class="font-bold text-lg">${t.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${t.dest}</p><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v => v.id === t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><p class="font-black text-indigo-600">${fmt(t.freightAmount)}</p><span class="badge ${t.status === 'Completed' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} mt-1 inline-block">${t.status}</span></div></div>`)}`).join('')}</div>`;
     }
 
     if (tab === 'reports') {
@@ -332,7 +405,11 @@ function renderPage(tab) {
 
     if (tab === 'vehicles') {
         if (!vehicles.length) return renderEmptyState('vehicles');
-        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${vehicles.map((v) => `${renderListCard('vehicle', v.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600">${v.type}</p></div><span class="badge bg-emerald-100 text-emerald-600">${v.status}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${v.capacity}</span><span class="text-xs font-bold text-slate-400">${v.id}</span></div>`)}`).join('')}</div>`;
+        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${vehicles.map((v) => {
+            const rs = v.runningStatus || 'STOPPED';
+            const badgeColor = rs === 'On Trip' ? 'bg-emerald-100 text-emerald-600' : (rs === 'Stopped' ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600');
+            return `${renderListCard('vehicle', v.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600">${v.type}</p></div><span class="badge ${badgeColor} uppercase">${rs}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${v.capacity} <span class="text-slate-300 mx-1">•</span> <i data-lucide="users" class="w-3 h-3 inline"></i> ${v.cabin || 'N/A'}</span></div>`)}`;
+        }).join('')}</div>`;
     }
 
     if (tab === 'drivers') {
@@ -355,48 +432,385 @@ function renderPage(tab) {
         const list = db.get(currentDetailData.type + 's'), item = list.find(x => x.id === currentDetailData.id);
         if (!item) return '<p>Not found</p>';
         const back = currentDetailData.type === 'expense' ? 'expenses' : currentDetailData.type + 's';
+        
         let html = '';
-        const entries = Object.entries(item);
-        for (let i = 0; i < entries.length; i += 2) { html += '<div class="grid grid-cols-2 gap-4 p-4 border-b-2 border-slate-100 dark:border-slate-800 last:border-b-0">'; entries.slice(i, i + 2).forEach(([k, v]) => { html += `<div><p class="text-xs font-bold text-slate-400 uppercase mb-1">${k.replace('Id', '')}</p><p class="font-black text-lg">${typeof v === 'number' ? fmt(v) : (v || 'N/A')}</p></div>`; }); html += '</div>'; }
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl">DETAILS</h3></div><div class="glass-card rounded-[5px]">${html}</div><div class="flex gap-3 mt-4"><button onclick="editItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-blue-600 text-white">Edit</button><button onclick="deleteItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-red-600 text-white">Delete</button></div>`;
+        
+        if (currentDetailData.type === 'vehicle') {
+            const v = item;
+            
+            let financeHtml = '';
+            if (v.hasFinance === 'Yes') {
+                const total = v.totalEmis || 1;
+                const paid = v.paidEmis || 0;
+                const pending = Math.max(0, total - paid);
+                const percent = Math.min(100, (paid / total) * 100);
+                
+                financeHtml = `
+                    <div class="border-t-2 border-slate-100 dark:border-slate-800 mt-4 mb-4"></div>
+                    <div class="px-4 pb-4">
+                        <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">FINANCE</h4>
+                        
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 mb-3 flex justify-between items-center bg-white dark:bg-slate-800/20">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">EMI AMOUNT</p>
+                                <p class="font-black text-lg text-indigo-600 uppercase">${fmt(v.emiAmount)}<span class="text-xs text-slate-400">/MO</span></p>
+                            </div>
+                            <span class="badge bg-amber-100 text-amber-600 uppercase">ACTIVE</span>
+                        </div>
+                        
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50">
+                            <div class="flex justify-between text-xs font-bold mb-3 uppercase">
+                                <span class="text-emerald-500"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span id="info-paid-val">${paid}</span> PAID</span>
+                                <span class="text-amber-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span id="info-pending-val">${pending}</span> PENDING</span>
+                            </div>
+                            
+                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div>
+                            </div>
+                            
+                            <p class="text-center text-[10px] font-bold text-slate-400 mt-2 uppercase">${total} TOTAL EMIS</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const compBox = (title, status, expiry) => {
+                let iconHtml = '';
+                if (status === 'Available') {
+                    const isExpired = expiry && expiry < today();
+                    const iconName = isExpired ? 'x-circle' : 'check-circle';
+                    const iconColor = isExpired ? 'text-rose-500' : 'text-emerald-500';
+                    iconHtml = `<i data-lucide="${iconName}" class="w-5 h-5 ${iconColor} flex-shrink-0"></i>`;
+                } else {
+                    iconHtml = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-500 flex-shrink-0"></i>`;
+                }
+                return `
+                <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${title}</p>
+                        <p class="font-black text-sm uppercase ${status === 'Available' ? 'text-emerald-600' : 'text-rose-600'}">${status || 'N/A'}</p>
+                    </div>
+                    ${iconHtml}
+                </div>`;
+            };
+
+            html = `
+                <div class="p-4">
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">GENERAL INFO</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">NUMBER</p>
+                            <p class="font-black text-sm uppercase">${v.number}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">TYPE</p>
+                            <p class="font-black text-sm uppercase">${v.type}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">CAPACITY</p>
+                            <p class="font-black text-sm uppercase">${v.capacity}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">CABIN</p>
+                            <p class="font-black text-sm uppercase">${v.cabin || 'N/A'}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">FUEL TYPE</p>
+                            <p class="font-black text-sm uppercase">${v.fuelType || 'N/A'}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">RUNNING STATUS</p>
+                                <p class="font-black text-sm uppercase">${v.runningStatus || 'STOPPED'}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t-2 border-slate-100 dark:border-slate-800"></div>
+                
+                <div class="p-4">
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">COMPLIANCE</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        ${compBox('NAT. PERMIT', v.nationalPermit, v.nationalPermitExpiry)}
+                        ${compBox('FITNESS', v.fitness, v.fitnessExpiry)}
+                        ${compBox('POLLUTION', v.pollution, v.pollutionExpiry)}
+                        ${compBox('INSURANCE', v.insurance, v.insuranceExpiry)}
+                    </div>
+                </div>
+                
+                ${financeHtml}
+            `;
+        } else if (currentDetailData.type === 'driver') {
+            const d = item;
+            const sh = d.salaryHistory || [];
+            
+            let monthlyRecordsSection = '';
+            
+            if (sh.length > 0) {
+                const totalOverall = sh.reduce((sum, s) => sum + s.total, 0);
+                const paidOverall = sh.reduce((sum, s) => sum + s.paid, 0);
+                const pendingOverall = Math.max(0, totalOverall - paidOverall);
+
+                let historyHtml = '';
+                sh.forEach(s => {
+                    const pending = Math.max(0, s.total - s.paid);
+                    const percent = s.total > 0 ? Math.min(100, (s.paid / s.total) * 100) : 0;
+                    historyHtml += `
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50 mb-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-black text-sm uppercase">${formatMonthStr(s.month)}</h5>
+                                <span class="badge ${pending === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase">${pending === 0 ? 'CLEARED' : 'PENDING'}</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold mb-1 uppercase">
+                                <span class="text-emerald-500"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span>${fmt(s.paid)}</span> PAID</span>
+                                <span class="text-amber-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span>${fmt(pending)}</span> DUE</span>
+                            </div>
+                            <div class="flex justify-between text-[9px] font-bold mb-2 uppercase text-slate-400 tracking-wider">
+                                <span>TOT: ${fmt(s.total)}</span>
+                                <span class="text-indigo-500">INC: ${fmt(s.incentive || 0)}</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                monthlyRecordsSection = `
+                    <div class="border-t-2 border-slate-100 dark:border-slate-800 mt-2 mb-4"></div>
+                    <div class="px-4 pb-4">
+                        <div class="flex justify-between items-end mb-3">
+                            <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">MONTHLY RECORDS</h4>
+                            <span class="text-[10px] font-bold ${pendingOverall > 0 ? 'text-amber-500' : 'text-emerald-500'} uppercase">TOTAL DUE: ${fmt(pendingOverall)}</span>
+                        </div>
+                        ${historyHtml}
+                    </div>
+                `;
+            }
+
+            html = `
+                <div class="p-4">
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">GENERAL INFO</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">NAME</p>
+                            <p class="font-black text-sm uppercase">${d.name}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">PHONE</p>
+                            <p class="font-black text-sm uppercase">${d.phone}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ROLE</p>
+                            <p class="font-black text-sm uppercase">${d.role}</p>
+                        </div>
+                        ${d.role === 'Driver' ? `
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">LICENSE</p>
+                            <p class="font-black text-sm uppercase">${d.license || 'N/A'}</p>
+                        </div>` : ''}
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">BASE SALARY</p>
+                            <p class="font-black text-sm uppercase">${fmt(d.baseSalary)}</p>
+                        </div>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">SALARY TYPE</p>
+                            <p class="font-black text-sm uppercase">${d.salaryType}</p>
+                        </div>
+                    </div>
+                </div>
+                ${monthlyRecordsSection}
+            `;
+        } else {
+            let entries = Object.entries(item);
+            for (let i = 0; i < entries.length; i += 2) { 
+                html += '<div class="grid grid-cols-2 gap-4 p-4 border-b-2 border-slate-100 dark:border-slate-800 last:border-b-0">'; 
+                entries.slice(i, i + 2).forEach(([k, v]) => { 
+                    html += `<div><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${k.replace('Id', '')}</p><p class="font-black text-lg uppercase">${typeof v === 'number' ? fmt(v) : (v || 'N/A')}</p></div>`; 
+                }); 
+                html += '</div>'; 
+            }
+        }
+        
+        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">DETAILS</h3></div><div class="glass-card rounded-[5px] pb-4">${html}</div><div class="flex gap-3 mt-4"><button onclick="editItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-blue-600 text-white uppercase">Edit</button><button onclick="deleteItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-red-600 text-white uppercase">Delete</button></div>`;
     }
 
     if (tab === 'profile') {
         const cn = localStorage.getItem('ot_company_name') || 'OmniTransport', gst = localStorage.getItem('ot_gst_no') || '', isDark = document.documentElement.classList.contains('dark');
-        return `<div class="space-y-3"><div class="glass-card rounded-[5px] p-6 text-center border-2 border-slate-200 dark:border-slate-700"><div class="w-20 h-20 mx-auto bg-indigo-100 rounded-full border-4 border-indigo-500 overflow-hidden mb-3"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" class="w-full h-full"></div><h2 class="font-black text-xl">Admin</h2><p class="font-bold text-indigo-600">XRV LABS</p></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500">COMPANY</label><input type="text" value="${cn}" class="field-input w-full mt-1" oninput="updateCompanyName(this.value)"></div><div><label class="text-xs font-bold text-slate-500">GST</label><input type="text" value="${gst}" class="field-input w-full mt-1" onchange="localStorage.setItem('ot_gst_no',this.value)"></div></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div class="flex justify-between items-center"><span class="font-bold">Dark Mode</span><button onclick="toggleTheme();switchTab('profile',false)" class="px-4 py-2 ${isDark ? 'bg-indigo-600 text-white' : 'bg-slate-200'} rounded-[5px] font-bold text-sm">${isDark ? 'On' : 'Off'}</button></div><div class="flex justify-between items-center"><span class="font-bold">Tutorial</span><button onclick="resetOnboarding()" class="px-4 py-2 bg-purple-600 text-white rounded-[5px] font-bold text-sm">Replay</button></div></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700"><div class="grid grid-cols-2 gap-3 mb-3"><button onclick="exportData()" class="p-3 bg-blue-50 text-blue-600 rounded-[5px] font-bold border border-blue-200"><i data-lucide="download" class="w-5 h-5 mx-auto mb-1"></i>Export</button><label class="p-3 bg-emerald-50 text-emerald-600 rounded-[5px] font-bold border border-emerald-200 cursor-pointer"><i data-lucide="upload" class="w-5 h-5 mx-auto mb-1"></i>Import<input type="file" class="hidden" accept=".json" onchange="importData(event)"></label></div><button onclick="if(confirm('Erase all?')){localStorage.clear();location.reload()}" class="w-full p-3 bg-red-50 text-red-600 rounded-[5px] font-bold border border-red-200">Erase All</button></div><p class="text-center text-slate-400 text-sm font-bold pb-4">v1.6.0 • XRV LABS</p></div>`;
+        return `<div class="space-y-3"><div class="glass-card rounded-[5px] p-6 text-center border-2 border-slate-200 dark:border-slate-700"><div class="w-20 h-20 mx-auto bg-indigo-100 rounded-full border-4 border-indigo-500 overflow-hidden mb-3"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" class="w-full h-full"></div><h2 class="font-black text-xl uppercase">Admin</h2><p class="font-bold text-indigo-600 uppercase">XRV LABS</p></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500 uppercase">COMPANY</label><input type="text" value="${cn}" class="field-input w-full mt-1 uppercase" oninput="updateCompanyName(this.value)"></div><div><label class="text-xs font-bold text-slate-500 uppercase">GST</label><input type="text" value="${gst}" class="field-input w-full mt-1 uppercase" onchange="localStorage.setItem('ot_gst_no',this.value)"></div></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div class="flex justify-between items-center"><span class="font-bold uppercase">Dark Mode</span><button onclick="toggleTheme();switchTab('profile',false)" class="px-4 py-2 ${isDark ? 'bg-indigo-600 text-white' : 'bg-slate-200'} rounded-[5px] font-bold text-sm uppercase">${isDark ? 'On' : 'Off'}</button></div><div class="flex justify-between items-center"><span class="font-bold uppercase">Tutorial</span><button onclick="resetOnboarding()" class="px-4 py-2 bg-purple-600 text-white rounded-[5px] font-bold text-sm uppercase">Replay</button></div></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700"><div class="grid grid-cols-2 gap-3 mb-3"><button onclick="exportData()" class="p-3 bg-blue-50 text-blue-600 rounded-[5px] font-bold border border-blue-200 uppercase"><i data-lucide="download" class="w-5 h-5 mx-auto mb-1"></i>Export</button><label class="p-3 bg-emerald-50 text-emerald-600 rounded-[5px] font-bold border border-emerald-200 cursor-pointer uppercase"><i data-lucide="upload" class="w-5 h-5 mx-auto mb-1"></i>Import<input type="file" class="hidden" accept=".json" onchange="importData(event)"></label></div><button onclick="if(confirm('Erase all?')){localStorage.clear();location.reload()}" class="w-full p-3 bg-red-50 text-red-600 rounded-[5px] font-bold border border-red-200 uppercase">Erase All</button></div><p class="text-center text-slate-400 text-sm font-bold pb-4 uppercase">v1.6.0 • XRV LABS</p></div>`;
     }
 
-    // Forms
+    // Add/Edit Forms
     if (tab === 'add-vehicle' || tab === 'edit-vehicle') {
-        const isEdit = tab.startsWith('edit'); let v = { number: '', type: '10-Wheeler', capacity: '', status: 'Active' };
+        const isEdit = tab.startsWith('edit'); 
+        let v = { 
+            number: '', type: '10-Wheeler', capacity: '', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'Stopped', 
+            nationalPermit: 'Available', nationalPermitIssue: '', nationalPermitExpiry: '', 
+            fitness: 'Available', fitnessIssue: '', fitnessExpiry: '', 
+            pollution: 'Available', pollutionIssue: '', pollutionExpiry: '', 
+            insurance: 'Available', insuranceIssue: '', insuranceExpiry: '', 
+            hasFinance: 'No', emiAmount: '', totalEmis: '', paidEmis: '', status: 'Active' 
+        };
         if (isEdit && currentDetailData) v = db.get('vehicles').find(x => x.id === currentDetailData.id) || v;
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('vehicles')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl">${isEdit ? 'EDIT' : 'ADD'} VEHICLE</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500">NUMBER</label><input type="text" id="v-number" value="${v.number}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">TYPE</label><select id="v-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select></div><div><label class="text-xs font-bold text-slate-500">CAPACITY</label><input type="text" id="v-capacity" value="${v.capacity}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">STATUS</label><select id="v-status" class="field-input w-full mt-1 bg-white dark:bg-slate-800"><option ${v.status === 'Active' ? 'selected' : ''}>Active</option><option ${v.status === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${v.status === 'Inactive' ? 'selected' : ''}>Inactive</option></select></div><button onclick="saveVehicle(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full">${isEdit ? 'Update' : 'Save'}</button></div>`;
+        
+        const editCompBox = (title, idPrefix, status, issue, expiry) => `
+            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 mb-3">
+                <label class="text-xs font-bold text-slate-500 uppercase">${title}</label>
+                <select id="${idPrefix}" class="field-input w-full mt-1 mb-2 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('${idPrefix}-dates').classList.toggle('hidden', this.value === 'Not Available')">
+                    <option ${status === 'Available' ? 'selected' : ''}>Available</option>
+                    <option ${status === 'Not Available' ? 'selected' : ''}>Not Available</option>
+                </select>
+                <div id="${idPrefix}-dates" class="grid grid-cols-2 gap-2 ${status === 'Not Available' ? 'hidden' : ''}">
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">ISSUE DATE</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="field-input w-full mt-1 uppercase"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">EXPIRY DATE</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="field-input w-full mt-1 uppercase"></div>
+                </div>
+            </div>
+        `;
+
+        return `
+        <div class="flex items-center gap-3 mb-4">
+            <button onclick="switchTab('vehicles')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} VEHICLE</h3>
+        </div>
+        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
+            
+            <div><label class="text-xs font-bold text-slate-500 uppercase">NUMBER</label><input type="text" id="v-number" value="${v.number}" class="field-input w-full mt-1 uppercase"></div>
+            <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="v-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">CAPACITY</label><input type="text" id="v-capacity" value="${v.capacity}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">CABIN</label><select id="v-cabin" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.cabin === '1 PERSON' ? 'selected' : ''}>1 PERSON</option><option ${v.cabin === '2 PERSON' ? 'selected' : ''}>2 PERSON</option><option ${v.cabin === '3 PERSON' ? 'selected' : ''}>3 PERSON</option><option ${v.cabin === '4 PERSON' ? 'selected' : ''}>4 PERSON</option></select></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">FUEL TYPE</label><select id="v-fuelType" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option><option ${v.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option><option ${v.fuelType === 'CNG' ? 'selected' : ''}>CNG</option><option ${v.fuelType === 'EV' ? 'selected' : ''}>EV</option></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">RUNNING STATUS</label><select id="v-runningStatus" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.runningStatus === 'Stopped' ? 'selected' : ''}>Stopped</option><option ${v.runningStatus === 'On Trip' ? 'selected' : ''}>On Trip</option><option ${v.runningStatus === 'Maintenance' ? 'selected' : ''}>Maintenance</option></select></div>
+            </div>
+            
+            <h4 class="text-xs font-black text-slate-400 mt-4 border-b-2 border-slate-100 dark:border-slate-800 pb-2 uppercase mb-3">COMPLIANCE</h4>
+            ${editCompBox('NAT. PERMIT', 'v-permit', v.nationalPermit, v.nationalPermitIssue, v.nationalPermitExpiry)}
+            ${editCompBox('FITNESS', 'v-fitness', v.fitness, v.fitnessIssue, v.fitnessExpiry)}
+            ${editCompBox('POLLUTION', 'v-pollution', v.pollution, v.pollutionIssue, v.pollutionExpiry)}
+            ${editCompBox('INSURANCE', 'v-insurance', v.insurance, v.insuranceIssue, v.insuranceExpiry)}
+
+            <h4 class="font-black text-slate-400 mt-4 border-b-2 border-slate-100 dark:border-slate-800 pb-2 uppercase">FINANCE DETAILS</h4>
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase">IS VEHICLE FINANCED?</label>
+                <select id="v-hasFinance" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('finance-fields').classList.toggle('hidden', this.value === 'No')">
+                    <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>No (Cleared)</option>
+                    <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>Yes (EMI Active)</option>
+                </select>
+            </div>
+            
+            <div id="finance-fields" class="space-y-3 mt-3 ${v.hasFinance === 'Yes' ? '' : 'hidden'} border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">EMI AMOUNT (₹)</label>
+                    <div class="flex items-center gap-2 mt-1">
+                        <input type="range" min="0" max="100000" step="500" value="${v.emiAmount || 0}" class="flex-1" oninput="document.getElementById('v-emiAmount').value = this.value">
+                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="e.g. 15000" class="field-input w-24 uppercase" oninput="document.querySelector('#finance-fields input[type=range]').value = this.value || 0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">TOTAL EMIs</label>
+                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="e.g. 60" class="field-input w-full mt-1 uppercase">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">PAID EMIs</label>
+                        <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" placeholder="e.g. 12" class="field-input w-full mt-1 uppercase">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="saveVehicle(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full mt-4 uppercase">${isEdit ? 'Update' : 'Save'}</button>
+        </div>`;
     }
 
     if (tab === 'add-driver' || tab === 'edit-driver') {
-        const isEdit = tab.startsWith('edit'); let d = { name: '', phone: '', license: '', salaryType: 'Fixed', baseSalary: '', role: 'Driver' };
+        const isEdit = tab.startsWith('edit'); 
+        let d = { name: '', phone: '', license: '', salaryType: 'Fixed', baseSalary: '', salaryHistory: [], role: 'Driver' };
         if (isEdit && currentDetailData) d = db.get('drivers').find(x => x.id === currentDetailData.id) || d;
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('drivers')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl">${isEdit ? 'EDIT' : 'ADD'} STAFF</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500">TYPE</label><select id="d-role" class="field-input w-full mt-1 bg-white dark:bg-slate-800" onchange="document.getElementById('license-field').classList.toggle('hidden',this.value==='Worker')"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>Driver</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>Worker</option></select></div><div><label class="text-xs font-bold text-slate-500">NAME</label><input type="text" id="d-name" value="${d.name}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">PHONE</label><input type="tel" id="d-phone" value="${d.phone}" class="field-input w-full mt-1"></div><div id="license-field" ${d.role === 'Worker' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500">LICENSE</label><input type="text" id="d-license" value="${d.license}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">SALARY TYPE</label><select id="d-salaryType" class="field-input w-full mt-1 bg-white dark:bg-slate-800"><option ${d.salaryType === 'Fixed' ? 'selected' : ''}>Fixed</option><option ${d.salaryType === 'Per Trip' ? 'selected' : ''}>Per Trip</option></select></div><div><label class="text-xs font-bold text-slate-500">BASE SALARY</label><input type="number" id="d-baseSalary" value="${d.baseSalary}" class="field-input w-full mt-1"></div><button onclick="saveDriver(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full">${isEdit ? 'Update' : 'Save'}</button></div>`;
+        
+        setTimeout(() => {
+            const sh = d.salaryHistory || [];
+            if(sh.length > 0) {
+                sh.forEach(s => window.addSalaryRow(s.month, s.total, s.paid, s.incentive || ''));
+            } else if (!isEdit) {
+                window.addSalaryRow(today().slice(0,7), d.baseSalary || '', '', '');
+            }
+        }, 50);
+
+        return `
+        <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('drivers')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} STAFF</h3></div>
+        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
+            <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="d-role" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('license-field').classList.toggle('hidden',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>Driver</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>Worker</option></select></div>
+            <div><label class="text-xs font-bold text-slate-500 uppercase">NAME</label><input type="text" id="d-name" value="${d.name}" class="field-input w-full mt-1 uppercase"></div>
+            <div><label class="text-xs font-bold text-slate-500 uppercase">PHONE</label><input type="tel" id="d-phone" value="${d.phone}" class="field-input w-full mt-1 uppercase"></div>
+            <div id="license-field" ${d.role === 'Worker' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500 uppercase">LICENSE</label><input type="text" id="d-license" value="${d.license}" class="field-input w-full mt-1 uppercase"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">BASE SALARY</label><input type="number" id="d-baseSalary" value="${d.baseSalary}" class="field-input w-full mt-1 uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">SALARY TYPE</label><select id="d-salaryType" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="Fixed" ${d.salaryType === 'Fixed' ? 'selected' : ''}>Fixed</option><option value="Per Trip" ${d.salaryType === 'Per Trip' ? 'selected' : ''} class="trip-opt ${d.role === 'Worker' ? 'hidden' : ''}">Per Trip</option></select></div>
+            </div>
+
+            <div class="border-t-2 border-slate-100 dark:border-slate-800 my-3 pt-3">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase">MONTHLY SALARY RECORDS</label>
+                    <button type="button" onclick="window.addSalaryRow('', document.getElementById('d-baseSalary').value || 0, '', '')" class="text-[10px] font-bold bg-indigo-100 text-indigo-600 px-2 py-1 rounded-[5px] uppercase">+ Add Month</button>
+                </div>
+                <div id="monthly-salaries-container"></div>
+            </div>
+
+            <button onclick="saveDriver(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-2">${isEdit ? 'Update' : 'Save'}</button>
+        </div>`;
     }
 
     if (tab === 'add-trip' || tab === 'edit-trip') {
         const isEdit = tab.startsWith('edit'); let t = { vehicleId: '', driverId: '', origin: '', dest: '', freightAmount: '', advance: '', date: today(), status: 'Ongoing' };
         if (isEdit && currentDetailData) t = db.get('trips').find(x => x.id === currentDetailData.id) || t;
         const dList = drivers.filter(d => d.role === 'Driver');
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl">${isEdit ? 'EDIT' : 'NEW'} TRIP</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500">VEHICLE</label><select id="t-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800">${vehicles.map(v => `<option value="${v.id}" ${t.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div><div><label class="text-xs font-bold text-slate-500">DRIVER</label><select id="t-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800">${dList.map(d => `<option value="${d.id}" ${t.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500">ORIGIN</label><input type="text" id="t-origin" value="${t.origin}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">DEST</label><input type="text" id="t-dest" value="${t.dest}" class="field-input w-full mt-1"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500">FREIGHT</label><input type="number" id="t-freight" value="${t.freightAmount}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">ADVANCE</label><input type="number" id="t-advance" value="${t.advance}" class="field-input w-full mt-1"></div></div><div><label class="text-xs font-bold text-slate-500">DATE</label><input type="date" id="t-date" value="${t.date}" class="field-input w-full mt-1"></div><button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full">${isEdit ? 'Update' : 'Save'}</button></div>`;
+        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'NEW'} TRIP</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="t-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${vehicles.map(v => `<option value="${v.id}" ${t.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div><div><label class="text-xs font-bold text-slate-500 uppercase">DRIVER</label><select id="t-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${dList.map(d => `<option value="${d.id}" ${t.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500 uppercase">ORIGIN</label><input type="text" id="t-origin" value="${t.origin}" class="field-input w-full mt-1 uppercase"></div><div><label class="text-xs font-bold text-slate-500 uppercase">DEST</label><input type="text" id="t-dest" value="${t.dest}" class="field-input w-full mt-1 uppercase"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500 uppercase">FREIGHT</label><input type="number" id="t-freight" value="${t.freightAmount}" class="field-input w-full mt-1 uppercase"></div><div><label class="text-xs font-bold text-slate-500 uppercase">ADVANCE</label><input type="number" id="t-advance" value="${t.advance}" class="field-input w-full mt-1 uppercase"></div></div><div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="t-date" value="${t.date}" class="field-input w-full mt-1 uppercase"></div><button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase">${isEdit ? 'Update' : 'Save'}</button></div>`;
     }
 
     if (tab === 'add-expense' || tab === 'edit-expense') {
         const isEdit = tab.startsWith('edit'); let e = { type: 'Fuel', amount: '', vehicleId: '', driverId: '', date: today(), notes: '' };
         if (isEdit && currentDetailData) e = db.get('expenses').find(x => x.id === currentDetailData.id) || e;
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl">${isEdit ? 'EDIT' : 'ADD'} EXPENSE</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500">TYPE</label><select id="e-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select></div><div><label class="text-xs font-bold text-slate-500">AMOUNT</label><input type="number" id="e-amount" value="${e.amount}" class="field-input w-full mt-1"></div><div id="vehicle-field" ${e.type === 'Salary' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500">VEHICLE</label><select id="e-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div><div id="driver-field" ${e.type !== 'Salary' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500">STAFF</label><select id="e-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div><div><label class="text-xs font-bold text-slate-500">DATE</label><input type="date" id="e-date" value="${e.date}" class="field-input w-full mt-1"></div><div><label class="text-xs font-bold text-slate-500">NOTES</label><textarea id="e-notes" class="field-input w-full mt-1 h-16 resize-none">${e.notes}</textarea></div><button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full">${isEdit ? 'Update' : 'Save'}</button></div>`;
+        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} EXPENSE</h3></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="e-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select></div><div><label class="text-xs font-bold text-slate-500 uppercase">AMOUNT</label><input type="number" id="e-amount" value="${e.amount}" class="field-input w-full mt-1 uppercase"></div><div id="vehicle-field" ${e.type === 'Salary' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="e-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div><div id="driver-field" ${e.type !== 'Salary' ? 'class="hidden"' : ''}><label class="text-xs font-bold text-slate-500 uppercase">STAFF</label><select id="e-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div><div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="e-date" value="${e.date}" class="field-input w-full mt-1 uppercase"></div><div><label class="text-xs font-bold text-slate-500 uppercase">NOTES</label><textarea id="e-notes" class="field-input w-full mt-1 h-16 resize-none uppercase">${e.notes}</textarea></div><button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full uppercase">${isEdit ? 'Update' : 'Save'}</button></div>`;
     }
 
     return '<p>Page not found</p>';
 }
 
 function saveVehicle(isEdit) {
-    const v = { id: isEdit && currentDetailData ? currentDetailData.id : 'V' + Date.now(), number: document.getElementById('v-number').value.toUpperCase(), type: document.getElementById('v-type').value, capacity: document.getElementById('v-capacity').value, status: document.getElementById('v-status').value };
+    const v = { 
+        id: isEdit && currentDetailData ? currentDetailData.id : 'V' + Date.now(), 
+        number: document.getElementById('v-number').value.toUpperCase(), 
+        type: document.getElementById('v-type').value, 
+        capacity: document.getElementById('v-capacity').value, 
+        cabin: document.getElementById('v-cabin').value, 
+        fuelType: document.getElementById('v-fuelType').value, 
+        runningStatus: document.getElementById('v-runningStatus').value, 
+        
+        nationalPermit: document.getElementById('v-permit').value, 
+        nationalPermitIssue: document.getElementById('v-permit-issue')?.value || '',
+        nationalPermitExpiry: document.getElementById('v-permit-expiry')?.value || '',
+        
+        fitness: document.getElementById('v-fitness').value, 
+        fitnessIssue: document.getElementById('v-fitness-issue')?.value || '',
+        fitnessExpiry: document.getElementById('v-fitness-expiry')?.value || '',
+        
+        pollution: document.getElementById('v-pollution').value, 
+        pollutionIssue: document.getElementById('v-pollution-issue')?.value || '',
+        pollutionExpiry: document.getElementById('v-pollution-expiry')?.value || '',
+        
+        insurance: document.getElementById('v-insurance').value, 
+        insuranceIssue: document.getElementById('v-insurance-issue')?.value || '',
+        insuranceExpiry: document.getElementById('v-insurance-expiry')?.value || '',
+        
+        hasFinance: document.getElementById('v-hasFinance').value, 
+        emiAmount: +document.getElementById('v-emiAmount').value || 0,
+        totalEmis: +document.getElementById('v-totalEmis').value || 0,
+        paidEmis: +document.getElementById('v-paidEmis').value || 0,
+        status: isEdit && currentDetailData ? (db.get('vehicles').find(x => x.id === currentDetailData.id)?.status || 'Active') : 'Active'
+    };
     if (!v.number) return alert('Enter number');
     if (isEdit) { const arr = db.get('vehicles'), i = arr.findIndex(x => x.id === v.id); if (i > -1) { arr[i] = v; db.set('vehicles', arr); } } else { db.push('vehicles', v); createConfetti(); }
     switchTab('vehicles');
@@ -404,7 +818,28 @@ function saveVehicle(isEdit) {
 
 function saveDriver(isEdit) {
     const role = document.getElementById('d-role').value;
-    const d = { id: isEdit && currentDetailData ? currentDetailData.id : (role === 'Driver' ? 'D' : 'W') + Date.now(), name: document.getElementById('d-name').value, phone: document.getElementById('d-phone').value, license: role === 'Driver' ? document.getElementById('d-license').value : '', salaryType: document.getElementById('d-salaryType').value, baseSalary: +document.getElementById('d-baseSalary').value || 0, role };
+    
+    const salaryHistory = [];
+    document.querySelectorAll('.salary-row').forEach(row => {
+        const m = row.querySelector('.s-month').value;
+        const t = +row.querySelector('.s-total').value || 0;
+        const p = +row.querySelector('.s-paid').value || 0;
+        const i = +row.querySelector('.s-incentive').value || 0;
+        if (m) salaryHistory.push({ month: m, total: t, paid: p, incentive: i });
+    });
+    salaryHistory.sort((a,b) => b.month.localeCompare(a.month)); // Newest month first
+
+    const d = { 
+        id: isEdit && currentDetailData ? currentDetailData.id : (role === 'Driver' ? 'D' : 'W') + Date.now(), 
+        name: document.getElementById('d-name').value, 
+        phone: document.getElementById('d-phone').value, 
+        license: role === 'Driver' ? document.getElementById('d-license').value : '', 
+        salaryType: document.getElementById('d-salaryType').value, 
+        baseSalary: +document.getElementById('d-baseSalary').value || 0, 
+        salaryHistory,
+        role 
+    };
+    
     if (!d.name) return alert('Enter name');
     if (isEdit) { const arr = db.get('drivers'), i = arr.findIndex(x => x.id === d.id); if (i > -1) { arr[i] = d; db.set('drivers', arr); } } else { db.push('drivers', d); createConfetti(); }
     activeStaffTab = role === 'Driver' ? 'drivers' : 'workers';
