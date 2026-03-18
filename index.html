@@ -16,12 +16,10 @@
                     screens: { 'xs': '380px' },
                     fontFamily: { 'sans': ['Quantico', 'sans-serif'] },
                     animation: {
-                        'slide-up': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'fade-in': 'fadeIn 0.4s ease-out forwards',
+                        'slide-up': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
                     },
                     keyframes: {
-                        slideUp: { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
-                        fadeIn: { '0%': { transform: 'translateY(10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -40,10 +38,9 @@
         .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 2px solid #e2e8f0; }
         .dark .glass-card { background: rgba(30, 41, 59, 0.85); border-color: #334155; }
         
-        html, body, button, input, select, textarea, p, h1, h2, h3, span, div, .badge { font-size: clamp(14px, 3.5vw, 18px) !important; }
+        html, body, button, input, select, textarea, p, h1, h2, h3, span, div { font-size: clamp(14px, 3.5vw, 18px) !important; }
         .app-container { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
         .hidden { display: none !important; }
-        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -54,7 +51,12 @@
         .btn-primary { padding: clamp(10px, 3vw, 16px); font-weight: 700; border-radius: 5px; }
         .btn-primary:active { transform: translateY(2px); }
         
-        .badge { padding: 4px 8px; font-weight: 700; text-transform: uppercase; white-space: nowrap; border-radius: 5px; }
+        /* Updated Badge Size for Mobile and Desktop */
+        .badge { padding: 3px 6px; font-size: 11px !important; font-weight: 700; text-transform: uppercase; white-space: nowrap; border-radius: 4px; }
+        @media (min-width: 768px) {
+            .badge { padding: 4px 8px; font-size: 13px !important; border-radius: 5px; }
+        }
+
         .stat-card { padding: clamp(10px, 3vw, 20px); border: 2px solid #e2e8f0; border-radius: 5px; }
         .dark .stat-card { border-color: #334155; }
         
@@ -79,27 +81,6 @@
         .tab-btn.active { background: white; color: #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .dark .tab-btn.active { background: #334155; color: #818cf8; }
 
-        .skeleton-card { position: relative; overflow: hidden; background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 5px; }
-        .dark .skeleton-card { background: #1e293b; border-color: #334155; }
-        .skeleton-card::before { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: linear-gradient(90deg, transparent 0%, rgba(79, 70, 229, 0.15) 20%, rgba(79, 70, 229, 0.3) 50%, rgba(79, 70, 229, 0.15) 80%, transparent 100%); animation: stepFill var(--fill-duration, 0.5s) ease-out forwards; animation-delay: var(--fill-delay, 0s); z-index: 1; }
-        .dark .skeleton-card::before { background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.2) 20%, rgba(129, 140, 248, 0.4) 50%, rgba(129, 140, 248, 0.2) 80%, transparent 100%); }
-        .skeleton-card::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: rgba(79, 70, 229, 0.08); animation: stepFillBg var(--fill-duration, 0.5s) ease-out forwards; animation-delay: var(--fill-delay, 0s); }
-        .dark .skeleton-card::after { background: rgba(129, 140, 248, 0.1); }
-        @keyframes stepFill { 0% { width: 0%; } 100% { width: 100%; } }
-        @keyframes stepFillBg { 0% { width: 0%; } 100% { width: 100%; } }
-        .skeleton-bar { background: #e2e8f0; border-radius: 5px; }
-        .dark .skeleton-bar { background: #334155; }
-        .loading-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #4f46e5, #818cf8, #4f46e5); background-size: 200% 100%; animation: progressShimmer 1s linear infinite, progressGrow var(--total-duration, 1.5s) ease-out forwards; z-index: 9999; }
-        @keyframes progressShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        @keyframes progressGrow { 0% { width: 0%; } 100% { width: 100%; } }
-
-        .swipe-container { position: relative; overflow: hidden; touch-action: pan-y; }
-        .swipe-content { position: relative; z-index: 10; transition: transform 0.3s ease; }
-        .swipe-actions { position: absolute; top: 0; bottom: 0; display: flex; align-items: stretch; }
-        .swipe-actions-left { left: 0; transform: translateX(-100%); }
-        .swipe-actions-right { right: 0; transform: translateX(100%); }
-        .swipe-btn { display: flex; align-items: center; justify-content: center; width: 70px; font-weight: bold; color: white; }
-
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
         .confetti { position: absolute; opacity: 0; }
         @keyframes confetti-fall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
@@ -115,8 +96,6 @@
         .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; }
         .floating { animation: floating 3s ease-in-out infinite; }
         @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        .card-reveal { opacity: 0; transform: translateY(20px); animation: cardReveal 0.4s ease-out forwards; }
-        @keyframes cardReveal { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100">
@@ -237,28 +216,6 @@ const db = {
 };
 
 let chartInstance = null, currentDetailData = null;
-const FILL_DURATION = 300;
-
-function renderSkeleton(type, count) {
-    let html = `<div class="loading-progress" style="--total-duration:${count * FILL_DURATION}ms"></div>`;
-    if (type === 'dashboard') {
-        html += `<div class="grid grid-cols-2 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4 flex flex-col items-center gap-2" style="--fill-duration:${FILL_DURATION/4}ms;--fill-delay:${i*FILL_DURATION/4}ms"><div class="skeleton-bar w-10 h-10 rounded-full"></div><div class="skeleton-bar h-3 w-16 mt-1"></div></div>`).join('')}</div>`;
-        html += `<div class="skeleton-bar h-5 w-32 mb-3"></div><div class="space-y-3">${[0,1,2].map(i => `<div class="skeleton-card p-4" style="--fill-duration:${FILL_DURATION}ms;--fill-delay:${FILL_DURATION+i*FILL_DURATION}ms"><div class="flex justify-between"><div><div class="skeleton-bar h-6 w-40 mb-2"></div><div class="skeleton-bar h-4 w-28"></div></div><div><div class="skeleton-bar h-6 w-20 mb-2"></div><div class="skeleton-bar h-5 w-16 rounded-[5px]"></div></div></div></div>`).join('')}</div>`;
-    } else if (type === 'stats') {
-        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4" style="--fill-duration:${FILL_DURATION/2}ms;--fill-delay:${i*FILL_DURATION/2}ms"><div class="skeleton-bar h-3 w-16 mb-2"></div><div class="skeleton-bar h-8 w-24"></div></div>`).join('')}</div>`;
-        html += `<div class="skeleton-card p-4" style="--fill-duration:${FILL_DURATION}ms;--fill-delay:${2*FILL_DURATION}ms"><div class="skeleton-bar h-5 w-40 mx-auto mb-4"></div><div class="flex items-end justify-center gap-4 h-[200px]"><div class="skeleton-bar w-20 h-[60%]"></div><div class="skeleton-bar w-20 h-[80%]"></div></div></div>`;
-    } else if (type === 'staff') {
-        html += `<div class="skeleton-card p-2 mb-3" style="--fill-duration:${FILL_DURATION/2}ms"><div class="flex gap-2"><div class="skeleton-bar flex-1 h-12 rounded-[5px]"></div><div class="skeleton-bar flex-1 h-12 rounded-[5px]"></div></div></div>`;
-        html += `<div class="space-y-3">${Array(count).fill(0).map((_, i) => `<div class="skeleton-card p-4" style="--fill-duration:${FILL_DURATION}ms;--fill-delay:${150+i*FILL_DURATION}ms"><div class="flex justify-between"><div><div class="skeleton-bar h-6 w-3/4 mb-2"></div><div class="skeleton-bar h-4 w-1/2"></div></div><div class="skeleton-bar h-8 w-20 rounded-[5px]"></div></div></div>`).join('')}</div>`;
-    } else {
-        html += `<div class="space-y-3">${Array(count).fill(0).map((_, i) => `<div class="skeleton-card p-4" style="--fill-duration:${FILL_DURATION}ms;--fill-delay:${i*FILL_DURATION}ms"><div class="flex justify-between mb-3"><div><div class="skeleton-bar h-6 w-3/4 mb-2"></div><div class="skeleton-bar h-4 w-1/2"></div></div><div class="skeleton-bar h-8 w-20 rounded-[5px]"></div></div><div class="flex justify-between pt-3 border-t-2 border-slate-100 dark:border-slate-700"><div class="skeleton-bar h-4 w-24"></div><div class="skeleton-bar h-4 w-16"></div></div></div>`).join('')}</div>`;
-    }
-    return html;
-}
-
-function getLoadDuration(type, count) {
-    return type === 'dashboard' ? FILL_DURATION * 4 : type === 'stats' ? FILL_DURATION * 3 : type === 'staff' ? 150 + count * FILL_DURATION : count * FILL_DURATION;
-}
 
 function createConfetti() {
     const c = document.getElementById('confetti-container'), colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -312,22 +269,12 @@ function renderEmptyState(type) {
     return `<div class="empty-state"><div class="floating mb-6"><div class="w-20 h-20 bg-${s[3]}-100 dark:bg-${s[3]}-900/30 rounded-full flex items-center justify-center"><i data-lucide="${s[0]}" class="w-10 h-10 text-${s[3]}-600"></i></div></div><h3 class="font-black text-xl mb-2">${s[1]}</h3><button onclick="switchTab('${s[2]}')" class="btn-primary bg-${s[3]}-600 text-white px-6 mt-4"><i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>Add</button></div>`;
 }
 
-let touchStartX = 0, touchCurrentX = 0, currentSwipeEl = null;
-function initSwipe() {
-    document.querySelectorAll('.swipe-container').forEach(c => {
-        const ct = c.querySelector('.swipe-content');
-        c.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; currentSwipeEl = c; ct.style.transition = 'none'; }, { passive: true });
-        c.addEventListener('touchmove', e => { if (!currentSwipeEl) return; touchCurrentX = e.touches[0].clientX; ct.style.transform = `translateX(${Math.max(-140, Math.min(140, touchCurrentX - touchStartX))}px)`; }, { passive: true });
-        c.addEventListener('touchend', () => { if (!currentSwipeEl) return; const ct = currentSwipeEl.querySelector('.swipe-content'); ct.style.transition = 'transform 0.3s'; const d = touchCurrentX - touchStartX; ct.style.transform = d > 70 ? 'translateX(70px)' : d < -70 ? 'translateX(-70px)' : 'translateX(0)'; currentSwipeEl = null; touchStartX = touchCurrentX = 0; });
-    });
-}
-function resetSwipe(el) { el.closest('.swipe-container').querySelector('.swipe-content').style.transform = 'translateX(0)'; }
 function editItem(t, id) { currentDetailData = { type: t, id }; switchTab('edit-' + t); }
 function deleteItem(t, id) { if (confirm('Delete?')) { db.delete(t + 's', id); switchTab(t + 's'); } }
 
 function updateCompanyName(v) { localStorage.setItem('ot_company_name', v); const el = document.getElementById('sidebar-company-name'); if (el) el.innerText = v || 'OmniTransport'; }
 
-function switchTab(tab, loader = true) {
+function switchTab(tab) {
     document.querySelectorAll('#desktop-sidebar button').forEach(b => b.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400'));
     document.getElementById('side-' + tab)?.classList.add('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400');
     let title = tab.replace('-', ' ').toUpperCase();
@@ -336,45 +283,37 @@ function switchTab(tab, loader = true) {
     if (tab === 'details' && currentDetailData) title = currentDetailData.type.toUpperCase() + ' INFO';
     document.getElementById('app-title').innerText = title;
     
-    if (loader && ['dashboard', 'vehicles', 'drivers', 'trips', 'expenses', 'reports'].includes(tab)) {
-        const type = tab === 'dashboard' ? 'dashboard' : tab === 'reports' ? 'stats' : tab === 'drivers' ? 'staff' : 'list';
-        const count = Math.min(db.get(tab).length || 3, 4);
-        document.getElementById('main-content').innerHTML = `<div class="w-full">${renderSkeleton(type, count)}</div>`;
-        setTimeout(() => { document.querySelector('.loading-progress')?.remove(); document.getElementById('main-content').innerHTML = `<div class="animate-in w-full">${renderPage(tab)}</div>`; lucide.createIcons(); initSwipe(); if (tab === 'reports') setTimeout(initChart, 100); }, getLoadDuration(type, count) + 100);
-    } else {
-        document.getElementById('main-content').innerHTML = `<div class="animate-in w-full">${renderPage(tab)}</div>`;
-        lucide.createIcons(); initSwipe();
-    }
+    // Instant rendering without loader/shimmer
+    document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`;
+    lucide.createIcons(); 
+    if (tab === 'reports') setTimeout(initChart, 50);
+    
     updateThemeIcon();
 }
 
-function switchStaffTab(t) { activeStaffTab = t; document.getElementById('staff-content').innerHTML = renderStaffContent(); document.querySelectorAll('.staff-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === t)); lucide.createIcons(); initSwipe(); }
+function switchStaffTab(t) { activeStaffTab = t; document.getElementById('staff-content').innerHTML = renderStaffContent(); document.querySelectorAll('.staff-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === t)); lucide.createIcons(); }
 function showFabMenu() { document.getElementById('fab-menu').classList.remove('hidden'); }
 function closeFabMenu() { document.getElementById('fab-menu').classList.add('hidden'); }
 function toggleTheme() { const d = document.documentElement.classList.toggle('dark'); localStorage.setItem('ot_theme', d ? 'dark' : 'light'); updateThemeIcon(); }
 function updateThemeIcon() { const i = document.getElementById('theme-icon'); if (i) { i.setAttribute('data-lucide', document.documentElement.classList.contains('dark') ? 'sun' : 'moon'); lucide.createIcons(); } }
 function exportData() { const d = { vehicles: db.get('vehicles'), drivers: db.get('drivers'), trips: db.get('trips'), expenses: db.get('expenses'), companyName: localStorage.getItem('ot_company_name') }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = `OmniTransport_${today()}.json`; a.click(); }
 function importData(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); ['vehicles', 'drivers', 'trips', 'expenses'].forEach(k => d[k] && db.set(k, d[k])); if (d.companyName) localStorage.setItem('ot_company_name', d.companyName); createConfetti(); location.reload(); } catch { alert('Invalid file'); } }; r.readAsText(f); }
-function viewDetails(t, id) { currentDetailData = { type: t, id }; switchTab('details', false); }
+function viewDetails(t, id) { currentDetailData = { type: t, id }; switchTab('details'); }
 function completeTrip(id) { const arr = db.get('trips'), t = arr.find(x => x.id === id); if (t) { t.status = 'Completed'; db.set('trips', arr); createConfetti(); switchTab('trips'); } }
 
-function renderSwipeCard(t, id, content) {
-    return `<div class="swipe-container rounded-[5px] overflow-hidden"><div class="swipe-actions swipe-actions-left"><button onclick="editItem('${t}','${id}');resetSwipe(this)" class="swipe-btn bg-blue-500"><i data-lucide="pencil" class="w-5 h-5"></i></button></div><div class="swipe-content glass-card rounded-[5px] border-2 border-slate-200 dark:border-slate-700">${content}</div><div class="swipe-actions swipe-actions-right"><button onclick="deleteItem('${t}','${id}');resetSwipe(this)" class="swipe-btn bg-red-500"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div></div>`;
-}
-
 function renderListCard(type, id, content) {
-    return `<div class="glass-card p-4 rounded-[5px] border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('${type.slice(0,-1)}','${id}')">${content}</div>`;
+    return `<div class="glass-card p-4 rounded-[5px] border-2 border-slate-200 dark:border-slate-700 cursor-pointer" onclick="viewDetails('${type}','${id}')">${content}</div>`;
 }
 
-function renderStaffCard(p, i, all) {
+function renderStaffCard(p, all) {
     const isD = p.role === 'Driver';
-    return `<div class="card-reveal" style="animation-delay:${i*60}ms">${renderListCard('drivers', p.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${p.name}</h4><p class="font-bold text-indigo-600"><i data-lucide="phone" class="inline w-3 h-3"></i> ${p.phone}</p></div><span class="badge ${isD ? 'bg-emerald-100 text-emerald-600' : 'bg-purple-100 text-purple-600'}">${p.salaryType}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${isD ? 'Lic: ' + (p.license || 'N/A') : 'Office'}</span><span class="text-xs font-bold text-slate-400">${fmt(p.baseSalary)}</span></div>`)}</div>`;
+    return `${renderListCard('driver', p.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${p.name}</h4><p class="font-bold text-indigo-600"><i data-lucide="phone" class="inline w-3 h-3"></i> ${p.phone}</p></div><span class="badge ${isD ? 'bg-emerald-100 text-emerald-600' : 'bg-purple-100 text-purple-600'}">${p.salaryType}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${isD ? 'Lic: ' + (p.license || 'N/A') : 'Office'}</span><span class="text-xs font-bold text-slate-400">${fmt(p.baseSalary)}</span></div>`)}`;
 }
 
 function renderStaffContent() {
     const all = db.get('drivers'), list = all.filter(d => d.role === (activeStaffTab === 'drivers' ? 'Driver' : 'Worker'));
     if (!list.length) return `<div class="text-center py-12"><div class="w-16 h-16 mx-auto bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4"><i data-lucide="${activeStaffTab === 'drivers' ? 'car' : 'briefcase'}" class="w-8 h-8 text-slate-400"></i></div><p class="text-slate-500 font-bold">No ${activeStaffTab} yet</p></div>`;
-    return `<div class="space-y-3">${list.map((p, i) => renderStaffCard(p, i, all)).join('')}</div>`;
+    return `<div class="space-y-3">${list.map((p) => renderStaffCard(p, all)).join('')}</div>`;
 }
 
 function renderPage(tab) {
@@ -382,33 +321,33 @@ function renderPage(tab) {
     
     if (tab === 'dashboard') {
         const btns = [['vehicles', 'truck', 'indigo', 'VEHICLES'], ['drivers', 'users', 'blue', 'STAFF'], ['trips', 'route', 'emerald', 'TRIPS'], ['expenses', 'banknote', 'red', 'EXPENSES']];
-        if (!trips.length && !vehicles.length) return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l], idx) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50 card-reveal" style="animation-delay:${idx * 50}ms"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div>${renderEmptyState('trips')}`;
-        return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l], idx) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50 card-reveal" style="animation-delay:${idx * 50}ms"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div><h3 class="font-black text-slate-400 mb-3 card-reveal" style="animation-delay:200ms">RECENT TRIPS</h3><div class="space-y-3">${trips.slice(-3).reverse().map((t, i) => `<div class="card-reveal" style="animation-delay:${250 + i * 80}ms">${renderSwipeCard('trip', t.id, `<div class="p-4 cursor-pointer" onclick="viewDetails('trip','${t.id}')"><div class="flex justify-between items-center"><div><p class="font-bold text-lg">${t.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${t.dest}</p><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v => v.id === t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><p class="font-black text-indigo-600">${fmt(t.freightAmount)}</p><span class="badge ${t.status === 'Completed' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} text-xs mt-1">${t.status}</span></div></div></div>`)}</div>`).join('')}</div>`;
+        if (!trips.length && !vehicles.length) return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l]) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div>${renderEmptyState('trips')}`;
+        return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([t, i, c, l]) => `<button onclick="switchTab('${t}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest">${l}</span></button>`).join('')}</div><h3 class="font-black text-slate-400 mb-3">RECENT TRIPS</h3><div class="space-y-3">${trips.slice(-3).reverse().map((t) => `${renderListCard('trip', t.id, `<div class="flex justify-between items-center"><div><p class="font-bold text-lg">${t.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${t.dest}</p><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v => v.id === t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><p class="font-black text-indigo-600">${fmt(t.freightAmount)}</p><span class="badge ${t.status === 'Completed' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} text-xs mt-1">${t.status}</span></div></div>`)}`).join('')}</div>`;
     }
 
     if (tab === 'reports') {
         const tF = trips.reduce((s, t) => s + t.freightAmount, 0), tE = expenses.reduce((s, e) => s + e.amount, 0);
-        return `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3"><div class="stat-card bg-indigo-600 text-white rounded-[5px] border-none card-reveal"><p class="font-bold opacity-80 text-[10px]">Freight</p><h3 class="font-black text-xl">${fmt(tF)}</h3></div><div class="stat-card bg-red-50 dark:bg-red-900/20 text-red-600 card-reveal" style="animation-delay:50ms"><p class="font-bold text-[10px]">Expenses</p><h3 class="font-black text-xl">${fmt(tE)}</h3></div><div class="stat-card bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 card-reveal" style="animation-delay:100ms"><p class="font-bold text-[10px]">Net</p><h3 class="font-black text-xl">${fmt(tF - tE)}</h3></div><div class="stat-card bg-amber-50 dark:bg-amber-900/20 text-amber-600 card-reveal" style="animation-delay:150ms"><p class="font-bold text-[10px]">Active</p><h3 class="font-black text-xl">${trips.filter(t => t.status === 'Ongoing').length}</h3></div></div><div class="glass-card p-4 rounded-[5px] border-2 border-slate-200 dark:border-slate-700 card-reveal" style="animation-delay:200ms"><h3 class="font-black text-slate-400 mb-4 text-center">INCOME VS EXPENSE</h3><div class="chart-container" style="height:220px"><canvas id="financeChart"></canvas></div></div>`;
+        return `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3"><div class="stat-card bg-indigo-600 text-white rounded-[5px] border-none"><p class="font-bold opacity-80 text-[10px]">Freight</p><h3 class="font-black text-xl">${fmt(tF)}</h3></div><div class="stat-card bg-red-50 dark:bg-red-900/20 text-red-600"><p class="font-bold text-[10px]">Expenses</p><h3 class="font-black text-xl">${fmt(tE)}</h3></div><div class="stat-card bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600"><p class="font-bold text-[10px]">Net</p><h3 class="font-black text-xl">${fmt(tF - tE)}</h3></div><div class="stat-card bg-amber-50 dark:bg-amber-900/20 text-amber-600"><p class="font-bold text-[10px]">Active</p><h3 class="font-black text-xl">${trips.filter(t => t.status === 'Ongoing').length}</h3></div></div><div class="glass-card p-4 rounded-[5px] border-2 border-slate-200 dark:border-slate-700"><h3 class="font-black text-slate-400 mb-4 text-center">INCOME VS EXPENSE</h3><div class="chart-container" style="height:220px"><canvas id="financeChart"></canvas></div></div>`;
     }
 
     if (tab === 'vehicles') {
         if (!vehicles.length) return renderEmptyState('vehicles');
-        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${vehicles.map((v, i) => `<div class="card-reveal" style="animation-delay:${i * 60}ms">${renderListCard('vehicles', v.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600">${v.type}</p></div><span class="badge bg-emerald-100 text-emerald-600">${v.status}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${v.capacity}</span><span class="text-xs font-bold text-slate-400">${v.id}</span></div>`)}</div>`).join('')}</div>`;
+        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${vehicles.map((v) => `${renderListCard('vehicle', v.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600">${v.type}</p></div><span class="badge bg-emerald-100 text-emerald-600">${v.status}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${v.capacity}</span><span class="text-xs font-bold text-slate-400">${v.id}</span></div>`)}`).join('')}</div>`;
     }
 
     if (tab === 'drivers') {
         if (!drivers.length) return renderEmptyState('drivers');
-        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-driver')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="tab-switcher mb-3 card-reveal"><button class="tab-btn staff-tab-btn ${activeStaffTab === 'drivers' ? 'active' : ''}" data-tab="drivers" onclick="switchStaffTab('drivers')"><i data-lucide="car" class="w-4 h-4"></i>Drivers</button><button class="tab-btn staff-tab-btn ${activeStaffTab === 'workers' ? 'active' : ''}" data-tab="workers" onclick="switchStaffTab('workers')"><i data-lucide="briefcase" class="w-4 h-4"></i>Workers</button></div><div id="staff-content">${renderStaffContent()}</div>`;
+        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-driver')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="tab-switcher mb-3"><button class="tab-btn staff-tab-btn ${activeStaffTab === 'drivers' ? 'active' : ''}" data-tab="drivers" onclick="switchStaffTab('drivers')"><i data-lucide="car" class="w-4 h-4"></i>Drivers</button><button class="tab-btn staff-tab-btn ${activeStaffTab === 'workers' ? 'active' : ''}" data-tab="workers" onclick="switchStaffTab('workers')"><i data-lucide="briefcase" class="w-4 h-4"></i>Workers</button></div><div id="staff-content">${renderStaffContent()}</div>`;
     }
 
     if (tab === 'trips' || tab === 'payments') {
         if (!trips.length) return renderEmptyState('trips');
-        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-trip')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${[...trips].reverse().map((t, i) => `<div class="card-reveal" style="animation-delay:${i * 60}ms">${renderSwipeCard('trip', t.id, `<div class="p-4 cursor-pointer" onclick="viewDetails('trip','${t.id}')"><div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${t.origin} → ${t.dest}</h4><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v => v.id === t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><h3 class="font-black text-xl text-emerald-600">${fmt(t.freightAmount)}</h3><p class="text-xs font-bold text-slate-400">Adv: ${fmt(t.advance)}</p></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${t.date}</span>${t.status === 'Ongoing' ? `<button onclick="event.stopPropagation();completeTrip('${t.id}')" class="badge bg-amber-500 text-white">Done</button>` : `<span class="badge bg-emerald-100 text-emerald-600">Settled</span>`}</div></div>`)}</div>`).join('')}</div>`;
+        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-trip')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${[...trips].reverse().map((t) => `${renderListCard('trip', t.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${t.origin} → ${t.dest}</h4><p class="font-bold text-indigo-600 mt-1">${vehicles.find(v => v.id === t.vehicleId)?.number || 'N/A'}</p></div><div class="text-right"><h3 class="font-black text-xl text-emerald-600">${fmt(t.freightAmount)}</h3><p class="text-xs font-bold text-slate-400">Adv: ${fmt(t.advance)}</p></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${t.date}</span>${t.status === 'Ongoing' ? `<button onclick="event.stopPropagation();completeTrip('${t.id}')" class="badge bg-amber-500 text-white">Done</button>` : `<span class="badge bg-emerald-100 text-emerald-600">Settled</span>`}</div>`)}`).join('')}</div>`;
     }
 
     if (tab === 'expenses') {
         if (!expenses.length) return renderEmptyState('expenses');
-        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${[...expenses].reverse().map((e, i) => { const isSal = e.type === 'Salary'; return `<div class="card-reveal" style="animation-delay:${i * 60}ms">${renderSwipeCard('expense', e.id, `<div class="p-4 cursor-pointer" onclick="viewDetails('expense','${e.id}')"><div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${e.type}</h4><p class="font-bold ${isSal ? 'text-blue-600' : 'text-red-600'} mt-1">${isSal ? (drivers.find(d => d.id === e.driverId)?.name || 'N/A') : (vehicles.find(v => v.id === e.vehicleId)?.number || 'General')}</p></div><h3 class="font-black text-xl text-red-600">-${fmt(e.amount)}</h3></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400">${e.notes || e.id}</span></div></div>`)}</div>`; }).join('')}</div>`;
+        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${[...expenses].reverse().map((e) => { const isSal = e.type === 'Salary'; return `${renderListCard('expense', e.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${e.type}</h4><p class="font-bold ${isSal ? 'text-blue-600' : 'text-red-600'} mt-1">${isSal ? (drivers.find(d => d.id === e.driverId)?.name || 'N/A') : (vehicles.find(v => v.id === e.vehicleId)?.number || 'General')}</p></div><h3 class="font-black text-xl text-red-600">-${fmt(e.amount)}</h3></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400">${e.notes || e.id}</span></div>`)}`; }).join('')}</div>`;
     }
 
     if (tab === 'details') {
