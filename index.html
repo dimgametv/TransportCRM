@@ -190,8 +190,8 @@ const formatMonthStr = (ym) => {
 let activeStaffTab = 'drivers';
 
 function seedDB() {
-    if (localStorage.getItem('ot_seeded_v21')) return;
-    for (let i=1; i<21; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
+    if (localStorage.getItem('ot_seeded_v22')) return;
+    for (let i=1; i<22; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
     const data = {
         vehicles: [
             { 
@@ -231,7 +231,7 @@ function seedDB() {
     };
     Object.keys(data).forEach(k => localStorage.setItem('ot_' + k, JSON.stringify(data[k])));
     localStorage.setItem('ot_company_name', 'OmniTransport');
-    localStorage.setItem('ot_seeded_v21', '1');
+    localStorage.setItem('ot_seeded_v22', '1');
 }
 seedDB();
 
@@ -251,23 +251,21 @@ window.addSalaryRow = (m='', t='', p='', i='', epfoSettled=true) => {
     const isEpfoActive = document.getElementById('d-epfo')?.value === 'Activated';
     
     container.insertAdjacentHTML('beforeend', `
-        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 mb-3 bg-slate-50 dark:bg-slate-800/50 salary-row relative animate-slide-up">
-            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-rose-500 w-6 h-6 flex items-center justify-center bg-rose-100 rounded-[5px]"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <div class="grid grid-cols-2 gap-3 mt-4 items-end">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">MONTH</label><input type="month" class="field-input w-full mt-1 uppercase s-month" value="${currentM}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">TOTAL (₹)</label><input type="number" placeholder="0" class="field-input w-full mt-1 uppercase s-total" value="${t}"></div>
+        <div class="glass-card rounded-[5px] p-3 mb-3 salary-row relative animate-slide-up focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-rose-500 w-6 h-6 flex items-center justify-center bg-rose-100 rounded-[5px] z-10"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="grid grid-cols-2 gap-2 mt-2 items-end">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">MONTH</label><input type="month" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-month text-slate-900 dark:text-slate-100" value="${currentM}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TOTAL (₹)</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-total text-slate-900 dark:text-slate-100" value="${t}"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mt-3 items-end">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">PAID (₹)</label><input type="number" placeholder="0" class="field-input w-full mt-1 uppercase s-paid" value="${p}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">INCENTIVE (₹)</label><input type="number" placeholder="0" class="field-input w-full mt-1 uppercase s-incentive" value="${i}"></div>
+            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t-2 border-slate-100 dark:border-slate-800 items-end">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">PAID (₹)</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-paid text-slate-900 dark:text-slate-100" value="${p}"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">INCENTIVE (₹)</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-incentive text-slate-900 dark:text-slate-100" value="${i}"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mt-3 epfo-col ${isEpfoActive ? '' : 'hidden'}">
-                <div class="col-span-2">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2 p-3 bg-white dark:bg-slate-800 rounded-[5px] border border-slate-200 dark:border-slate-700 cursor-pointer">
-                        <input type="checkbox" class="s-epfo w-4 h-4 rounded text-blue-600 focus:ring-blue-500" ${epfoSettled ? 'checked' : ''}>
-                        <span class="text-blue-500 flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> EPFO SETTLED FOR MONTH</span>
-                    </label>
-                </div>
+            <div class="grid grid-cols-1 gap-2 mt-2 pt-2 border-t-2 border-slate-100 dark:border-slate-800 epfo-col ${isEpfoActive ? '' : 'hidden'}">
+                <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="s-epfo w-4 h-4 rounded text-blue-600 focus:ring-blue-500" ${epfoSettled ? 'checked' : ''}>
+                    <span class="text-blue-500 flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> EPFO SETTLED FOR MONTH</span>
+                </label>
             </div>
         </div>
     `);
@@ -758,15 +756,15 @@ function renderPage(tab) {
         if (isEdit && currentDetailData) v = db.get('vehicles').find(x => x.id === currentDetailData.id) || v;
         
         const editCompBox = (title, idPrefix, status, issue, expiry) => `
-            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
-                <label class="text-xs font-bold text-slate-500 uppercase">${title}</label>
-                <select id="${idPrefix}" class="field-input w-full mt-1 mb-2 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('${idPrefix}-dates').classList.toggle('hidden', this.value === 'Not Available')">
+            <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${title}</label>
+                <select id="${idPrefix}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('${idPrefix}-dates').classList.toggle('hidden', this.value === 'Not Available')">
                     <option ${status === 'Available' ? 'selected' : ''}>Available</option>
                     <option ${status === 'Not Available' ? 'selected' : ''}>Not Available</option>
                 </select>
-                <div id="${idPrefix}-dates" class="${status === 'Not Available' ? 'hidden' : ''}">
-                    <div class="mt-2"><label class="text-[10px] font-bold text-slate-400 uppercase">ISSUE DATE</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="field-input w-full mt-1 uppercase"></div>
-                    <div class="mt-2"><label class="text-[10px] font-bold text-slate-400 uppercase">EXPIRY DATE</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="field-input w-full mt-1 uppercase"></div>
+                <div id="${idPrefix}-dates" class="${status === 'Not Available' ? 'hidden' : ''} pt-2 border-t-2 border-slate-100 dark:border-slate-800 mt-2 space-y-2">
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">ISSUE DATE</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">EXPIRY DATE</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
                 </div>
             </div>
         `;
@@ -776,64 +774,78 @@ function renderPage(tab) {
             <button onclick="switchTab('vehicles')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
             <h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} VEHICLE</h3>
         </div>
-        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
+        <div class="space-y-6 pb-6">
             
-            <div class="grid grid-cols-2 gap-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">NUMBER</label><input type="text" id="v-number" value="${v.number}" class="field-input w-full mt-1 uppercase"></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="v-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">CAPACITY</label><input type="text" id="v-capacity" value="${v.capacity}" class="field-input w-full mt-1 uppercase"></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">CABIN</label><select id="v-cabin" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.cabin === '1 PERSON' ? 'selected' : ''}>1 PERSON</option><option ${v.cabin === '2 PERSON' ? 'selected' : ''}>2 PERSON</option><option ${v.cabin === '3 PERSON' ? 'selected' : ''}>3 PERSON</option><option ${v.cabin === '4 PERSON' ? 'selected' : ''}>4 PERSON</option></select></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">FUEL TYPE</label><select id="v-fuelType" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option><option ${v.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option><option ${v.fuelType === 'CNG' ? 'selected' : ''}>CNG</option><option ${v.fuelType === 'EV' ? 'selected' : ''}>EV</option></select></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">RUNNING STATUS</label><select id="v-runningStatus" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option ${v.runningStatus === 'Stopped' ? 'selected' : ''}>Stopped</option><option ${v.runningStatus === 'On Trip' ? 'selected' : ''}>On Trip</option><option ${v.runningStatus === 'Maintenance' ? 'selected' : ''}>Maintenance</option></select></div>
-            </div>
-            
-            <h4 class="text-xs font-black text-slate-400 mt-4 border-b-2 border-slate-100 dark:border-slate-800 pb-2 uppercase mb-3">COMPLIANCE</h4>
-            <div class="grid grid-cols-2 gap-3">
-                ${editCompBox('NAT. PERMIT', 'v-permit', v.nationalPermit, v.nationalPermitIssue, v.nationalPermitExpiry)}
-                ${editCompBox('FITNESS', 'v-fitness', v.fitness, v.fitnessIssue, v.fitnessExpiry)}
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                ${editCompBox('POLLUTION', 'v-pollution', v.pollution, v.pollutionIssue, v.pollutionExpiry)}
-                ${editCompBox('INSURANCE', 'v-insurance', v.insurance, v.insuranceIssue, v.insuranceExpiry)}
+            <div>
+                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">GENERAL INFO</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">NUMBER</label>
+                        <input type="text" id="v-number" value="${v.number}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="NUMBER">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TYPE</label>
+                        <select id="v-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">CAPACITY</label>
+                        <input type="text" id="v-capacity" value="${v.capacity}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="CAPACITY">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">CABIN</label>
+                        <select id="v-cabin" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.cabin === '1 PERSON' ? 'selected' : ''}>1 PERSON</option><option ${v.cabin === '2 PERSON' ? 'selected' : ''}>2 PERSON</option><option ${v.cabin === '3 PERSON' ? 'selected' : ''}>3 PERSON</option><option ${v.cabin === '4 PERSON' ? 'selected' : ''}>4 PERSON</option></select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">FUEL TYPE</label>
+                        <select id="v-fuelType" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option><option ${v.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option><option ${v.fuelType === 'CNG' ? 'selected' : ''}>CNG</option><option ${v.fuelType === 'EV' ? 'selected' : ''}>EV</option></select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">RUNNING STATUS</label>
+                        <select id="v-runningStatus" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.runningStatus === 'Stopped' ? 'selected' : ''}>Stopped</option><option ${v.runningStatus === 'On Trip' ? 'selected' : ''}>On Trip</option><option ${v.runningStatus === 'Maintenance' ? 'selected' : ''}>Maintenance</option></select>
+                    </div>
+                </div>
             </div>
 
-            <h4 class="font-black text-slate-400 mt-4 border-b-2 border-slate-100 dark:border-slate-800 pb-2 uppercase">FINANCE DETAILS</h4>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase">IS VEHICLE FINANCED?</label>
-                    <select id="v-hasFinance" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('finance-fields').classList.toggle('hidden', this.value === 'No')">
-                        <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>No (Cleared)</option>
-                        <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>Yes (EMI Active)</option>
-                    </select>
+            <div>
+                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">COMPLIANCE</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    ${editCompBox('NAT. PERMIT', 'v-permit', v.nationalPermit, v.nationalPermitIssue, v.nationalPermitExpiry)}
+                    ${editCompBox('FITNESS', 'v-fitness', v.fitness, v.fitnessIssue, v.fitnessExpiry)}
+                    ${editCompBox('POLLUTION', 'v-pollution', v.pollution, v.pollutionIssue, v.pollutionExpiry)}
+                    ${editCompBox('INSURANCE', 'v-insurance', v.insurance, v.insuranceIssue, v.insuranceExpiry)}
                 </div>
-                <div></div>
             </div>
-            
-            <div id="finance-fields" class="mt-3 ${v.hasFinance === 'Yes' ? '' : 'hidden'} border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase">EMI AMOUNT (₹)</label>
-                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" class="field-input w-full mt-1 uppercase">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase">TOTAL EMIs</label>
-                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" class="field-input w-full mt-1 uppercase">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-3">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase">PAID EMIs</label>
-                        <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" class="field-input w-full mt-1 uppercase">
+
+            <div>
+                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">FINANCE DETAILS</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">IS VEHICLE FINANCED?</label>
+                        <select id="v-hasFinance" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('finance-fields').classList.toggle('hidden', this.value === 'No')">
+                            <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>No (Cleared)</option>
+                            <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>Yes (EMI Active)</option>
+                        </select>
                     </div>
                     <div></div>
                 </div>
+                
+                <div id="finance-fields" class="mt-2 ${v.hasFinance === 'Yes' ? 'grid' : 'hidden'} grid-cols-2 gap-2">
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">EMI AMOUNT (₹)</label>
+                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TOTAL EMIs</label>
+                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">PAID EMIs</label>
+                        <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                </div>
             </div>
 
-            <button onclick="saveVehicle(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full mt-4 uppercase">${isEdit ? 'Update' : 'Save'}</button>
+            <button onclick="saveVehicle(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-2">${isEdit ? 'Update' : 'Save'}</button>
         </div>`;
     }
 
@@ -853,38 +865,56 @@ function renderPage(tab) {
 
         return `
         <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('drivers')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} STAFF</h3></div>
-        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
+        <div class="space-y-6 pb-6">
             
-            <div class="grid grid-cols-2 gap-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="d-role" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('license-field').classList.toggle('invisible',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>Driver</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>Worker</option></select></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">NAME</label><input type="text" id="d-name" value="${d.name}" class="field-input w-full mt-1 uppercase"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">PHONE</label><input type="tel" id="d-phone" value="${d.phone}" class="field-input w-full mt-1 uppercase"></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">EMAIL ID</label><input type="email" id="d-email" value="${d.email || ''}" class="field-input w-full mt-1"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">AADHAAR NUMBER</label><input type="text" id="d-aadhaar" value="${d.aadhaar || ''}" class="field-input w-full mt-1 uppercase"></div>
-                <div id="license-field" class="${d.role === 'Worker' ? 'invisible' : ''}"><label class="text-xs font-bold text-slate-500 uppercase">LICENSE</label><input type="text" id="d-license" value="${d.license}" class="field-input w-full mt-1 uppercase"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase">EPFO</label>
-                    <select id="d-epfo" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.querySelectorAll('.epfo-col').forEach(el => el.classList.toggle('hidden', this.value !== 'Activated'))">
-                        <option value="Not Activated" ${d.epfo !== 'Activated' ? 'selected' : ''}>Not Activated</option>
-                        <option value="Activated" ${d.epfo === 'Activated' ? 'selected' : ''}>Activated</option>
-                    </select>
+            <div>
+                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">GENERAL INFO</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TYPE</label>
+                        <select id="d-role" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('license-field').classList.toggle('invisible',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>Driver</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>Worker</option></select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">NAME</label>
+                        <input type="text" id="d-name" value="${d.name}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="NAME">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">PHONE</label>
+                        <input type="tel" id="d-phone" value="${d.phone}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="PHONE">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">EMAIL ID</label>
+                        <input type="email" id="d-email" value="${d.email || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="EMAIL">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">AADHAAR</label>
+                        <input type="text" id="d-aadhaar" value="${d.aadhaar || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="AADHAAR">
+                    </div>
+                    <div id="license-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${d.role === 'Worker' ? 'invisible' : ''}">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">LICENSE</label>
+                        <input type="text" id="d-license" value="${d.license}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="LICENSE">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">EPFO</label>
+                        <select id="d-epfo" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.querySelectorAll('.epfo-col').forEach(el => el.classList.toggle('hidden', this.value !== 'Activated'))">
+                            <option value="Not Activated" ${d.epfo !== 'Activated' ? 'selected' : ''}>Not Activated</option>
+                            <option value="Activated" ${d.epfo === 'Activated' ? 'selected' : ''}>Activated</option>
+                        </select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">SALARY TYPE</label>
+                        <select id="d-salaryType" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Fixed" ${d.salaryType === 'Fixed' ? 'selected' : ''}>Fixed</option><option value="Per Trip" ${d.salaryType === 'Per Trip' ? 'selected' : ''} class="trip-opt ${d.role === 'Worker' ? 'hidden' : ''}">Per Trip</option></select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">BASE SALARY</label>
+                        <input type="number" id="d-baseSalary" value="${d.baseSalary}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
                 </div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">SALARY TYPE</label><select id="d-salaryType" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="Fixed" ${d.salaryType === 'Fixed' ? 'selected' : ''}>Fixed</option><option value="Per Trip" ${d.salaryType === 'Per Trip' ? 'selected' : ''} class="trip-opt ${d.role === 'Worker' ? 'hidden' : ''}">Per Trip</option></select></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">BASE SALARY</label><input type="number" id="d-baseSalary" value="${d.baseSalary}" class="field-input w-full mt-1 uppercase"></div>
-                <div></div>
             </div>
 
-            <div class="border-t-2 border-slate-100 dark:border-slate-800 my-3 pt-3">
-                <div class="flex justify-between items-center mb-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase">MONTHLY SALARY RECORDS</label>
+            <div>
+                <div class="flex justify-between items-end mb-3 px-1">
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">MONTHLY SALARY RECORDS</h4>
                     <button type="button" onclick="window.addSalaryRow('', document.getElementById('d-baseSalary').value || 0, '', '', true)" class="text-[10px] font-bold bg-indigo-100 text-indigo-600 px-2 py-1 rounded-[5px] uppercase">+ Add Month</button>
                 </div>
                 <div id="monthly-salaries-container"></div>
@@ -900,22 +930,39 @@ function renderPage(tab) {
         const dList = drivers.filter(d => d.role === 'Driver');
         return `
         <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'NEW'} TRIP</h3></div>
-        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="t-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${vehicles.map(v => `<option value="${v.id}" ${t.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">DRIVER</label><select id="t-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${dList.map(d => `<option value="${d.id}" ${t.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">ORIGIN</label><input type="text" id="t-origin" value="${t.origin}" class="field-input w-full mt-1 uppercase"></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">DEST</label><input type="text" id="t-dest" value="${t.dest}" class="field-input w-full mt-1 uppercase"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">FREIGHT</label><input type="number" id="t-freight" value="${t.freightAmount}" class="field-input w-full mt-1 uppercase"></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">ADVANCE</label><input type="number" id="t-advance" value="${t.advance}" class="field-input w-full mt-1 uppercase"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="t-date" value="${t.date}" class="field-input w-full mt-1 uppercase"></div>
-                <div></div>
+        <div class="space-y-6 pb-6">
+            <div>
+                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">TRIP INFO</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">VEHICLE</label>
+                        <select id="t-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${vehicles.map(v => `<option value="${v.id}" ${t.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">DRIVER</label>
+                        <select id="t-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${dList.map(d => `<option value="${d.id}" ${t.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">ORIGIN</label>
+                        <input type="text" id="t-origin" value="${t.origin}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="ORIGIN">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">DESTINATION</label>
+                        <input type="text" id="t-dest" value="${t.dest}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="DEST">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">FREIGHT</label>
+                        <input type="number" id="t-freight" value="${t.freightAmount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">ADVANCE</label>
+                        <input type="number" id="t-advance" value="${t.advance}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">DATE</label>
+                        <input type="date" id="t-date" value="${t.date}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">
+                    </div>
+                </div>
             </div>
             <button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-2">${isEdit ? 'Update' : 'Save'}</button>
         </div>`;
@@ -926,20 +973,35 @@ function renderPage(tab) {
         if (isEdit && currentDetailData) e = db.get('expenses').find(x => x.id === currentDetailData.id) || e;
         return `
         <div class="flex items-center gap-3 mb-4"><button onclick="switchTab('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} EXPENSE</h3></div>
-        <div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">TYPE</label><select id="e-type" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">AMOUNT</label><input type="number" id="e-amount" value="${e.amount}" class="field-input w-full mt-1 uppercase"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div>
-                    <div id="vehicle-field" class="${e.type === 'Salary' ? 'hidden' : ''}"><label class="text-xs font-bold text-slate-500 uppercase">VEHICLE</label><select id="e-vehicle" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
-                    <div id="driver-field" class="${e.type !== 'Salary' ? 'hidden' : ''}"><label class="text-xs font-bold text-slate-500 uppercase">STAFF</label><select id="e-driver" class="field-input w-full mt-1 bg-white dark:bg-slate-800 uppercase">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
+        <div class="space-y-6 pb-6">
+            <div>
+                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">EXPENSE INFO</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TYPE</label>
+                        <select id="e-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">AMOUNT</label>
+                        <input type="number" id="e-amount" value="${e.amount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                    <div id="vehicle-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${e.type === 'Salary' ? 'hidden' : ''}">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">VEHICLE</label>
+                        <select id="e-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select>
+                    </div>
+                    <div id="driver-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${e.type !== 'Salary' ? 'hidden' : ''}">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">STAFF</label>
+                        <select id="e-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select>
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">DATE</label>
+                        <input type="date" id="e-date" value="${e.date}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">
+                    </div>
+                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors col-span-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">NOTES</label>
+                        <textarea id="e-notes" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 h-16 resize-none placeholder-slate-400" placeholder="OPTIONAL NOTES">${e.notes}</textarea>
+                    </div>
                 </div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">DATE</label><input type="date" id="e-date" value="${e.date}" class="field-input w-full mt-1 uppercase"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-3">
-                <div class="col-span-2"><label class="text-xs font-bold text-slate-500 uppercase">NOTES</label><textarea id="e-notes" class="field-input w-full mt-1 h-16 resize-none uppercase">${e.notes}</textarea></div>
             </div>
             <button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full uppercase mt-2">${isEdit ? 'Update' : 'Save'}</button>
         </div>`;
