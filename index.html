@@ -190,8 +190,8 @@ const formatMonthStr = (ym) => {
 let activeStaffTab = 'drivers';
 
 function seedDB() {
-    if (localStorage.getItem('ot_seeded_v22')) return;
-    for (let i=1; i<22; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
+    if (localStorage.getItem('ot_seeded_v23')) return;
+    for (let i=1; i<23; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
     const data = {
         vehicles: [
             { 
@@ -231,7 +231,7 @@ function seedDB() {
     };
     Object.keys(data).forEach(k => localStorage.setItem('ot_' + k, JSON.stringify(data[k])));
     localStorage.setItem('ot_company_name', 'OmniTransport');
-    localStorage.setItem('ot_seeded_v22', '1');
+    localStorage.setItem('ot_seeded_v23', '1');
 }
 seedDB();
 
@@ -819,29 +819,30 @@ function renderPage(tab) {
             <div>
                 <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">FINANCE DETAILS</h4>
                 <div class="grid grid-cols-2 gap-2">
+                    
                     <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">IS VEHICLE FINANCED?</label>
-                        <select id="v-hasFinance" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('finance-fields').classList.toggle('hidden', this.value === 'No')">
+                        <select id="v-hasFinance" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.querySelectorAll('.finance-field').forEach(el => el.classList.toggle('hidden', this.value === 'No'))">
                             <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>No (Cleared)</option>
                             <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>Yes (EMI Active)</option>
                         </select>
                     </div>
-                    <div></div>
-                </div>
-                
-                <div id="finance-fields" class="mt-2 ${v.hasFinance === 'Yes' ? 'grid' : 'hidden'} grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">EMI AMOUNT (₹)</label>
-                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TOTAL EMIs</label>
-                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                    
+                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">PAID EMIs</label>
                         <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
                     </div>
+
+                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">EMI AMOUNT (₹)</label>
+                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+                    
+                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TOTAL EMIs</label>
+                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
+                    </div>
+
                 </div>
             </div>
 
