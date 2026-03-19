@@ -458,11 +458,10 @@ function renderPage(tab) {
                 const percent = Math.min(100, (paid / total) * 100);
                 
                 financeHtml = `
-                    <div class="border-t-2 border-slate-100 dark:border-slate-800 mt-4 mb-4"></div>
-                    <div class="px-4 pb-4">
-                        <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">FINANCE</h4>
+                    <div class="mt-6 mb-4">
+                        <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">FINANCE</h4>
                         
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 mb-3 flex justify-between items-center bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-4 mb-3 flex justify-between items-center">
                             <div>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">EMI AMOUNT</p>
                                 <p class="font-black text-lg text-indigo-600 uppercase">${fmt(v.emiAmount)}<span class="text-xs text-slate-400">/MO</span></p>
@@ -470,7 +469,7 @@ function renderPage(tab) {
                             <span class="badge bg-amber-100 text-amber-600 uppercase">ACTIVE</span>
                         </div>
                         
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50">
+                        <div class="glass-card rounded-[5px] p-4">
                             <div class="flex justify-between text-xs font-bold mb-3 uppercase">
                                 <span class="text-emerald-500"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span id="info-paid-val">${paid}</span> PAID</span>
                                 <span class="text-amber-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span id="info-pending-val">${pending}</span> PENDING</span>
@@ -492,58 +491,56 @@ function renderPage(tab) {
                     const isExpired = expiry && expiry < today();
                     const iconName = isExpired ? 'x-circle' : 'check-circle';
                     const iconColor = isExpired ? 'text-rose-500' : 'text-emerald-500';
-                    iconHtml = `<i data-lucide="${iconName}" class="w-5 h-5 ${iconColor} flex-shrink-0"></i>`;
+                    iconHtml = `<i data-lucide="${iconName}" class="w-5 h-5 ${iconColor} flex-shrink-0 ml-1"></i>`;
                 } else {
-                    iconHtml = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-500 flex-shrink-0"></i>`;
+                    iconHtml = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-500 flex-shrink-0 ml-1"></i>`;
                 }
                 return `
-                <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${title}</p>
-                        <p class="font-black text-sm uppercase ${status === 'Available' ? 'text-emerald-600' : 'text-rose-600'}">${status || 'N/A'}</p>
+                <div class="glass-card rounded-[5px] p-3 flex justify-between items-center">
+                    <div class="overflow-hidden">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 truncate">${title}</p>
+                        <p class="font-black text-sm uppercase truncate ${status === 'Available' ? 'text-emerald-600' : 'text-rose-600'}">${status || 'N/A'}</p>
                     </div>
                     ${iconHtml}
                 </div>`;
             };
 
             html = `
-                <div class="p-4">
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">GENERAL INFO</h4>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                <div>
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">GENERAL INFO</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">NUMBER</p>
-                            <p class="font-black text-sm uppercase">${v.number}</p>
+                            <p class="font-black text-sm uppercase truncate">${v.number}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">TYPE</p>
-                            <p class="font-black text-sm uppercase">${v.type}</p>
+                            <p class="font-black text-sm uppercase truncate">${v.type}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">CAPACITY</p>
-                            <p class="font-black text-sm uppercase">${v.capacity}</p>
+                            <p class="font-black text-sm uppercase truncate">${v.capacity}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">CABIN</p>
-                            <p class="font-black text-sm uppercase">${v.cabin || 'N/A'}</p>
+                            <p class="font-black text-sm uppercase truncate">${v.cabin || 'N/A'}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">FUEL TYPE</p>
-                            <p class="font-black text-sm uppercase">${v.fuelType || 'N/A'}</p>
+                            <p class="font-black text-sm uppercase truncate">${v.fuelType || 'N/A'}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 flex justify-between items-center">
-                            <div>
+                        <div class="glass-card rounded-[5px] p-3 flex justify-between items-center">
+                            <div class="overflow-hidden">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">RUNNING STATUS</p>
-                                <p class="font-black text-sm uppercase">${v.runningStatus || 'STOPPED'}</p>
+                                <p class="font-black text-sm uppercase truncate">${v.runningStatus || 'STOPPED'}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="border-t-2 border-slate-100 dark:border-slate-800"></div>
-                
-                <div class="p-4">
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">COMPLIANCE</h4>
-                    <div class="grid grid-cols-2 gap-3">
+                <div class="mt-6 mb-4">
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">COMPLIANCE</h4>
+                    <div class="grid grid-cols-2 gap-2">
                         ${compBox('NAT. PERMIT', v.nationalPermit, v.nationalPermitExpiry)}
                         ${compBox('FITNESS', v.fitness, v.fitnessExpiry)}
                         ${compBox('POLLUTION', v.pollution, v.pollutionExpiry)}
@@ -572,18 +569,18 @@ function renderPage(tab) {
                     const epfoBadge = (d.epfo === 'Activated' && s.epfoSettled) ? `<div class="text-[10px] font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 uppercase flex items-center gap-1 text-blue-500"><i data-lucide="check-circle" class="w-3 h-3"></i> EPFO SETTLED</div>` : '';
 
                     historyHtml += `
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-4 bg-slate-50 dark:bg-slate-800/50 mb-3">
+                        <div class="glass-card rounded-[5px] p-4 mb-3">
                             <div class="flex justify-between items-center mb-2">
                                 <h5 class="font-black text-sm uppercase">${formatMonthStr(s.month)}</h5>
                                 <span class="badge ${pending === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase">${pending === 0 ? 'CLEARED' : 'PENDING'}</span>
                             </div>
                             <div class="flex justify-between mb-1">
-                                <span class="text-emerald-500 !text-[10px] font-bold uppercase"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span class="!text-[10px]">${fmt(s.paid)}</span> PAID</span>
-                                <span class="text-amber-500 !text-[10px] font-bold uppercase"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span class="!text-[10px]">${fmt(pending)}</span> DUE</span>
+                                <span class="text-emerald-500 !text-[11px] font-bold uppercase"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span class="!text-[11px]">${fmt(s.paid)}</span> PAID</span>
+                                <span class="text-amber-500 !text-[11px] font-bold uppercase"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span class="!text-[11px]">${fmt(pending)}</span> DUE</span>
                             </div>
                             <div class="flex justify-between mb-2">
-                                <span class="text-slate-400 !text-[9px] font-bold uppercase tracking-tight">TOTAL: ${fmt(s.total)}</span>
-                                <span class="text-indigo-500 !text-[9px] font-bold uppercase tracking-tight">INCENTIVE: ${fmt(s.incentive || 0)}</span>
+                                <span class="text-slate-400 !text-[10px] font-bold uppercase tracking-tight">TOTAL: ${fmt(s.total)}</span>
+                                <span class="text-indigo-500 !text-[10px] font-bold uppercase tracking-tight">INCENTIVE: ${fmt(s.incentive || 0)}</span>
                             </div>
                             <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mt-1">
                                 <div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div>
@@ -594,9 +591,8 @@ function renderPage(tab) {
                 });
 
                 monthlyRecordsSection = `
-                    <div class="border-t-2 border-slate-100 dark:border-slate-800 mt-2 mb-4"></div>
-                    <div class="px-4 pb-4">
-                        <div class="flex justify-between items-end mb-3">
+                    <div class="mt-6 mb-4">
+                        <div class="flex justify-between items-end mb-3 px-1">
                             <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">MONTHLY RECORDS</h4>
                             <span class="text-xs font-bold ${pendingOverall > 0 ? 'text-amber-500' : 'text-emerald-500'} uppercase">TOTAL DUE: ${fmt(pendingOverall)}</span>
                         </div>
@@ -606,70 +602,141 @@ function renderPage(tab) {
             }
 
             html = `
-                <div class="p-4">
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3">GENERAL INFO</h4>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                <div>
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">GENERAL INFO</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">NAME</p>
-                            <p class="font-black text-sm uppercase">${d.name}</p>
+                            <p class="font-black text-sm uppercase truncate">${d.name}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">PHONE</p>
-                            <p class="font-black text-sm uppercase">${d.phone}</p>
+                            <p class="font-black text-sm uppercase truncate">${d.phone}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ROLE</p>
-                            <p class="font-black text-sm uppercase">${d.role}</p>
+                            <p class="font-black text-sm uppercase truncate">${d.role}</p>
                         </div>
                         ${d.role === 'Driver' ? `
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">LICENSE</p>
-                            <p class="font-black text-sm uppercase">${d.license || 'N/A'}</p>
+                            <p class="font-black text-sm uppercase truncate">${d.license || 'N/A'}</p>
                         </div>` : ''}
                         
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">AADHAAR</p>
-                            <p class="font-black text-sm uppercase">${d.aadhaar || 'N/A'}</p>
+                            <p class="font-black text-sm uppercase truncate">${d.aadhaar || 'N/A'}</p>
                         </div>
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">EMAIL</p>
-                            <p class="font-black text-sm">${d.email || 'N/A'}</p>
+                            <p class="font-black text-sm truncate">${d.email || 'N/A'}</p>
                         </div>
                         
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="glass-card rounded-[5px] p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">BASE SALARY</p>
-                            <p class="font-black text-sm uppercase">${fmt(d.baseSalary)}</p>
+                            <p class="font-black text-sm uppercase truncate">${fmt(d.baseSalary)}</p>
                         </div>
                         
-                        <div class="col-span-2 grid grid-cols-2 gap-3">
-                            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20">
+                        <div class="col-span-2 grid grid-cols-2 gap-2">
+                            <div class="glass-card rounded-[5px] p-3">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">SALARY TYPE</p>
-                                <p class="font-black text-sm uppercase">${d.salaryType}</p>
+                                <p class="font-black text-sm uppercase truncate">${d.salaryType}</p>
                             </div>
-                            <div class="border border-slate-200 dark:border-slate-700 rounded-[5px] p-3 bg-white dark:bg-slate-800/20 flex justify-between items-center">
-                                <div>
+                            <div class="glass-card rounded-[5px] p-3 flex justify-between items-center">
+                                <div class="overflow-hidden">
                                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">EPFO</p>
-                                    <p class="font-black text-sm uppercase ${d.epfo === 'Activated' ? 'text-blue-600' : ''}">${d.epfo || 'Not Activated'}</p>
+                                    <p class="font-black text-sm uppercase truncate ${d.epfo === 'Activated' ? 'text-blue-600' : ''}">${d.epfo || 'Not Activated'}</p>
                                 </div>
-                                ${d.epfo === 'Activated' ? `<i data-lucide="check-circle" class="w-5 h-5 text-blue-500"></i>` : ''}
+                                ${d.epfo === 'Activated' ? `<i data-lucide="check-circle" class="w-5 h-5 text-blue-500 flex-shrink-0 ml-1"></i>` : ''}
                             </div>
                         </div>
                     </div>
                 </div>
                 ${monthlyRecordsSection}
             `;
-        } else {
-            let entries = Object.entries(item);
-            for (let i = 0; i < entries.length; i += 2) { 
-                html += '<div class="grid grid-cols-2 gap-4 p-4 border-b-2 border-slate-100 dark:border-slate-800 last:border-b-0">'; 
-                entries.slice(i, i + 2).forEach(([k, v]) => { 
-                    html += `<div><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${k.replace('Id', '')}</p><p class="font-black text-lg uppercase">${typeof v === 'number' ? fmt(v) : (v || 'N/A')}</p></div>`; 
-                }); 
-                html += '</div>'; 
-            }
+        } else if (currentDetailData.type === 'trip') {
+            const t = item;
+            const veh = db.get('vehicles').find(x => x.id === t.vehicleId);
+            const drv = db.get('drivers').find(x => x.id === t.driverId);
+            
+            html = `
+                <div>
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">TRIP INFO</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ORIGIN</p>
+                            <p class="font-black text-sm uppercase truncate">${t.origin}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">DESTINATION</p>
+                            <p class="font-black text-sm uppercase truncate">${t.dest}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">VEHICLE</p>
+                            <p class="font-black text-sm uppercase truncate text-indigo-600">${veh ? veh.number : 'N/A'}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">STAFF</p>
+                            <p class="font-black text-sm uppercase truncate text-indigo-600">${drv ? drv.name : 'N/A'}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">FREIGHT AMOUNT</p>
+                            <p class="font-black text-sm uppercase truncate text-emerald-600">${fmt(t.freightAmount)}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ADVANCE</p>
+                            <p class="font-black text-sm uppercase truncate text-amber-600">${fmt(t.advance)}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">DATE</p>
+                            <p class="font-black text-sm uppercase truncate">${t.date}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3 flex justify-between items-center">
+                            <div class="overflow-hidden">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">STATUS</p>
+                                <p class="font-black text-sm uppercase truncate ${t.status === 'Completed' ? 'text-emerald-600' : 'text-amber-500'}">${t.status}</p>
+                            </div>
+                            ${t.status === 'Completed' ? `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 flex-shrink-0 ml-1"></i>` : `<i data-lucide="clock" class="w-5 h-5 text-amber-500 flex-shrink-0 ml-1"></i>`}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (currentDetailData.type === 'expense') {
+            const e = item;
+            const veh = db.get('vehicles').find(x => x.id === e.vehicleId);
+            const drv = db.get('drivers').find(x => x.id === e.driverId);
+            const relatedTo = e.type === 'Salary' ? (drv ? drv.name : 'N/A') : (veh ? veh.number : 'General');
+            
+            html = `
+                <div>
+                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">EXPENSE INFO</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">TYPE</p>
+                            <p class="font-black text-sm uppercase truncate">${e.type}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">AMOUNT</p>
+                            <p class="font-black text-sm uppercase truncate text-red-600">${fmt(e.amount)}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3 col-span-2">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${e.type === 'Salary' ? 'STAFF' : 'VEHICLE'}</p>
+                            <p class="font-black text-sm uppercase truncate text-indigo-600">${relatedTo}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">DATE</p>
+                            <p class="font-black text-sm uppercase truncate">${e.date}</p>
+                        </div>
+                        <div class="glass-card rounded-[5px] p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">NOTES</p>
+                            <p class="font-black text-sm uppercase truncate">${e.notes || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
         
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">DETAILS</h3></div><div class="glass-card rounded-[5px] pb-4">${html}</div><div class="flex gap-3 mt-4"><button onclick="editItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-blue-600 text-white uppercase">Edit</button><button onclick="deleteItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-red-600 text-white uppercase">Delete</button></div>`;
+        return `<div class="flex items-center gap-3 mb-4"><button onclick="switchTab('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">DETAILS</h3></div><div>${html}</div><div class="flex gap-3 mt-4"><button onclick="editItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-blue-600 text-white uppercase">Edit</button><button onclick="deleteItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-red-600 text-white uppercase">Delete</button></div>`;
     }
 
     if (tab === 'profile') {
