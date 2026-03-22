@@ -192,48 +192,30 @@ const formatMonthStr = (ym) => {
 let activeStaffTab = 'drivers';
 
 function seedDB() {
-    if (localStorage.getItem('ot_seeded_v26')) return;
-    for (let i=1; i<26; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
+    if (localStorage.getItem('ot_seeded_v32')) return; 
+    for (let i=1; i<32; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
     const data = {
         vehicles: [
-            { 
-                id: 'V1', number: 'RJ-14-GD-1234', type: '10-Wheeler', capacity: '15 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'On Trip', 
-                nationalPermit: 'Available', nationalPermitIssue: '2025-01-10', nationalPermitExpiry: '2026-01-10', 
-                fitness: 'Available', fitnessIssue: '2025-02-15', fitnessExpiry: '2026-02-15',
-                pollution: 'Available', pollutionIssue: '2025-06-01', pollutionExpiry: '2025-12-01',
-                insurance: 'Available', insuranceIssue: '2025-03-20', insuranceExpiry: '2026-03-20',
-                hasFinance: 'Yes', emiAmount: 15500, totalEmis: 60, paidEmis: 24, status: 'Active' 
-            },
-            { 
-                id: 'V2', number: 'RJ-14-GD-5678', type: '14-Wheeler', capacity: '25 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'Stopped', 
-                nationalPermit: 'Not Available', nationalPermitIssue: '', nationalPermitExpiry: '', 
-                fitness: 'Available', fitnessIssue: '2025-01-05', fitnessExpiry: '2026-01-05',
-                pollution: 'Available', pollutionIssue: '2025-05-10', pollutionExpiry: '2025-11-10',
-                insurance: 'Available', insuranceIssue: '2025-04-12', insuranceExpiry: '2026-04-12',
-                hasFinance: 'No', emiAmount: 0, totalEmis: 0, paidEmis: 0, status: 'Active' 
-            }
+            { id: 'V1', number: 'RJ-14-GD-1234', type: '10-Wheeler', capacity: '15 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'On Trip', nationalPermit: 'Available', nationalPermitIssue: '2025-01-10', nationalPermitExpiry: '2026-01-10', fitness: 'Available', fitnessIssue: '2025-02-15', fitnessExpiry: '2026-02-15', pollution: 'Available', pollutionIssue: '2025-06-01', pollutionExpiry: '2025-12-01', insurance: 'Available', insuranceIssue: '2025-03-20', insuranceExpiry: '2026-03-20', hasFinance: 'Yes', emiAmount: 15500, totalEmis: 60, paidEmis: 24, status: 'Active' },
+            { id: 'V2', number: 'RJ-14-GD-5678', type: '14-Wheeler', capacity: '25 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'Stopped', nationalPermit: 'Not Available', nationalPermitIssue: '', nationalPermitExpiry: '', fitness: 'Available', fitnessIssue: '2025-01-05', fitnessExpiry: '2026-01-05', pollution: 'Available', pollutionIssue: '2025-05-10', pollutionExpiry: '2025-11-10', insurance: 'Available', insuranceIssue: '2025-04-12', insuranceExpiry: '2026-04-12', hasFinance: 'No', emiAmount: 0, totalEmis: 0, paidEmis: 0, status: 'Active' }
         ],
         drivers: [
             { id: 'D1', name: 'Ramesh Singh', phone: '9876543210', email: 'ramesh@xrvlabs.com', aadhaar: '1234 5678 9012', epfo: 'Activated', license: 'RJ142010123', salaryType: 'Fixed', baseSalary: 15000, salaryHistory: [{ month: '2026-03', total: 15000, paid: 5000, incentive: 1200, epfoSettled: true }, { month: '2026-02', total: 15000, paid: 15000, incentive: 0, epfoSettled: true }], role: 'Driver' },
-            { id: 'D2', name: 'Suresh Kumar', phone: '9876543211', email: '', aadhaar: '', epfo: 'Not Activated', license: 'RJ142010124', salaryType: 'Per Trip', baseSalary: 12000, salaryHistory: [{ month: '2026-03', total: 12000, paid: 12000, incentive: 500, epfoSettled: false }], role: 'Driver' },
-            { id: 'D3', name: 'Mahesh Yadav', phone: '9876543214', email: '', aadhaar: '', epfo: 'Not Activated', license: 'RJ142010125', salaryType: 'Fixed', baseSalary: 14000, salaryHistory: [], role: 'Driver' },
-            { id: 'W1', name: 'Priya Sharma', phone: '9876543212', email: 'priya@xrvlabs.com', aadhaar: '0987 6543 2109', epfo: 'Activated', license: '', salaryType: 'Fixed', baseSalary: 18000, salaryHistory: [{ month: '2026-03', total: 18000, paid: 10000, incentive: 200, epfoSettled: true }], role: 'Worker' },
-            { id: 'W2', name: 'Amit Verma', phone: '9876543213', email: '', aadhaar: '', epfo: 'Not Activated', license: '', salaryType: 'Fixed', baseSalary: 20000, salaryHistory: [{ month: '2026-03', total: 20000, paid: 20000, incentive: 1000, epfoSettled: false }], role: 'Worker' },
-            { id: 'W3', name: 'Neha Gupta', phone: '9876543215', email: '', aadhaar: '', epfo: 'Not Activated', license: '', salaryType: 'Fixed', baseSalary: 22000, salaryHistory: [], role: 'Worker' }
+            { id: 'D2', name: 'Suresh Kumar', phone: '9876543211', email: '', aadhaar: '', epfo: 'Not Activated', license: 'RJ142010124', salaryType: 'Per Trip', baseSalary: 12000, salaryHistory: [{ month: '2026-03', total: 12000, paid: 12000, incentive: 500, epfoSettled: false }], role: 'Driver' }
         ],
         trips: [
-            { id: 'T1', vehicleId: 'V1', driverId: 'D1', companyName: 'Reliance Logistics', origin: 'Jaipur', dest: 'Delhi', freightAmount: 25000, advance: 25000, date: today(), status: 'Settled' },
-            { id: 'T2', vehicleId: 'V1', driverId: 'D1', companyName: '', origin: 'Delhi', dest: 'Mumbai', freightAmount: 45000, advance: 10000, date: today(), status: 'Completed' },
-            { id: 'T3', vehicleId: 'V2', driverId: 'D2', companyName: 'Amazon Shipping', origin: 'Mumbai', dest: 'Bangalore', freightAmount: 35000, advance: 8000, date: today(), status: 'Ongoing' }
+            { id: 'T1', vehicleId: 'V1', driverId: 'D1', companyName: 'Reliance Logistics', origin: 'Jaipur', dest: 'Delhi', freightAmount: 25000, advance: 25000, date: today(), status: 'Settled' }
         ],
         expenses: [
             { id: 'E1', type: 'Fuel', amount: 8000, vehicleId: 'V1', date: today(), notes: 'Pump' },
-            { id: 'E2', type: 'Maintenance', amount: 5000, vehicleId: 'V2', date: today(), notes: 'Tyre' }
+            { id: 'E2', type: 'Maintenance', amount: 5000, vehicleId: 'V2', date: today(), notes: 'Tyre' },
+            { id: 'E3', type: 'Office', amount: 1200, vehicleId: '', driverId: '', payee: 'Sharma Stationers', date: '2026-03-20', notes: 'Files and Pens' },
+            { id: 'E4', type: 'Office', amount: 450, vehicleId: '', driverId: '', payee: 'Sharma Stationers', date: today(), notes: 'Printer Ink' }
         ]
     };
     Object.keys(data).forEach(k => localStorage.setItem('ot_' + k, JSON.stringify(data[k])));
     localStorage.setItem('ot_company_name', 'OmniTransport');
-    localStorage.setItem('ot_seeded_v26', '1');
+    localStorage.setItem('ot_seeded_v32', '1');
 }
 seedDB();
 
@@ -245,6 +227,22 @@ const db = {
 };
 
 let chartInstance = null, currentDetailData = null;
+
+// Ledger Filter Logic
+window.filterLedger = function(month) {
+    let total = 0;
+    const items = document.querySelectorAll('.ledger-item');
+    items.forEach(item => {
+        if (month === 'All' || item.dataset.month === month) {
+            item.style.display = '';
+            total += parseFloat(item.dataset.amount || 0);
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    const totalEl = document.getElementById('ledger-total');
+    if(totalEl) totalEl.innerText = '-' + fmt(total);
+};
 
 // History Navigation Helper
 function goBack(fallbackTab) {
@@ -366,14 +364,12 @@ function switchTab(tab, loader = true, historyAction = 'push') {
     if (tab === 'details' && currentDetailData) title = currentDetailData.type.toUpperCase() + ' INFO';
     document.getElementById('app-title').innerText = title;
     
-    // Manage History state
     if (historyAction === 'push') {
         history.pushState({ tab, detail: currentDetailData }, title, `#${tab}`);
     } else if (historyAction === 'replace') {
         history.replaceState({ tab, detail: currentDetailData }, title, `#${tab}`);
     }
 
-    // Ensure header is visible on new tab
     document.getElementById('main-header').style.marginTop = '0px';
     
     if (loader && ['dashboard', 'vehicles', 'drivers', 'trips', 'expenses', 'reports'].includes(tab)) {
@@ -476,7 +472,15 @@ function renderPage(tab) {
 
     if (tab === 'expenses') {
         if (!expenses.length) return renderEmptyState('expenses');
-        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${[...expenses].reverse().map((e) => { const isSal = e.type === 'Salary'; return `${renderListCard('expense', e.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${e.type}</h4><p class="font-bold ${isSal ? 'text-blue-600' : 'text-red-600'} mt-1">${isSal ? (drivers.find(d => d.id === e.driverId)?.name || 'N/A') : (vehicles.find(v => v.id === e.vehicleId)?.number || 'General')}</p></div><h3 class="font-black text-xl text-red-600">-${fmt(e.amount)}</h3></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400">${e.notes || e.id}</span></div>`)}`; }).join('')}</div>`;
+        return `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">+ Add</button></div><div class="space-y-3">${[...expenses].reverse().map((e) => { 
+            let relatedTo = 'General';
+            let colorClass = 'text-red-600';
+            if (e.type === 'Salary') { relatedTo = drivers.find(d => d.id === e.driverId)?.name || 'N/A'; colorClass = 'text-blue-600'; }
+            else if (['Fuel', 'Maintenance', 'Toll'].includes(e.type)) { relatedTo = vehicles.find(v => v.id === e.vehicleId)?.number || 'N/A'; colorClass = 'text-amber-600'; }
+            else { relatedTo = e.payee || 'Office / General'; colorClass = 'text-purple-600'; }
+            
+            return `${renderListCard('expense', e.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${e.type}</h4><p class="font-bold ${colorClass} mt-1">${relatedTo}</p></div><h3 class="font-black text-xl text-red-600">-${fmt(e.amount)}</h3></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400">${e.notes || e.id}</span></div>`)}`; 
+        }).join('')}</div>`;
     }
 
     if (tab === 'details') {
@@ -616,7 +620,7 @@ function renderPage(tab) {
                             </div>
                             <div class="flex justify-between mb-1">
                                 <span class="text-emerald-500 !text-[11px] font-bold uppercase"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span class="!text-[11px]">${fmt(s.paid)}</span> PAID</span>
-                                <span class="text-amber-500 !text-[11px] font-bold uppercase"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span class="!text-[11px]">${fmt(pending)}</span> DUE</span>
+                                <span class="text-amber-500 !text-[11px] font-bold uppercase"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span id="info-bal-val">${fmt(pending)}</span> DUE</span>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-slate-400 !text-[10px] font-bold uppercase tracking-tight">TOTAL: ${fmt(s.total)}</span>
@@ -773,8 +777,83 @@ function renderPage(tab) {
             const e = item;
             const veh = db.get('vehicles').find(x => x.id === e.vehicleId);
             const drv = db.get('drivers').find(x => x.id === e.driverId);
-            const relatedTo = e.type === 'Salary' ? (drv ? drv.name : 'N/A') : (veh ? veh.number : 'General');
             
+            let relatedLabel = 'RELATED TO';
+            let relatedTo = 'N/A';
+            let historyFilter = (x) => false;
+            let historyTitle = 'HISTORY';
+            
+            if (e.type === 'Salary') { 
+                relatedLabel = 'STAFF'; 
+                relatedTo = drv ? drv.name : 'N/A'; 
+                historyFilter = (x) => x.driverId === e.driverId && x.driverId !== '';
+                historyTitle = `STAFF LEDGER`;
+            } 
+            else if (['Fuel', 'Maintenance', 'Toll'].includes(e.type)) { 
+                relatedLabel = 'VEHICLE'; 
+                relatedTo = veh ? veh.number : 'N/A'; 
+                historyFilter = (x) => x.vehicleId === e.vehicleId && x.vehicleId !== '';
+                historyTitle = `VEHICLE LEDGER`;
+            } 
+            else { 
+                relatedLabel = 'PAYEE / ACCOUNT'; 
+                relatedTo = e.payee || 'Office / General'; 
+                historyFilter = (x) => x.payee === e.payee && x.payee !== '';
+                if (!e.payee) historyFilter = (x) => x.type === e.type && !x.payee && !x.vehicleId && !x.driverId;
+                historyTitle = `SHOP LEDGER`;
+            }
+
+            const allExpenses = db.get('expenses');
+            const relatedExpenses = allExpenses.filter(historyFilter).sort((a, b) => new Date(b.date) - new Date(a.date));
+            const totalRelated = relatedExpenses.reduce((sum, x) => sum + x.amount, 0);
+
+            const uniqueMonths = [...new Set(relatedExpenses.map(x => x.date.substring(0, 7)))].sort().reverse();
+            const monthOptions = `<option value="All">ALL MONTHS</option>` + uniqueMonths.map(m => `<option value="${m}">${formatMonthStr(m)}</option>`).join('');
+
+            let historyHtml = `
+                <div class="mt-8 mb-4">
+                    <div class="flex justify-between items-end mb-3 px-1">
+                        <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">${historyTitle}</h4>
+                        <select onchange="filterLedger(this.value)" class="bg-transparent border-none outline-none text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase text-right cursor-pointer">
+                            ${monthOptions}
+                        </select>
+                    </div>
+                    
+                    <div class="glass-card rounded-[5px] overflow-hidden">
+                        <div class="grid grid-cols-[3fr_2fr] gap-2 p-3 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 uppercase">
+                            <div>Date</div>
+                            <div class="text-right">Amount</div>
+                        </div>
+                        <div id="ledger-list-container" class="max-h-64 overflow-y-auto no-scrollbar">
+            `;
+
+            if (relatedExpenses.length === 0) {
+                historyHtml += `<div class="p-4 text-center text-xs text-slate-500 uppercase font-bold">No records found.</div>`;
+            } else {
+                relatedExpenses.forEach(rx => {
+                    const isCurrent = rx.id === e.id;
+                    const monthStr = rx.date.substring(0, 7);
+                    const rowClass = isCurrent ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50';
+                    
+                    historyHtml += `
+                        <div class="ledger-item grid grid-cols-[3fr_2fr] gap-2 p-3 border-b border-slate-100 dark:border-slate-800 text-xs items-center cursor-pointer ${rowClass} transition-colors" onclick="viewDetails('expense','${rx.id}')" data-month="${monthStr}" data-amount="${rx.amount}">
+                            <div class="text-slate-500 font-bold tracking-tight">${rx.date}</div>
+                            <div class="text-right font-black text-red-600">${fmt(rx.amount)}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            historyHtml += `
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-800/80 flex justify-between items-center border-t border-slate-200 dark:border-slate-700">
+                            <span class="text-xs font-black uppercase text-slate-500">Total</span>
+                            <span id="ledger-total" class="font-black text-red-600">-${fmt(totalRelated)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
             html = `
                 <div>
                     <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">EXPENSE INFO</h4>
@@ -788,7 +867,7 @@ function renderPage(tab) {
                             <p class="font-black text-sm uppercase truncate text-red-600">${fmt(e.amount)}</p>
                         </div>
                         <div class="glass-card rounded-[5px] p-3 col-span-2">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${e.type === 'Salary' ? 'STAFF' : 'VEHICLE'}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${relatedLabel}</p>
                             <p class="font-black text-sm uppercase truncate text-indigo-600">${relatedTo}</p>
                         </div>
                         <div class="glass-card rounded-[5px] p-3">
@@ -801,6 +880,7 @@ function renderPage(tab) {
                         </div>
                     </div>
                 </div>
+                ${historyHtml}
             `;
         }
         
@@ -1059,7 +1139,8 @@ function renderPage(tab) {
     }
 
     if (tab === 'add-expense' || tab === 'edit-expense') {
-        const isEdit = tab.startsWith('edit'); let e = { type: 'Fuel', amount: '', vehicleId: '', driverId: '', date: today(), notes: '' };
+        const isEdit = tab.startsWith('edit'); 
+        let e = { type: 'Fuel', amount: '', vehicleId: '', driverId: '', payee: '', date: today(), notes: '' };
         if (isEdit && currentDetailData) e = db.get('expenses').find(x => x.id === currentDetailData.id) || e;
         return `
         <div class="flex items-center gap-3 mb-4"><button onclick="goBack('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? 'EDIT' : 'ADD'} EXPENSE</h3></div>
@@ -1069,19 +1150,31 @@ function renderPage(tab) {
                 <div class="grid grid-cols-2 gap-2">
                     <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">TYPE</label>
-                        <select id="e-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('vehicle-field').classList.toggle('hidden',this.value==='Salary');document.getElementById('driver-field').classList.toggle('hidden',this.value!=='Salary')"><option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option><option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option><option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option><option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option><option ${e.type === 'Other' ? 'selected' : ''}>Other</option></select>
+                        <select id="e-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('vehicle-field').classList.toggle('hidden', !['Fuel', 'Maintenance', 'Toll'].includes(this.value)); document.getElementById('driver-field').classList.toggle('hidden', this.value !== 'Salary'); document.getElementById('payee-field').classList.toggle('hidden', !['Office', 'Shop Account', 'Other'].includes(this.value));">
+                            <option ${e.type === 'Fuel' ? 'selected' : ''}>Fuel</option>
+                            <option ${e.type === 'Maintenance' ? 'selected' : ''}>Maintenance</option>
+                            <option ${e.type === 'Toll' ? 'selected' : ''}>Toll</option>
+                            <option ${e.type === 'Salary' ? 'selected' : ''}>Salary</option>
+                            <option ${e.type === 'Office' ? 'selected' : ''}>Office</option>
+                            <option ${e.type === 'Shop Account' ? 'selected' : ''}>Shop Account</option>
+                            <option ${e.type === 'Other' ? 'selected' : ''}>Other</option>
+                        </select>
                     </div>
                     <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">AMOUNT</label>
                         <input type="number" id="e-amount" value="${e.amount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
                     </div>
-                    <div id="vehicle-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${e.type === 'Salary' ? 'hidden' : ''}">
+                    <div id="vehicle-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${['Fuel', 'Maintenance', 'Toll'].includes(e.type) ? '' : 'hidden'}">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">VEHICLE</label>
                         <select id="e-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="">None</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select>
                     </div>
-                    <div id="driver-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${e.type !== 'Salary' ? 'hidden' : ''}">
+                    <div id="driver-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${e.type === 'Salary' ? '' : 'hidden'}">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">STAFF</label>
                         <select id="e-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select>
+                    </div>
+                    <div id="payee-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${['Office', 'Shop Account', 'Other'].includes(e.type) ? '' : 'hidden'}">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">SHOP / OFFICE / PAYEE</label>
+                        <input type="text" id="e-payee" value="${e.payee || ''}" placeholder="ENTER NAME" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
                     </div>
                     <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">DATE</label>
@@ -1089,7 +1182,7 @@ function renderPage(tab) {
                     </div>
                     <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors col-span-2">
                         <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">NOTES</label>
-                        <textarea id="e-notes" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 h-16 resize-none placeholder-slate-400" placeholder="OPTIONAL NOTES">${e.notes}</textarea>
+                        <textarea id="e-notes" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 h-16 resize-none placeholder-slate-400" placeholder="OPTIONAL NOTES">${e.notes || ''}</textarea>
                     </div>
                 </div>
             </div>
@@ -1150,7 +1243,7 @@ function saveDriver(isEdit) {
 
         if (m) salaryHistory.push({ month: m, total: t, paid: p, incentive: i, epfoSettled: epfo });
     });
-    salaryHistory.sort((a,b) => b.month.localeCompare(a.month)); // Newest month first
+    salaryHistory.sort((a,b) => b.month.localeCompare(a.month)); 
 
     const d = { 
         id: isEdit && currentDetailData ? currentDetailData.id : (role === 'Driver' ? 'D' : 'W') + Date.now(), 
@@ -1191,7 +1284,17 @@ function saveTrip(isEdit) {
 }
 
 function saveExpense(isEdit) {
-    const e = { id: isEdit && currentDetailData ? currentDetailData.id : 'E' + Date.now(), type: document.getElementById('e-type').value, amount: +document.getElementById('e-amount').value || 0, vehicleId: document.getElementById('e-vehicle')?.value || '', driverId: document.getElementById('e-driver')?.value || '', date: document.getElementById('e-date').value, notes: document.getElementById('e-notes').value };
+    const type = document.getElementById('e-type').value;
+    const e = { 
+        id: isEdit && currentDetailData ? currentDetailData.id : 'E' + Date.now(), 
+        type: type, 
+        amount: +document.getElementById('e-amount').value || 0, 
+        vehicleId: ['Fuel', 'Maintenance', 'Toll'].includes(type) ? (document.getElementById('e-vehicle')?.value || '') : '', 
+        driverId: type === 'Salary' ? (document.getElementById('e-driver')?.value || '') : '', 
+        payee: ['Office', 'Shop Account', 'Other'].includes(type) ? (document.getElementById('e-payee')?.value || '') : '',
+        date: document.getElementById('e-date').value, 
+        notes: document.getElementById('e-notes').value 
+    };
     if (!e.amount) return alert('Enter amount');
     if (isEdit) { const arr = db.get('expenses'), i = arr.findIndex(x => x.id === e.id); if (i > -1) { arr[i] = e; db.set('expenses', arr); } } else db.push('expenses', e);
     switchTab('expenses', true, 'replace');
@@ -1205,53 +1308,42 @@ function initChart() {
     chartInstance = new Chart(ctx, { type: 'bar', data: { labels: ['Total'], datasets: [{ label: 'Income', data: [trips.reduce((s, t) => s + t.freightAmount, 0)], backgroundColor: '#4f46e5', borderRadius: 5 }, { label: 'Expense', data: [expenses.reduce((s, e) => s + e.amount, 0)], backgroundColor: '#ef4444', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
 }
 
-// Window Onload Setup
 window.onload = () => { 
     updateThemeIcon(); 
     updateCompanyName(localStorage.getItem('ot_company_name')); 
     setTimeout(showOnboarding, 500); 
-
-    // Setup initial history state
     history.replaceState({ tab: 'dashboard', detail: null }, 'HOME', '#dashboard');
     switchTab('dashboard', true, 'none');
 
-    // Auto-hide Header logic for Mobile
     let lastScroll = 0;
     const mainContent = document.getElementById('main-content');
     const header = document.getElementById('main-header');
     
     mainContent.addEventListener('scroll', (e) => {
-        if (window.innerWidth >= 768) return; // Desktop unaffected
+        if (window.innerWidth >= 768) return;
         const st = e.target.scrollTop;
         if (st > lastScroll && st > 60) {
-            // Scroll Down
             header.style.marginTop = `-${header.offsetHeight}px`;
         } else if (st < lastScroll - 10 || st <= 0) {
-            // Scroll Up
             header.style.marginTop = '0px';
         }
         lastScroll = st;
     });
 };
 
-// Intercept browser back/forward buttons
 window.addEventListener('popstate', (e) => {
-    // If fab menu is open, close it instead of navigating
     const fab = document.getElementById('fab-menu');
     if (!fab.classList.contains('hidden')) {
         closeFabMenu();
-        history.pushState(e.state, '', location.hash); // negate the pop
+        history.pushState(e.state, '', location.hash);
         return;
     }
-    
-    // If onboarding is open, close it instead of navigating
     const ob = document.getElementById('onboarding-overlay');
     if (!ob.classList.contains('hidden')) {
         skipOnboarding();
         history.pushState(e.state, '', location.hash);
         return;
     }
-
     if (e.state && e.state.tab) {
         currentDetailData = e.state.detail || null;
         switchTab(e.state.tab, false, 'none');
