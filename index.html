@@ -26,59 +26,56 @@
     <style>
         :root { --safe-bottom: env(safe-area-inset-bottom, 0px); }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Quantico', sans-serif; -webkit-tap-highlight-color: transparent; overflow: hidden; background-color: #f8fafc; }
+        body { font-family: 'Quantico', sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; background-color: #f8fafc; touch-action: manipulation; }
         .dark body { background-color: #0f172a; }
         body * { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease; }
         button, h1, h2, h3, h4, h5, h6 { text-transform: uppercase !important; }
         
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 2px solid #e2e8f0; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid #e2e8f0; }
         .dark .glass-card { background: rgba(30, 41, 59, 0.85); border-color: #334155; }
         
-        html, body, button, input, textarea, p, h1, h2, h3, span, div { font-size: clamp(14px, 3.5vw, 18px) !important; }
-        select, select option { font-size: clamp(12px, 2.5vw, 15px) !important; }
-        
-        .app-container { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
         .hidden { display: none !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         #main-header { transition: margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .field-input { padding: clamp(10px, 2.5vw, 14px); border: 2px solid #cbd5e1; outline: none; border-radius: 5px; }
+        .field-input { padding: 10px 12px; border: 2px solid #cbd5e1; outline: none; border-radius: 5px; font-size: 14px; }
         .field-input:focus { border-color: #4f46e5; }
         .dark .field-input { border-color: #475569; background: #1e293b; }
         .dark .field-input:focus { border-color: #818cf8; }
-        .btn-primary { padding: clamp(10px, 3vw, 16px); font-weight: 700; border-radius: 5px; }
+        .btn-primary { padding: 10px 16px; font-weight: 700; border-radius: 5px; font-size: 14px; }
         .btn-primary:active { transform: translateY(2px); }
         
-        .badge { padding: 3px 6px; font-size: 11px !important; font-weight: 700; text-transform: uppercase; white-space: nowrap; border-radius: 4px; }
-        @media (min-width: 768px) { .badge { padding: 4px 8px; font-size: 13px !important; border-radius: 5px; } }
+        .badge { padding: 4px 8px; font-size: 11px !important; font-weight: 700; text-transform: uppercase; white-space: nowrap; border-radius: 4px; }
 
-        .stat-card { padding: clamp(10px, 3vw, 20px); border: 2px solid #e2e8f0; border-radius: 5px; }
+        .stat-card { padding: 12px; border: 1px solid #e2e8f0; border-radius: 5px; }
         .dark .stat-card { border-color: #334155; }
         
-        #main-content { padding: 8px; padding-bottom: 90px; }
-        #bottom-nav { padding-bottom: calc(var(--safe-bottom) + 4px); border-top: 2px solid #e2e8f0; }
+        #main-content { padding: 12px; padding-bottom: 80px; }
+        #bottom-nav { padding-bottom: calc(var(--safe-bottom) + 4px); border-top: 1px solid #e2e8f0; height: 60px; }
         .dark #bottom-nav { border-top-color: #334155; }
         
         .desktop-only { display: none !important; }
         
         @media (min-width: 768px) {
-            #main-content { padding: 8px; padding-bottom: 90px; }
+            #main-content { padding: 16px; padding-bottom: 24px; }
             #bottom-nav { display: none !important; }
             #desktop-sidebar { display: flex !important; }
             #view-main { flex-direction: row !important; }
             .desktop-only { display: flex !important; }
         }
+        
         .chart-container canvas { width: 100% !important; }
 
         .tab-switcher { display: flex; background: #e2e8f0; border-radius: 5px; padding: 4px; gap: 4px; }
         .dark .tab-switcher { background: #1e293b; }
-        .tab-btn { flex: 1; padding: 10px 16px; border-radius: 5px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; color: #64748b; }
+        .tab-btn { flex: 1; padding: 10px; font-size: 14px; border-radius: 5px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; color: #64748b; }
         .tab-btn.active { background: white; color: #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .dark .tab-btn.active { background: #334155; color: #818cf8; }
 
-        .skeleton-card { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 5px; overflow: hidden; }
+        .skeleton-card { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 5px; overflow: hidden; }
         .dark .skeleton-card { background: #1e293b; border-color: #334155; }
         .skeleton-bar { background: #e2e8f0; border-radius: 5px; }
         .dark .skeleton-bar { background: #334155; }
@@ -89,13 +86,13 @@
 
         .onboarding-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; }
         .onboarding-spotlight { position: absolute; border-radius: 5px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85); transition: all 0.5s ease; }
-        .onboarding-tooltip { position: absolute; background: white; border-radius: 5px; padding: 24px; max-width: 320px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10001; }
+        .onboarding-tooltip { position: absolute; background: white; border-radius: 5px; padding: 20px; max-width: 320px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10001; }
         .dark .onboarding-tooltip { background: #1e293b; }
-        .onboarding-progress { display: flex; gap: 6px; justify-content: center; margin-top: 16px; }
-        .onboarding-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; transition: all 0.3s; }
-        .onboarding-dot.active { background: #4f46e5; width: 24px; border-radius: 5px; }
+        .onboarding-progress { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+        .onboarding-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: all 0.3s; }
+        .onboarding-dot.active { background: #4f46e5; width: 20px; border-radius: 5px; }
 
-        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; }
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
         .floating { animation: floating 3s ease-in-out infinite; }
         @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
     </style>
@@ -110,7 +107,7 @@
             recent_trips: "RECENT TRIPS", free_roam: "FREE ROAM", freight: "Freight", net: "Net", active: "Active", last_6_months: "LAST 6 MONTHS (INCOME VS EXPENSE)", income: "Income", expenses_sm: "Expenses",
             no_vehicles: "No Vehicles", no_staff: "No Staff", no_trips: "No Trips", no_expenses: "No Expenses", drivers: "Drivers", workers: "Workers", search_v: "Search Vehicles...", search_s: "Search Staff...", search_t: "Search Trips / Clients...", search_e: "Search Expenses...",
             gen_info: "GENERAL INFO", num: "NUMBER", type: "TYPE", cap: "CAPACITY", cab: "CABIN", fuel: "FUEL TYPE", run_status: "RUNNING STATUS", comp: "COMPLIANCE", permit: "NAT. PERMIT", fit: "FITNESS", pol: "POLLUTION", ins: "INSURANCE", issue: "ISSUE DATE", expiry: "EXPIRY DATE", fin_details: "FINANCE DETAILS", is_fin: "IS VEHICLE FINANCED?", paid_emi: "PAID EMIs", emi_amt: "EMI AMOUNT (₹)", tot_emi: "TOTAL EMIs",
-            name: "NAME", phone: "PHONE", role: "ROLE", lic: "LICENSE", aadh: "AADHAAR", email: "EMAIL ID", sal_type: "SALARY TYPE", base_sal: "BASE SALARY", epfo: "EPFO", month_rec: "MONTHLY SALARY RECORDS", add_month: "+ Add Month", month: "MONTH", tot: "TOTAL (₹)", paid: "PAID", inc: "INCENTIVE", epfo_set: "EPFO SETTLED FOR MONTH",
+            name: "NAME", phone: "PHONE", role: "ROLE", lic: "LICENSE", aadh: "AADHAAR", email: "EMAIL ID", sal_type: "SALARY TYPE", base_sal: "BASE SALARY", epfo: "EPFO", month_rec: "MONTHLY SALARY RECORDS", add_month: "+ Add Month", month: "MONTH", tot: "TOTAL (₹)", paid: "PAID", inc: "INCENTIVE", epfo_set: "EPFO SETTLED",
             route: "ROUTE & LOGISTICS", client: "CLIENT / COMPANY", origin: "ORIGIN", dest: "DESTINATION", date: "DATE", status: "STATUS", trip_fin: "TRIP FINANCE", tot_freight: "TOTAL FREIGHT", adv: "ADVANCE", adv_given: "ADVANCE GIVEN (₹)", freight_amt: "TOTAL FREIGHT (₹)", received: "RECEIVED",
             exp_info: "EXPENSE INFO", amt: "AMOUNT", payee: "SHOP / OFFICE / PAYEE", notes: "NOTES", rel_to: "RELATED TO", c_ledger: "CLIENT LEDGER", s_ledger: "STAFF LEDGER", v_ledger: "VEHICLE LEDGER", sh_ledger: "SHOP LEDGER", all_trips: "ALL TRIPS", all_months: "ALL MONTHS", no_rec: "No records found.",
             company: "COMPANY", gst: "GST", dark_mode: "Dark Mode", tut: "Tutorial", export: "Export", import: "Import", erase: "Erase All", lang: "Language", on: "On", off: "Off", replay: "Replay",
@@ -126,7 +123,7 @@
             recent_trips: "HAAL HI KE TRIPS", free_roam: "KAHIN BHI (Free Roam)", freight: "Bhaada", net: "Bachat", active: "Chalu", last_6_months: "PICHLE 6 MAHINE (Kamai vs Kharcha)", income: "Kamai", expenses_sm: "Kharcha",
             no_vehicles: "Koi Gaadi Nahi", no_staff: "Koi Staff Nahi", no_trips: "Koi Trip Nahi", no_expenses: "Koi Kharcha Nahi", drivers: "Drivers", workers: "Workers", search_v: "Gaadi dhundhein...", search_s: "Staff dhundhein...", search_t: "Trip ya Party dhundhein...", search_e: "Kharcha dhundhein...",
             gen_info: "ZAROORI JANKARI", num: "GAADI NUMBER", type: "TYPE", cap: "CAPACITY (Wajan)", cab: "CABIN", fuel: "FUEL TYPE", run_status: "ABHI KYA STATUS HAI", comp: "KAGAZ PATRA", permit: "NATIONAL PERMIT", fit: "FITNESS", pol: "POLLUTION", ins: "INSURANCE", issue: "BANNE KI TAREEKH", expiry: "KHATAM KI TAREEKH", fin_details: "LOAN / EMI KI JANKARI", is_fin: "KYA GAADI PAR LOAN HAI?", paid_emi: "KITNI EMI BHAR DI", emi_amt: "EMI KITNE KI HAI (₹)", tot_emi: "TOTAL KITNI EMI HAIN",
-            name: "NAAM", phone: "PHONE NUMBER", role: "KAAM (Role)", lic: "LICENSE", aadh: "AADHAAR CARD", email: "EMAIL ID", sal_type: "SALARY KAISE MILTI HAI", base_sal: "TAI SALARY (Base)", epfo: "EPFO (PF)", month_rec: "MAHINE KI SALARY KA HISAAB", add_month: "+ Mahina Jodein", month: "MAHINA", tot: "KUL SALARY (₹)", paid: "DIYA GAYA", inc: "INAM/EXTRA", epfo_set: "IS MAHINE KA EPFO BHAR DIYA",
+            name: "NAAM", phone: "PHONE NUMBER", role: "KAAM (Role)", lic: "LICENSE", aadh: "AADHAAR CARD", email: "EMAIL ID", sal_type: "SALARY KAISE MILTI HAI", base_sal: "TAI SALARY (Base)", epfo: "EPFO (PF)", month_rec: "SALARY KA HISAAB", add_month: "+ Mahina Jodein", month: "MAHINA", tot: "KUL SALARY (₹)", paid: "DIYA GAYA", inc: "INAM/EXTRA", epfo_set: "EPFO BHAR DIYA",
             route: "RASTA AUR PARTY", client: "PARTY / COMPANY", origin: "KAHAN SE (Origin)", dest: "KAHAN TAK (Dest)", date: "TAREEKH (Date)", status: "STATUS", trip_fin: "BHAADA AUR ADVANCE", tot_freight: "TOTAL BHAADA", adv: "ADVANCE MILA", adv_given: "ADVANCE KITNA MILA (₹)", freight_amt: "TOTAL BHAADA (₹)", received: "MIL GAYA",
             exp_info: "KHARCHE KI JANKARI", amt: "KITNA PAISA LAGA", payee: "DUKAN / OFFICE KA NAAM", notes: "KUCH AUR LIKHNA HAI? (Notes)", rel_to: "KISKA KHARCHA HAI?", c_ledger: "PARTY KA KHATA", s_ledger: "STAFF KA KHATA", v_ledger: "GAADI KA KHATA", sh_ledger: "DUKAN KA KHATA", all_trips: "SABHI TRIPS", all_months: "SABHI MAHINE", no_rec: "Koi record nahi mila.",
             company: "COMPANY KA NAAM", gst: "GST NUMBER", dark_mode: "Dark Mode", tut: "Tutorial Dekhein", export: "Data Download", import: "Data Dalein", erase: "Sab Delete Karein", lang: "Bhasha (Language)", on: "Chalu", off: "Band", replay: "Firse Chalayein",
@@ -156,40 +153,40 @@
 
 <div id="app" class="app-container">
     <section id="view-main" class="flex-1 flex flex-col overflow-hidden w-full">
-        <aside id="desktop-sidebar" class="hidden w-64 bg-white dark:bg-slate-900 border-r-2 border-slate-200 dark:border-slate-800 flex-col flex-shrink-0">
-            <div class="p-6 border-b-2 border-slate-100 dark:border-slate-800 flex items-center gap-3">
-                <div class="w-10 h-10 bg-indigo-600 rounded-[5px] flex items-center justify-center text-white"><i data-lucide="truck" class="w-6 h-6"></i></div>
-                <div><h1 id="sidebar-company-name" class="font-bold text-lg leading-tight">OmniTransport</h1><p class="text-slate-500 text-sm">by XRV LABS</p></div>
+        <aside id="desktop-sidebar" class="hidden w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col flex-shrink-0">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-600 rounded-[5px] flex items-center justify-center text-white"><i data-lucide="truck" class="w-5 h-5"></i></div>
+                <div class="min-w-0"><h1 id="sidebar-company-name" class="font-black text-base leading-tight truncate">OmniTransport</h1><p class="text-slate-500 text-xs truncate">by XRV LABS</p></div>
             </div>
-            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <button onclick="switchTab('dashboard')" id="side-dashboard" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 relative"><i data-lucide="home"></i> <span id="txt-side-dash">Dashboard</span> <div id="badge-nav-dash" class="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full hidden"></div></button>
-                <button onclick="switchTab('trips')" id="side-trips" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 relative"><i data-lucide="route"></i> <span id="txt-side-trips">Trips</span> <div id="badge-nav-trips" class="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full hidden"></div></button>
-                <button onclick="switchTab('vehicles')" id="side-vehicles" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="truck"></i> <span id="txt-side-veh">Vehicles</span></button>
-                <button onclick="switchTab('drivers')" id="side-drivers" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 relative"><i data-lucide="users"></i> <span id="txt-side-staff">Staff</span> <div id="badge-nav-staff" class="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full hidden"></div></button>
-                <div class="my-2 border-t-2 border-slate-100 dark:border-slate-800"></div>
-                <button onclick="switchTab('expenses')" id="side-expenses" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="banknote"></i> <span id="txt-side-exp">Expense</span></button>
-                <button onclick="switchTab('reports')" id="side-reports" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="bar-chart-2"></i> <span id="txt-side-rep">Reports</span></button>
+            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto text-sm">
+                <button onclick="switchTab('dashboard')" id="side-dashboard" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 relative"><i data-lucide="home" class="w-5 h-5"></i> <span id="txt-side-dash" class="truncate">Dashboard</span> <div id="badge-nav-dash" class="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full hidden"></div></button>
+                <button onclick="switchTab('trips')" id="side-trips" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 relative"><i data-lucide="route" class="w-5 h-5"></i> <span id="txt-side-trips" class="truncate">Trips</span> <div id="badge-nav-trips" class="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full hidden"></div></button>
+                <button onclick="switchTab('vehicles')" id="side-vehicles" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="truck" class="w-5 h-5"></i> <span id="txt-side-veh" class="truncate">Vehicles</span></button>
+                <button onclick="switchTab('drivers')" id="side-drivers" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 relative"><i data-lucide="users" class="w-5 h-5"></i> <span id="txt-side-staff" class="truncate">Staff</span> <div id="badge-nav-staff" class="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full hidden"></div></button>
+                <div class="my-2 border-t border-slate-100 dark:border-slate-800"></div>
+                <button onclick="switchTab('expenses')" id="side-expenses" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="banknote" class="w-5 h-5"></i> <span id="txt-side-exp" class="truncate">Expense</span></button>
+                <button onclick="switchTab('reports')" id="side-reports" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> <span id="txt-side-rep" class="truncate">Reports</span></button>
             </nav>
-            <div class="p-4 border-t-2 border-slate-100 dark:border-slate-800">
-                <button onclick="switchTab('profile')" id="side-profile" class="w-full flex items-center gap-3 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="settings"></i> <span id="txt-side-prof">Settings</span></button>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 text-sm">
+                <button onclick="switchTab('profile')" id="side-profile" class="w-full flex items-center gap-2 p-3 rounded-[5px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="settings" class="w-5 h-5"></i> <span id="txt-side-prof" class="truncate">Settings</span></button>
             </div>
         </aside>
 
         <div class="flex-1 flex flex-col overflow-hidden w-full">
-            <header id="main-header" class="flex items-center justify-between bg-white dark:bg-slate-900 border-b-2 border-slate-200 dark:border-slate-800 p-4 z-10 relative">
-                <h2 id="app-title" class="font-black text-xl tracking-wide text-indigo-600 dark:text-indigo-400">HOME</h2>
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleTheme()" class="w-10 h-10 rounded-[5px] border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500"><i id="theme-icon" data-lucide="sun"></i></button>
-                    <button onclick="switchTab('profile')" class="w-10 h-10 rounded-[5px] border-2 border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" class="w-full h-full"></button>
+            <header id="main-header" class="flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 z-10 relative">
+                <h2 id="app-title" class="font-black text-base tracking-wide text-indigo-600 dark:text-indigo-400 truncate flex-1 pr-2">HOME</h2>
+                <div class="flex items-center gap-3 flex-shrink-0">
+                    <button onclick="toggleTheme()" class="w-9 h-9 rounded-[5px] border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500"><i id="theme-icon" data-lucide="sun" class="w-5 h-5"></i></button>
+                    <button onclick="switchTab('profile')" class="w-9 h-9 rounded-[5px] border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" class="w-full h-full"></button>
                 </div>
             </header>
             <main id="main-content" class="flex-1 overflow-y-auto no-scrollbar relative w-full"></main>
         </div>
 
-        <nav id="bottom-nav" class="flex justify-around items-center bg-white dark:bg-slate-900 z-50 md:hidden w-full py-2">
-            <button onclick="switchTab('dashboard')" class="flex flex-col items-center gap-1 text-slate-400 relative"><i data-lucide="home" class="w-6 h-6"></i><span id="txt-bot-home" class="text-xs font-bold">Home</span><div id="badge-bot-dash" class="absolute top-0 right-2 w-2 h-2 bg-red-500 rounded-full hidden"></div></button>
-            <button onclick="showFabMenu()" id="nav-fab" class="flex flex-col items-center -mt-6 relative z-10"><div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900"><i data-lucide="plus" class="w-7 h-7"></i></div></button>
-            <button onclick="switchTab('reports')" class="flex flex-col items-center gap-1 text-slate-400 relative"><i data-lucide="bar-chart-2" class="w-6 h-6"></i><span id="txt-bot-rep" class="text-xs font-bold">Reports</span><div id="badge-bot-reports" class="absolute top-0 right-2 w-2 h-2 bg-red-500 rounded-full hidden"></div></button>
+        <nav id="bottom-nav" class="flex justify-around items-center bg-white dark:bg-slate-900 z-50 md:hidden w-full">
+            <button onclick="switchTab('dashboard')" class="flex flex-col items-center gap-1 text-slate-400 relative p-2"><i data-lucide="home" class="w-6 h-6"></i><span id="txt-bot-home" class="text-[11px] font-bold">Home</span><div id="badge-bot-dash" class="absolute top-1 right-2 w-2.5 h-2.5 bg-red-500 rounded-full hidden"></div></button>
+            <button onclick="showFabMenu()" id="nav-fab" class="flex flex-col items-center -mt-6 relative z-10 p-2"><div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900"><i data-lucide="plus" class="w-6 h-6"></i></div></button>
+            <button onclick="switchTab('reports')" class="flex flex-col items-center gap-1 text-slate-400 relative p-2"><i data-lucide="bar-chart-2" class="w-6 h-6"></i><span id="txt-bot-rep" class="text-[11px] font-bold">Reports</span><div id="badge-bot-reports" class="absolute top-1 right-2 w-2.5 h-2.5 bg-red-500 rounded-full hidden"></div></button>
         </nav>
     </section>
 </div>
@@ -198,15 +195,15 @@
 
 <div id="onboarding-overlay" class="onboarding-overlay hidden">
     <div id="onboarding-spotlight" class="onboarding-spotlight"></div>
-    <div id="onboarding-tooltip" class="onboarding-tooltip">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-[5px] flex items-center justify-center"><i id="onboarding-icon" data-lucide="sparkles" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></i></div>
-            <div><h3 id="onboarding-title" class="font-black text-lg">Welcome!</h3><p class="text-xs text-slate-500">Step <span id="onboarding-step">1</span> of <span id="onboarding-total">5</span></p></div>
+    <div id="onboarding-tooltip" class="onboarding-tooltip text-sm">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-[5px] flex items-center justify-center"><i id="onboarding-icon" data-lucide="sparkles" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i></div>
+            <div><h3 id="onboarding-title" class="font-black text-base">Welcome!</h3><p class="text-xs text-slate-500">Step <span id="onboarding-step">1</span> of <span id="onboarding-total">5</span></p></div>
         </div>
-        <p id="onboarding-description" class="text-slate-600 dark:text-slate-300 mb-6"></p>
+        <p id="onboarding-description" class="text-sm text-slate-600 dark:text-slate-300 mb-4"></p>
         <div class="flex gap-3">
-            <button onclick="skipOnboarding()" id="btn-tut-skip" class="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 rounded-[5px] font-bold">Skip</button>
-            <button onclick="nextOnboarding()" id="btn-tut-next" class="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-[5px] font-bold">Next</button>
+            <button onclick="skipOnboarding()" id="btn-tut-skip" class="flex-1 py-2.5 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 rounded-[5px] font-bold text-sm">Skip</button>
+            <button onclick="nextOnboarding()" id="btn-tut-next" class="flex-1 py-2.5 px-4 bg-indigo-600 text-white rounded-[5px] font-bold text-sm">Next</button>
         </div>
         <div class="onboarding-progress"><div class="onboarding-dot active"></div><div class="onboarding-dot"></div><div class="onboarding-dot"></div><div class="onboarding-dot"></div><div class="onboarding-dot"></div></div>
     </div>
@@ -214,13 +211,13 @@
 
 <div id="fab-menu" class="hidden fixed inset-0 z-[200]">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeFabMenu()"></div>
-    <div class="absolute bottom-0 left-0 right-0 glass-card rounded-t-[5px] p-6 animate-slide-up flex flex-col gap-4 z-10" style="padding-bottom: calc(var(--safe-bottom) + 24px);">
-        <h3 id="txt-fab-title" class="font-black text-slate-800 dark:text-white uppercase text-center mb-2">Create Record</h3>
+    <div class="absolute bottom-0 left-0 right-0 glass-card rounded-t-[5px] p-5 animate-slide-up flex flex-col gap-4 z-10" style="padding-bottom: calc(var(--safe-bottom) + 20px);">
+        <h3 id="txt-fab-title" class="font-black text-base text-slate-800 dark:text-white uppercase text-center mb-1">Create Record</h3>
         <div class="grid grid-cols-2 gap-3">
-            <button onclick="switchTab('add-trip'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-indigo-100 dark:border-indigo-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded-[5px] flex items-center justify-center"><i data-lucide="map-pin"></i></div><span id="txt-fab-trip" class="font-bold text-sm">Trip</span></button>
-            <button onclick="switchTab('add-expense'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-red-100 dark:border-red-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-[5px] flex items-center justify-center"><i data-lucide="receipt"></i></div><span id="txt-fab-exp" class="font-bold text-sm">Expense</span></button>
-            <button onclick="switchTab('add-vehicle'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-amber-100 dark:border-amber-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 rounded-[5px] flex items-center justify-center"><i data-lucide="truck"></i></div><span id="txt-fab-veh" class="font-bold text-sm">Vehicle</span></button>
-            <button onclick="switchTab('add-driver'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border-2 border-blue-100 dark:border-blue-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-[5px] flex items-center justify-center"><i data-lucide="user-plus"></i></div><span id="txt-fab-staff" class="font-bold text-sm">Staff</span></button>
+            <button onclick="switchTab('add-trip'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border border-indigo-100 dark:border-indigo-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded-[5px] flex items-center justify-center"><i data-lucide="map-pin" class="w-5 h-5"></i></div><span id="txt-fab-trip" class="font-bold text-xs">Trip</span></button>
+            <button onclick="switchTab('add-expense'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border border-red-100 dark:border-red-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-[5px] flex items-center justify-center"><i data-lucide="receipt" class="w-5 h-5"></i></div><span id="txt-fab-exp" class="font-bold text-xs">Expense</span></button>
+            <button onclick="switchTab('add-vehicle'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border border-amber-100 dark:border-amber-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 rounded-[5px] flex items-center justify-center"><i data-lucide="truck" class="w-5 h-5"></i></div><span id="txt-fab-veh" class="font-bold text-xs">Vehicle</span></button>
+            <button onclick="switchTab('add-driver'); closeFabMenu();" class="p-3 bg-white dark:bg-slate-800 border border-blue-100 dark:border-blue-900 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-[5px] flex items-center justify-center"><i data-lucide="user-plus" class="w-5 h-5"></i></div><span id="txt-fab-staff" class="font-bold text-xs">Staff</span></button>
         </div>
     </div>
 </div>
@@ -240,7 +237,7 @@ function translateUI() {
     document.getElementById('txt-side-trips').innerText = t('trips');
     document.getElementById('txt-side-veh').innerText = t('vehicles');
     document.getElementById('txt-side-staff').innerText = t('staff');
-    document.getElementById('txt-side-exp').innerText = t('expenses');
+    document.getElementById('txt-side-exp').innerText = t('expenses_sm');
     document.getElementById('txt-side-rep').innerText = t('reports');
     document.getElementById('txt-side-prof').innerText = t('settings');
     
@@ -257,8 +254,8 @@ function translateUI() {
 let activeStaffTab = 'drivers';
 
 function seedDB() {
-    if (localStorage.getItem('ot_seeded_v35')) return; 
-    for (let i=1; i<35; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
+    if (localStorage.getItem('ot_seeded_v40')) return; 
+    for (let i=1; i<40; i++) localStorage.removeItem(i === 1 ? 'ot_seeded' : `ot_seeded_v${i}`);
     const data = {
         vehicles: [
             { id: 'V1', number: 'RJ-14-GD-1234', type: '10-Wheeler', capacity: '15 Ton', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'On Trip', nationalPermit: 'Available', nationalPermitIssue: '2025-01-10', nationalPermitExpiry: '2026-01-10', fitness: 'Available', fitnessIssue: '2025-02-15', fitnessExpiry: '2026-02-15', pollution: 'Available', pollutionIssue: '2025-06-01', pollutionExpiry: '2025-12-01', insurance: 'Available', insuranceIssue: '2025-03-20', insuranceExpiry: '2026-03-20', hasFinance: 'Yes', emiAmount: 15500, totalEmis: 60, paidEmis: 24, status: 'Active' },
@@ -280,12 +277,12 @@ function seedDB() {
     };
     Object.keys(data).forEach(k => localStorage.setItem('ot_' + k, JSON.stringify(data[k])));
     localStorage.setItem('ot_company_name', 'OmniTransport');
-    localStorage.setItem('ot_seeded_v34', '1');
+    localStorage.setItem('ot_seeded_v40', '1');
 }
 seedDB();
 
 const db = {
-    get: k => JSON.parse(localStorage.getItem('ot_' + k)) || [],
+    get: k => { try { return JSON.parse(localStorage.getItem('ot_' + k)) || []; } catch(e) { return []; } },
     set: (k, v) => localStorage.setItem('ot_' + k, JSON.stringify(v)),
     push(k, item) { const d = this.get(k); d.push(item); this.set(k, d); },
     delete(k, id) { this.set(k, this.get(k).filter(x => x.id !== id)); }
@@ -293,7 +290,6 @@ const db = {
 
 let chartInstance = null, currentDetailData = null;
 
-// Global Search Helper
 window.filterList = function(val) {
     const term = val.toLowerCase();
     document.querySelectorAll('.list-item-card').forEach(el => {
@@ -302,7 +298,6 @@ window.filterList = function(val) {
     });
 };
 
-// Global Badge Updater
 function updateBadges() {
     const trips = db.get('trips');
     const drivers = db.get('drivers');
@@ -323,7 +318,6 @@ function updateBadges() {
     document.getElementById('badge-bot-reports')?.classList.toggle('hidden', !isPending);
 }
 
-// Ledger Filter Logic
 window.filterLedger = function(month) {
     let total = 0;
     const items = document.querySelectorAll('.ledger-item');
@@ -339,13 +333,9 @@ window.filterLedger = function(month) {
     if(totalEl) totalEl.innerText = '-' + fmt(total);
 };
 
-// History Navigation Helper
 function goBack(fallbackTab) {
-    if (history.state && history.length > 1) {
-        history.back();
-    } else {
-        switchTab(fallbackTab, true, 'replace');
-    }
+    if (history.state && history.length > 1) { history.back(); } 
+    else { switchTab(fallbackTab, true, 'replace'); }
 }
 
 window.addSalaryRow = (m='', t_v='', p='', i='', epfoSettled=true) => {
@@ -355,20 +345,20 @@ window.addSalaryRow = (m='', t_v='', p='', i='', epfoSettled=true) => {
     const isEpfoActive = document.getElementById('d-epfo')?.value === 'Activated';
     
     container.insertAdjacentHTML('beforeend', `
-        <div class="glass-card rounded-[5px] p-3 mb-3 salary-row relative animate-slide-up focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
+        <div class="glass-card rounded-[5px] p-3 mb-3 salary-row relative animate-slide-up focus-within:border-indigo-500 transition-colors">
             <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-rose-500 w-6 h-6 flex items-center justify-center bg-rose-100 rounded-[5px] z-10"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <div class="grid grid-cols-2 gap-2 mt-2 items-end">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('month')}</label><input type="month" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-month text-slate-900 dark:text-slate-100" value="${currentM}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('tot')}</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-total text-slate-900 dark:text-slate-100" value="${t_v}"></div>
+            <div class="grid grid-cols-2 gap-2 mt-1.5 items-end">
+                <div><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('month')}</label><input type="month" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-month text-slate-900 dark:text-slate-100" value="${currentM}"></div>
+                <div><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('tot')}</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-total text-slate-900 dark:text-slate-100" value="${t_v}"></div>
             </div>
-            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t-2 border-slate-100 dark:border-slate-800 items-end">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('paid')}</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-paid text-slate-900 dark:text-slate-100" value="${p}"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('inc')}</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-incentive text-slate-900 dark:text-slate-100" value="${i}"></div>
+            <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 items-end">
+                <div><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('paid')}</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-paid text-slate-900 dark:text-slate-100" value="${p}"></div>
+                <div><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('inc')}</label><input type="number" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase s-incentive text-slate-900 dark:text-slate-100" value="${i}"></div>
             </div>
-            <div class="grid grid-cols-1 gap-2 mt-2 pt-2 border-t-2 border-slate-100 dark:border-slate-800 epfo-col ${isEpfoActive ? '' : 'hidden'}">
-                <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2 cursor-pointer">
+            <div class="grid grid-cols-1 gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 epfo-col ${isEpfoActive ? '' : 'hidden'}">
+                <label class="text-[11px] font-bold text-slate-400 uppercase flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" class="s-epfo w-4 h-4 rounded text-blue-600 focus:ring-blue-500" ${epfoSettled ? 'checked' : ''}>
-                    <span class="text-blue-500 flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> ${t('epfo_set')}</span>
+                    <span class="text-blue-500 flex items-center gap-1 truncate"><i data-lucide="check-circle" class="w-4 h-4"></i> ${t('epfo_set')}</span>
                 </label>
             </div>
         </div>
@@ -379,117 +369,68 @@ window.addSalaryRow = (m='', t_v='', p='', i='', epfoSettled=true) => {
 function renderSkeleton(type, count) {
     let html = '';
     if (type === 'dashboard') {
-        html += `<div class="grid grid-cols-2 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4 flex flex-col items-center gap-2"><div class="skeleton-bar w-10 h-10 rounded-full"></div><div class="skeleton-bar h-3 w-16 mt-1"></div></div>`).join('')}</div>`;
-        html += `<div class="skeleton-bar h-5 w-32 mb-3"></div><div class="space-y-3">${[0,1,2].map(i => `<div class="skeleton-card p-4"><div class="flex justify-between"><div><div class="skeleton-bar h-6 w-40 mb-2"></div><div class="skeleton-bar h-4 w-28"></div></div><div><div class="skeleton-bar h-6 w-20 mb-2"></div><div class="skeleton-bar h-5 w-16 rounded-[5px]"></div></div></div></div>`).join('')}</div>`;
+        html += `<div class="grid grid-cols-2 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-3 flex flex-col items-center gap-2"><div class="skeleton-bar w-10 h-10 rounded-full"></div><div class="skeleton-bar h-3 w-16 mt-1"></div></div>`).join('')}</div>`;
+        html += `<div class="skeleton-bar h-4 w-32 mb-3"></div><div class="space-y-3">${[0,1,2].map(i => `<div class="skeleton-card p-4"><div class="flex justify-between"><div><div class="skeleton-bar h-4 w-40 mb-2"></div><div class="skeleton-bar h-3 w-28"></div></div><div><div class="skeleton-bar h-4 w-20 mb-2"></div><div class="skeleton-bar h-3 w-16 rounded-[5px]"></div></div></div></div>`).join('')}</div>`;
     } else if (type === 'stats') {
-        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4"><div class="skeleton-bar h-3 w-16 mb-2"></div><div class="skeleton-bar h-8 w-24"></div></div>`).join('')}</div>`;
-        html += `<div class="skeleton-card p-4"><div class="skeleton-bar h-5 w-40 mx-auto mb-4"></div><div class="flex items-end justify-center gap-4 h-[200px]"><div class="skeleton-bar w-20 h-[60%]"></div><div class="skeleton-bar w-20 h-[80%]"></div></div></div>`;
-    } else if (type === 'staff') {
-        html += `<div class="skeleton-card p-2 mb-3"><div class="flex gap-2"><div class="skeleton-bar flex-1 h-12 rounded-[5px]"></div><div class="skeleton-bar flex-1 h-12 rounded-[5px]"></div></div></div>`;
-        html += `<div class="space-y-3">${Array(count).fill(0).map(() => `<div class="skeleton-card p-4"><div class="flex justify-between"><div><div class="skeleton-bar h-6 w-3/4 mb-2"></div><div class="skeleton-bar h-4 w-1/2"></div></div><div class="skeleton-bar h-8 w-20 rounded-[5px]"></div></div></div>`).join('')}</div>`;
+        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">${[0,1,2,3].map(i => `<div class="skeleton-card p-4"><div class="skeleton-bar h-3 w-16 mb-2"></div><div class="skeleton-bar h-6 w-24"></div></div>`).join('')}</div>`;
+        html += `<div class="skeleton-card p-4"><div class="skeleton-bar h-4 w-40 mx-auto mb-4"></div><div class="flex items-end justify-center gap-4 h-[200px]"><div class="skeleton-bar w-16 h-[60%]"></div><div class="skeleton-bar w-16 h-[80%]"></div></div></div>`;
     } else {
-        html += `<div class="space-y-3">${Array(count).fill(0).map(() => `<div class="skeleton-card p-4"><div class="flex justify-between mb-3"><div><div class="skeleton-bar h-6 w-3/4 mb-2"></div><div class="skeleton-bar h-4 w-1/2"></div></div><div class="skeleton-bar h-8 w-20 rounded-[5px]"></div></div><div class="flex justify-between pt-3 border-t-2 border-slate-100 dark:border-slate-700"><div class="skeleton-bar h-4 w-24"></div><div class="skeleton-bar h-4 w-16"></div></div></div>`).join('')}</div>`;
+        html += `<div class="space-y-3">${Array(count).fill(0).map(() => `<div class="skeleton-card p-4"><div class="flex justify-between mb-3"><div><div class="skeleton-bar h-4 w-3/4 mb-2"></div><div class="skeleton-bar h-3 w-1/2"></div></div><div class="skeleton-bar h-6 w-20 rounded-[5px]"></div></div><div class="flex justify-between pt-3 border-t border-slate-100 dark:border-slate-700"><div class="skeleton-bar h-3 w-24"></div><div class="skeleton-bar h-3 w-16"></div></div></div>`).join('')}</div>`;
     }
     return html;
 }
 
-function createConfetti() {
-    const c = document.getElementById('confetti-container'), colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
-    for (let i = 0; i < 100; i++) {
-        const el = document.createElement('div');
-        el.className = 'confetti';
-        el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${Math.random()*8+4}px;height:${Math.random()*8+4}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation:confetti-fall ${Math.random()*2+2}s linear forwards;animation-delay:${Math.random()*0.5}s`;
-        c.appendChild(el);
-    }
-    setTimeout(() => c.innerHTML = '', 4000);
+function renderListCard(type, id, content, extraClass='') {
+    return `<div class="glass-card list-item-card p-4 rounded-[5px] cursor-pointer ${extraClass}" onclick="viewDetails('${type}','${id}')">${content}</div>`;
 }
 
-function showOnboarding() {
-    if (localStorage.getItem('ot_onboarding_done')) return;
-    
-    document.getElementById('onboarding-title').textContent = t('welcome');
-    document.getElementById('onboarding-description').textContent = t('tut_desc1');
-    document.getElementById('btn-tut-skip').textContent = t('skip');
-    document.getElementById('btn-tut-next').textContent = t('next');
-    
-    document.getElementById('onboarding-overlay').classList.remove('hidden');
-    updateOnboardingStep();
+function renderSearchBar(placeholder) {
+    return `<div class="mb-4 relative"><input type="text" placeholder="${placeholder}" onkeyup="filterList(this.value)" class="w-full pl-9 py-2.5 border border-slate-200 dark:border-slate-700 outline-none rounded-[5px] text-sm bg-white dark:bg-slate-800"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i></div>`;
 }
 
-function updateOnboardingStep() {
-    const steps = [
-        { target: null, icon: 'sparkles', title: t('welcome'), description: t('tut_desc1'), position: 'center' },
-        { target: '#main-header', icon: 'layout-dashboard', title: t('tut_head'), description: t('tut_desc2'), position: 'bottom' },
-        { target: '#nav-fab', icon: 'plus-circle', title: t('tut_act'), description: t('tut_desc3'), position: 'top' },
-        { target: null, icon: 'home', title: t('dash'), description: t('tut_desc4'), position: 'center' },
-        { target: null, icon: 'bar-chart-2', title: t('reports'), description: t('tut_desc5'), position: 'center' }
-    ];
-    
-    const s = steps[currentOnboardingStep], tt = document.getElementById('onboarding-tooltip'), sp = document.getElementById('onboarding-spotlight');
-    document.getElementById('onboarding-title').textContent = s.title;
-    document.getElementById('onboarding-description').textContent = s.description;
-    document.getElementById('onboarding-step').textContent = currentOnboardingStep + 1;
-    document.getElementById('onboarding-total').textContent = steps.length;
-    document.getElementById('onboarding-icon').setAttribute('data-lucide', s.icon);
-    document.querySelectorAll('.onboarding-dot').forEach((d, i) => d.classList.toggle('active', i === currentOnboardingStep));
-    document.getElementById('btn-tut-next').textContent = currentOnboardingStep === steps.length - 1 ? t('done') : t('next');
-    
-    if (s.target) {
-        const el = document.querySelector(s.target);
-        if (el) { const r = el.getBoundingClientRect(); sp.style.cssText = `top:${r.top-8}px;left:${r.left-8}px;width:${r.width+16}px;height:${r.height+16}px;display:block`; tt.style.cssText = s.position === 'bottom' ? `top:${r.bottom+20}px;left:50%;transform:translateX(-50%)` : `bottom:${innerHeight-r.top+20}px;left:50%;transform:translateX(-50%)`; }
-    } else { sp.style.display = 'none'; tt.style.cssText = 'top:50%;left:50%;transform:translate(-50%,-50%)'; }
-    lucide.createIcons();
+function renderStaffCard(p, all) {
+    const isD = p.role === 'Driver';
+    return renderListCard('driver', p.id, `<div class="flex justify-between items-start mb-2 gap-2"><div class="min-w-0 flex-1"><h4 class="font-black text-base truncate">${p.name}</h4><p class="font-bold text-sm text-indigo-600 truncate"><i data-lucide="phone" class="inline w-3 h-3"></i> ${p.phone}</p></div><span class="badge ${isD ? 'bg-emerald-100 text-emerald-600' : 'bg-purple-100 text-purple-600'} flex-shrink-0">${ts(p.salaryType)}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 dark:border-slate-700"><span class="font-bold text-[11px] text-slate-500 truncate pr-2">${isD ? t('lic') + ': ' + (p.license || 'N/A') : t('office')}</span><span class="text-sm font-black text-slate-700 dark:text-slate-300 flex-shrink-0">${fmt(p.baseSalary)}</span></div>`);
 }
 
-function nextOnboarding() { if (++currentOnboardingStep >= 5) { skipOnboarding(); createConfetti(); } else updateOnboardingStep(); }
-function skipOnboarding() { localStorage.setItem('ot_onboarding_done', '1'); document.getElementById('onboarding-overlay').classList.add('hidden'); }
-function resetOnboarding() { localStorage.removeItem('ot_onboarding_done'); currentOnboardingStep = 0; showOnboarding(); }
+function renderStaffContent() {
+    const all = db.get('drivers'), list = all.filter(d => d.role === (activeStaffTab === 'drivers' ? 'Driver' : 'Worker'));
+    if (!list.length) return `<div class="text-center py-8"><div class="w-12 h-12 mx-auto bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3"><i data-lucide="${activeStaffTab === 'drivers' ? 'car' : 'briefcase'}" class="w-6 h-6 text-slate-400"></i></div><p class="text-slate-500 text-sm font-bold">${t('no_staff')}</p></div>`;
+    return `<div class="space-y-3">${list.map((p) => renderStaffCard(p, all)).join('')}</div>`;
+}
 
 function renderEmptyState(type) {
     const s = { vehicles: ['truck', t('no_vehicles'), 'add-vehicle', 'amber'], drivers: ['users', t('no_staff'), 'add-driver', 'blue'], trips: ['route', t('no_trips'), 'add-trip', 'indigo'], expenses: ['receipt', t('no_expenses'), 'add-expense', 'red'] }[type];
     if (!s) return '';
-    return `<div class="empty-state"><div class="floating mb-6"><div class="w-20 h-20 bg-${s[3]}-100 dark:bg-${s[3]}-900/30 rounded-full flex items-center justify-center"><i data-lucide="${s[0]}" class="w-10 h-10 text-${s[3]}-600"></i></div></div><h3 class="font-black text-xl mb-2">${s[1]}</h3><button onclick="switchTab('${s[2]}')" class="btn-primary bg-${s[3]}-600 text-white px-6 mt-4"><i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>${t('add')}</button></div>`;
+    return `<div class="empty-state"><div class="floating mb-4"><div class="w-16 h-16 bg-${s[3]}-100 dark:bg-${s[3]}-900/30 rounded-full flex items-center justify-center"><i data-lucide="${s[0]}" class="w-8 h-8 text-${s[3]}-600"></i></div></div><h3 class="font-black text-base mb-2">${s[1]}</h3><button onclick="switchTab('${s[2]}')" class="btn-primary py-2 px-5 bg-${s[3]}-600 text-white mt-2 text-sm"><i data-lucide="plus" class="w-4 h-4 inline mr-1.5"></i>${t('add')}</button></div>`;
 }
 
 function editItem(tt, id) { currentDetailData = { type: tt, id }; switchTab('edit-' + tt); }
 function deleteItem(tt, id) { if (confirm(t('delete') + '?')) { db.delete(tt + 's', id); switchTab(tt + 's', true, 'replace'); } }
-
 function updateCompanyName(v) { localStorage.setItem('ot_company_name', v); const el = document.getElementById('sidebar-company-name'); if (el) el.innerText = v || t('app_title'); }
 
 function switchTab(tab, loader = true, historyAction = 'push') {
     document.querySelectorAll('#desktop-sidebar button').forEach(b => b.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400'));
     document.getElementById('side-' + tab)?.classList.add('bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-600', 'dark:text-indigo-400');
     
-    const tabTitles = { dashboard: t('home'), trips: t('trips'), vehicles: t('vehicles'), drivers: t('staff'), payments: t('payments'), expenses: t('expenses'), reports: t('reports'), profile: t('settings'), 'add-vehicle': t('add_v'), 'edit-vehicle': t('edit_v'), 'add-driver': t('add_s'), 'edit-driver': t('edit_s'), 'add-trip': t('add_t'), 'edit-trip': t('edit_t'), 'add-expense': t('add_e'), 'edit-expense': t('edit_e') };
+    const tabTitles = { dashboard: t('home'), trips: t('trips'), vehicles: t('vehicles'), drivers: t('staff'), payments: t('payments'), expenses: t('expenses_sm'), reports: t('reports'), profile: t('settings'), 'add-vehicle': t('add_v'), 'edit-vehicle': t('edit_v'), 'add-driver': t('add_s'), 'edit-driver': t('edit_s'), 'add-trip': t('add_t'), 'edit-trip': t('edit_t'), 'add-expense': t('add_e'), 'edit-expense': t('edit_e') };
     let title = tabTitles[tab] || tab.toUpperCase();
     if (tab === 'details' && currentDetailData) title = t('details');
     document.getElementById('app-title').innerText = title;
     
-    if (historyAction === 'push') {
-        history.pushState({ tab, detail: currentDetailData }, title, `#${tab}`);
-    } else if (historyAction === 'replace') {
-        history.replaceState({ tab, detail: currentDetailData }, title, `#${tab}`);
-    }
+    if (historyAction === 'push') { history.pushState({ tab, detail: currentDetailData }, title, `#${tab}`); } 
+    else if (historyAction === 'replace') { history.replaceState({ tab, detail: currentDetailData }, title, `#${tab}`); }
 
     document.getElementById('main-header').style.marginTop = '0px';
     
     if (loader && ['dashboard', 'vehicles', 'drivers', 'trips', 'expenses', 'reports'].includes(tab)) {
-        const type = tab === 'dashboard' ? 'dashboard' : tab === 'reports' ? 'stats' : tab === 'drivers' ? 'staff' : 'list';
+        const type = tab === 'dashboard' ? 'dashboard' : tab === 'reports' ? 'stats' : 'list';
         const count = Math.min(db.get(tab).length || 3, 4);
-        
         document.getElementById('main-content').innerHTML = `<div class="w-full">${renderSkeleton(type, count)}</div>`;
-        
-        setTimeout(() => {
-            document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`;
-            lucide.createIcons(); 
-            if (tab === 'reports') setTimeout(initChart, 50);
-            updateBadges();
-        }, 1000);
+        setTimeout(() => { document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`; lucide.createIcons(); if (tab === 'reports') setTimeout(initChart, 50); updateBadges(); }, 600);
     } else {
         document.getElementById('main-content').innerHTML = `<div class="w-full">${renderPage(tab)}</div>`;
-        lucide.createIcons();
-        if (tab === 'reports') setTimeout(initChart, 50);
-        updateBadges();
+        lucide.createIcons(); if (tab === 'reports') setTimeout(initChart, 50); updateBadges();
     }
     updateThemeIcon();
 }
@@ -515,70 +456,46 @@ function updateTripStatus(id, newStatus) {
     }
 }
 
-function renderListCard(type, id, content, extraClass='') {
-    return `<div class="glass-card list-item-card p-4 rounded-[5px] border-2 border-slate-200 dark:border-slate-700 cursor-pointer ${extraClass}" onclick="viewDetails('${type}','${id}')">${content}</div>`;
-}
-
-function renderSearchBar(placeholder) {
-    return `
-        <div class="mb-4 relative">
-            <input type="text" placeholder="${placeholder}" onkeyup="filterList(this.value)" class="w-full pl-10 field-input bg-white dark:bg-slate-800">
-            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
-        </div>
-    `;
-}
-
-function renderStaffCard(p, all) {
-    const isD = p.role === 'Driver';
-    return renderListCard('driver', p.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${p.name}</h4><p class="font-bold text-indigo-600"><i data-lucide="phone" class="inline w-3 h-3"></i> ${p.phone}</p></div><span class="badge ${isD ? 'bg-emerald-100 text-emerald-600' : 'bg-purple-100 text-purple-600'}">${ts(p.salaryType)}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${isD ? t('lic') + ': ' + (p.license || 'N/A') : t('office')}</span><span class="text-xs font-bold text-slate-400">${fmt(p.baseSalary)}</span></div>`);
-}
-
-function renderStaffContent() {
-    const all = db.get('drivers'), list = all.filter(d => d.role === (activeStaffTab === 'drivers' ? 'Driver' : 'Worker'));
-    if (!list.length) return `<div class="text-center py-12"><div class="w-16 h-16 mx-auto bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4"><i data-lucide="${activeStaffTab === 'drivers' ? 'car' : 'briefcase'}" class="w-8 h-8 text-slate-400"></i></div><p class="text-slate-500 font-bold">${t('no_staff')}</p></div>`;
-    return `<div class="space-y-3">${list.map((p) => renderStaffCard(p, all)).join('')}</div>`;
-}
-
 function renderPage(tab) {
     const vehicles = db.get('vehicles'), drivers = db.get('drivers'), trips = db.get('trips'), expenses = db.get('expenses');
     
     if (tab === 'dashboard') {
         const btns = [['vehicles', 'truck', 'indigo', t('vehicles')], ['drivers', 'users', 'blue', t('staff')], ['trips', 'route', 'emerald', t('trips')], ['expenses', 'banknote', 'red', t('expenses_sm')]];
-        if (!trips.length && !vehicles.length) return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([tt, i, c, l]) => `<button onclick="switchTab('${tt}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest uppercase">${l}</span></button>`).join('')}</div>${renderEmptyState('trips')}`;
-        return `<div class="grid grid-cols-2 gap-2 mb-3">${btns.map(([tt, i, c, l]) => `<button onclick="switchTab('${tt}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2 border-2 border-${c}-100 dark:border-${c}-900/50"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[10px] tracking-widest uppercase">${l}</span></button>`).join('')}</div><h3 class="font-black text-slate-400 mb-3">${t('recent_trips')}</h3><div class="space-y-3">${trips.slice(-3).reverse().map((tr) => {
+        if (!trips.length && !vehicles.length) return `<div class="grid grid-cols-2 gap-3 mb-4">${btns.map(([tt, i, c, l]) => `<button onclick="switchTab('${tt}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[11px] tracking-widest uppercase truncate w-full text-center">${l}</span></button>`).join('')}</div>${renderEmptyState('trips')}`;
+        return `<div class="grid grid-cols-2 gap-3 mb-5">${btns.map(([tt, i, c, l]) => `<button onclick="switchTab('${tt}')" class="glass-card p-4 rounded-[5px] flex flex-col items-center gap-2"><div class="w-10 h-10 bg-${c}-100 dark:bg-${c}-900/50 text-${c}-600 rounded-[5px] flex items-center justify-center"><i data-lucide="${i}" class="w-5 h-5"></i></div><span class="font-black text-[11px] tracking-widest uppercase truncate w-full text-center">${l}</span></button>`).join('')}</div><h3 class="font-black text-sm text-slate-400 mb-3 truncate">${t('recent_trips')}</h3><div class="space-y-3">${trips.slice(-3).reverse().map((tr) => {
             const badgeCls = tr.status === 'Settled' ? 'bg-emerald-100 text-emerald-600' : (tr.status === 'Completed' ? 'bg-blue-100 text-blue-600' : 'bg-amber-100 text-amber-600');
-            return renderListCard('trip', tr.id, `<div class="flex justify-between items-center"><div><p class="font-bold text-lg">${tr.origin} <i data-lucide="arrow-right" class="inline w-4 h-4"></i> ${tr.dest}</p><p class="font-bold text-indigo-600 mt-1">${tr.companyName || t('free_roam')}</p></div><div class="text-right"><p class="font-black text-indigo-600">${fmt(tr.freightAmount)}</p><span class="badge ${badgeCls} mt-1 inline-block uppercase">${ts(tr.status)}</span></div></div>`);
+            return renderListCard('trip', tr.id, `<div class="flex justify-between items-center gap-2"><div class="min-w-0 flex-1"><p class="font-black text-base truncate">${tr.origin} → ${tr.dest}</p><p class="font-bold text-sm text-indigo-600 mt-1 truncate">${tr.companyName || t('free_roam')}</p></div><div class="text-right flex-shrink-0"><p class="font-black text-base text-indigo-600">${fmt(tr.freightAmount)}</p><span class="badge ${badgeCls} mt-1.5 inline-block uppercase">${ts(tr.status)}</span></div></div>`);
         }).join('')}</div>`;
     }
 
     if (tab === 'reports') {
         const tF = trips.reduce((s, tr) => s + tr.freightAmount, 0), tE = expenses.reduce((s, e) => s + e.amount, 0);
-        return `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3"><div class="stat-card bg-indigo-600 text-white rounded-[5px] border-none"><p class="font-bold opacity-80 text-[10px]">${t('freight')}</p><h3 class="font-black text-xl">${fmt(tF)}</h3></div><div class="stat-card bg-red-50 dark:bg-red-900/20 text-red-600"><p class="font-bold text-[10px]">${t('expenses_sm')}</p><h3 class="font-black text-xl">${fmt(tE)}</h3></div><div class="stat-card bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600"><p class="font-bold text-[10px]">${t('net')}</p><h3 class="font-black text-xl">${fmt(tF - tE)}</h3></div><div class="stat-card bg-amber-50 dark:bg-amber-900/20 text-amber-600"><p class="font-bold text-[10px]">${t('active')}</p><h3 class="font-black text-xl">${trips.filter(tr => tr.status === 'Ongoing').length}</h3></div></div><div class="glass-card p-4 rounded-[5px] border-2 border-slate-200 dark:border-slate-700"><h3 class="font-black text-slate-400 mb-4 text-center">${t('last_6_months')}</h3><div class="chart-container" style="height:250px"><canvas id="financeChart"></canvas></div></div>`;
+        return `<div class="grid grid-cols-2 gap-3 mb-5"><div class="stat-card bg-indigo-600 text-white rounded-[5px] border-none"><p class="font-bold opacity-80 text-[11px] truncate">${t('freight')}</p><h3 class="font-black text-lg truncate">${fmt(tF)}</h3></div><div class="stat-card bg-red-50 dark:bg-red-900/20 text-red-600 border border-red-100 dark:border-red-800/30"><p class="font-bold text-[11px] truncate">${t('expenses_sm')}</p><h3 class="font-black text-lg truncate">${fmt(tE)}</h3></div><div class="stat-card bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border border-emerald-100 dark:border-emerald-800/30"><p class="font-bold text-[11px] truncate">${t('net')}</p><h3 class="font-black text-lg truncate">${fmt(tF - tE)}</h3></div><div class="stat-card bg-amber-50 dark:bg-amber-900/20 text-amber-600 border border-amber-100 dark:border-amber-800/30"><p class="font-bold text-[11px] truncate">${t('active')}</p><h3 class="font-black text-lg truncate">${trips.filter(tr => tr.status === 'Ongoing').length}</h3></div></div><div class="glass-card p-4 rounded-[5px]"><h3 class="font-black text-[11px] text-slate-400 mb-4 text-center truncate tracking-widest">${t('last_6_months')}</h3><div class="chart-container" style="height:220px"><canvas id="financeChart"></canvas></div></div>`;
     }
 
     if (tab === 'vehicles') {
         if (!vehicles.length) return renderEmptyState('vehicles');
-        let html = `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
+        let html = `<div class="desktop-only justify-end mb-3"><button onclick="switchTab('add-vehicle')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
         html += renderSearchBar(t('search_v'));
         html += `<div class="space-y-3">${vehicles.map((v) => {
             const rs = v.runningStatus || 'Stopped';
             const badgeColor = rs === 'On Trip' ? 'bg-emerald-100 text-emerald-600' : (rs === 'Stopped' ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600');
-            return renderListCard('vehicle', v.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg tracking-wider">${v.number}</h4><p class="font-bold text-indigo-600">${v.type}</p></div><span class="badge ${badgeColor} uppercase">${ts(rs)}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${v.capacity} <span class="text-slate-300 mx-1">•</span> <i data-lucide="users" class="w-3 h-3 inline"></i> ${v.cabin || 'N/A'}</span></div>`);
+            return renderListCard('vehicle', v.id, `<div class="flex justify-between items-start mb-2 gap-2"><div class="min-w-0 flex-1"><h4 class="font-black text-base tracking-wider truncate">${v.number}</h4><p class="font-bold text-sm text-indigo-600 mt-0.5 truncate">${v.type}</p></div><span class="badge ${badgeColor} uppercase flex-shrink-0">${ts(rs)}</span></div><div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 dark:border-slate-700"><span class="font-bold text-[11px] text-slate-500 truncate pr-2">${v.capacity} <span class="text-slate-300 mx-1">•</span> <i data-lucide="users" class="w-3.5 h-3.5 inline"></i> ${v.cabin || 'N/A'}</span></div>`);
         }).join('')}</div>`;
         return html;
     }
 
     if (tab === 'drivers') {
         if (!drivers.length) return renderEmptyState('drivers');
-        let html = `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-driver')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
+        let html = `<div class="desktop-only justify-end mb-3"><button onclick="switchTab('add-driver')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
         html += renderSearchBar(t('search_s'));
-        html += `<div class="tab-switcher mb-3"><button class="tab-btn staff-tab-btn ${activeStaffTab === 'drivers' ? 'active' : ''}" data-tab="drivers" onclick="switchStaffTab('drivers')"><i data-lucide="car" class="w-4 h-4"></i>${t('drivers')}</button><button class="tab-btn staff-tab-btn ${activeStaffTab === 'workers' ? 'active' : ''}" data-tab="workers" onclick="switchStaffTab('workers')"><i data-lucide="briefcase" class="w-4 h-4"></i>${t('workers')}</button></div><div id="staff-content">${renderStaffContent()}</div>`;
+        html += `<div class="tab-switcher mb-4"><button class="tab-btn staff-tab-btn ${activeStaffTab === 'drivers' ? 'active' : ''}" data-tab="drivers" onclick="switchStaffTab('drivers')"><i data-lucide="car" class="w-4 h-4"></i><span class="truncate">${t('drivers')}</span></button><button class="tab-btn staff-tab-btn ${activeStaffTab === 'workers' ? 'active' : ''}" data-tab="workers" onclick="switchStaffTab('workers')"><i data-lucide="briefcase" class="w-4 h-4"></i><span class="truncate">${t('workers')}</span></button></div><div id="staff-content">${renderStaffContent()}</div>`;
         return html;
     }
 
     if (tab === 'trips' || tab === 'payments') {
         if (!trips.length) return renderEmptyState('trips');
-        let html = `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-trip')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
+        let html = `<div class="desktop-only justify-end mb-3"><button onclick="switchTab('add-trip')" class="btn-primary bg-indigo-600 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
         html += renderSearchBar(t('search_t'));
         html += `<div class="space-y-3">${[...trips].reverse().map((tr) => {
             let actionBtn = '';
@@ -586,16 +503,16 @@ function renderPage(tab) {
             else if (tr.status === 'Completed') actionBtn = `<button onclick="event.stopPropagation();updateTripStatus('${tr.id}', 'Settled')" class="badge bg-emerald-500 text-white">${t('mark_settle')}</button>`;
             else actionBtn = `<span class="badge bg-emerald-100 text-emerald-600 uppercase">${ts('Settled')}</span>`;
             
-            const clientNameClickable = `<p class="font-bold text-indigo-600 mt-1 cursor-pointer hover:underline inline-block" onclick="event.stopPropagation(); viewDetails('client', '${tr.companyName || t('free_roam')}')">${tr.companyName || t('free_roam')} <i data-lucide="external-link" class="inline w-3 h-3 text-indigo-400"></i></p>`;
+            const clientNameClickable = `<p class="font-bold text-sm text-indigo-600 mt-1 cursor-pointer hover:underline inline-block truncate" data-client="${tr.companyName || t('free_roam')}" onclick="event.stopPropagation(); viewDetails('client', this.getAttribute('data-client'))">${tr.companyName || t('free_roam')} <i data-lucide="external-link" class="inline w-3.5 h-3.5 text-indigo-400"></i></p>`;
             
-            return renderListCard('trip', tr.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg">${tr.origin} → ${tr.dest}</h4>${clientNameClickable}</div><div class="text-right"><h3 class="font-black text-xl text-emerald-600">${fmt(tr.freightAmount)}</h3></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${tr.date}</span>${actionBtn}</div>`);
+            return renderListCard('trip', tr.id, `<div class="flex justify-between items-start mb-2 gap-2"><div class="min-w-0 flex-1"><h4 class="font-black text-base truncate">${tr.origin} → ${tr.dest}</h4>${clientNameClickable}</div><div class="text-right flex-shrink-0"><h3 class="font-black text-lg text-emerald-600">${fmt(tr.freightAmount)}</h3></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 dark:border-slate-700"><span class="font-bold text-[11px] text-slate-500 truncate pr-2">${tr.date}</span>${actionBtn}</div>`);
         }).join('')}</div>`;
         return html;
     }
 
     if (tab === 'expenses') {
         if (!expenses.length) return renderEmptyState('expenses');
-        let html = `<div class="desktop-only justify-end mb-2"><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
+        let html = `<div class="desktop-only justify-end mb-3"><button onclick="switchTab('add-expense')" class="btn-primary bg-red-500 text-white py-2 px-4 text-sm">${t('add')}</button></div>`;
         html += renderSearchBar(t('search_e'));
         html += `<div class="space-y-3">${[...expenses].reverse().map((e) => { 
             let relatedTo = 'General';
@@ -606,7 +523,7 @@ function renderPage(tab) {
             
             let eTypeLabel = e.type === 'Fuel' ? t('fuel_t') : e.type === 'Maintenance' ? t('maint_t') : e.type === 'Toll' ? t('toll_t') : e.type === 'Salary' ? t('sal_t') : e.type === 'Office' ? t('off_t') : e.type === 'Shop Account' ? t('shop_t') : t('oth_t');
 
-            return renderListCard('expense', e.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-lg uppercase">${eTypeLabel}</h4><p class="font-bold ${colorClass} mt-1">${relatedTo}</p></div><h3 class="font-black text-xl text-red-600">-${fmt(e.amount)}</h3></div><div class="flex justify-between items-center mt-3 pt-3 border-t-2 border-slate-100 dark:border-slate-700"><span class="font-bold text-slate-500">${e.date}</span><span class="text-xs font-bold text-slate-400">${e.notes || e.id}</span></div>`); 
+            return renderListCard('expense', e.id, `<div class="flex justify-between items-start mb-2 gap-2"><div class="min-w-0 flex-1"><h4 class="font-black text-base uppercase truncate">${eTypeLabel}</h4><p class="font-bold text-sm ${colorClass} mt-1 truncate">${relatedTo}</p></div><h3 class="font-black text-lg text-red-600 flex-shrink-0">-${fmt(e.amount)}</h3></div><div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 dark:border-slate-700"><span class="font-bold text-[11px] text-slate-500 flex-shrink-0">${e.date}</span><span class="text-[11px] font-bold text-slate-400 truncate pl-2 text-right">${e.notes || e.id}</span></div>`); 
         }).join('')}</div>`;
         return html;
     }
@@ -626,34 +543,25 @@ function renderPage(tab) {
             const tPend = Math.max(0, tFreight - tAdv);
             
             html = `
-                <div class="glass-card rounded-[5px] p-6 mb-6 text-center border-indigo-200 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-900/20">
-                    <div class="w-16 h-16 mx-auto bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-3"><i data-lucide="building" class="w-8 h-8"></i></div>
-                    <h2 class="font-black text-xl uppercase tracking-wide text-indigo-700 dark:text-indigo-400">${currentDetailData.id}</h2>
-                    <p class="text-xs font-bold text-slate-500 uppercase mt-1">${t('c_ledger')}</p>
+                <div class="glass-card rounded-[5px] p-5 mb-5 text-center border border-indigo-200 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-900/20">
+                    <div class="w-14 h-14 mx-auto bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-3"><i data-lucide="building" class="w-7 h-7"></i></div>
+                    <h2 class="font-black text-lg uppercase tracking-wide text-indigo-700 dark:text-indigo-400 truncate px-2">${currentDetailData.id}</h2>
+                    <p class="text-[11px] font-bold text-slate-500 uppercase mt-1 truncate">${t('c_ledger')}</p>
                 </div>
-                <div class="grid grid-cols-3 gap-2 mb-6">
-                    <div class="stat-card p-3 text-center">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('trips')}</p>
-                        <h3 class="font-black text-lg">${clientTrips.length}</h3>
-                    </div>
-                    <div class="stat-card p-3 text-center">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('adv')}</p>
-                        <h3 class="font-black text-lg text-emerald-600">${fmt(tAdv)}</h3>
-                    </div>
-                    <div class="stat-card p-3 text-center">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('pending')}</p>
-                        <h3 class="font-black text-lg text-amber-600">${fmt(tPend)}</h3>
-                    </div>
+                <div class="grid grid-cols-3 gap-2 mb-5">
+                    <div class="stat-card p-3 text-center overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('trips')}</p><h3 class="font-black text-base truncate">${clientTrips.length}</h3></div>
+                    <div class="stat-card p-3 text-center overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('adv')}</p><h3 class="font-black text-base text-emerald-600 truncate">${fmt(tAdv)}</h3></div>
+                    <div class="stat-card p-3 text-center overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('pending')}</p><h3 class="font-black text-base text-amber-600 truncate">${fmt(tPend)}</h3></div>
                 </div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('all_trips')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('all_trips')}</h4>
                 <div class="space-y-3">
-                    ${clientTrips.length === 0 ? `<p class="text-center text-slate-400 font-bold py-4">${t('no_rec')}</p>` : clientTrips.map(tr => {
+                    ${clientTrips.length === 0 ? `<p class="text-center text-slate-400 text-sm font-bold py-6">${t('no_rec')}</p>` : clientTrips.map(tr => {
                         const badgeCls = tr.status === 'Settled' ? 'bg-emerald-100 text-emerald-600' : (tr.status === 'Completed' ? 'bg-blue-100 text-blue-600' : 'bg-amber-100 text-amber-600');
-                        return renderListCard('trip', tr.id, `<div class="flex justify-between items-start mb-2"><div><h4 class="font-black text-sm">${tr.origin} → ${tr.dest}</h4><p class="text-[10px] text-slate-500 mt-1">${tr.date}</p></div><div class="text-right"><h3 class="font-black text-sm text-indigo-600">${fmt(tr.freightAmount)}</h3><span class="badge ${badgeCls} mt-1 inline-block uppercase">${ts(tr.status)}</span></div></div>`);
+                        return renderListCard('trip', tr.id, `<div class="flex justify-between items-start gap-2"><div class="min-w-0 flex-1"><h4 class="font-black text-base truncate">${tr.origin} → ${tr.dest}</h4><p class="text-[11px] text-slate-500 mt-1 truncate">${tr.date}</p></div><div class="text-right flex-shrink-0"><h3 class="font-black text-base text-indigo-600">${fmt(tr.freightAmount)}</h3><span class="badge ${badgeCls} mt-1.5 inline-block uppercase">${ts(tr.status)}</span></div></div>`);
                     }).join('')}
                 </div>
             `;
-            return `<div class="flex items-center gap-3 mb-4"><button onclick="goBack('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${t('details')}</h3></div><div>${html}</div>`;
+            return `<div class="flex items-center gap-4 mb-5"><button onclick="goBack('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px] flex-shrink-0"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-lg uppercase truncate flex-1">${t('details')}</h3></div><div>${html}</div>`;
         }
 
         const list = db.get(currentDetailData.type + 's'), item = list.find(x => x.id === currentDetailData.id);
@@ -662,73 +570,62 @@ function renderPage(tab) {
         
         if (currentDetailData.type === 'vehicle') {
             const v = item;
-            
             let financeHtml = '';
             if (v.hasFinance === 'Yes') {
                 const total = v.totalEmis || 1;
                 const paid = v.paidEmis || 0;
                 const pending = Math.max(0, total - paid);
                 const percent = Math.min(100, (paid / total) * 100);
-                
                 financeHtml = `
                     <div class="mt-6 mb-4">
-                        <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('fin_details')}</h4>
-                        <div class="glass-card rounded-[5px] p-4 mb-3 flex justify-between items-center">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('emi_amt')}</p>
-                                <p class="font-black text-lg text-indigo-600 uppercase">${fmt(v.emiAmount)}<span class="text-xs text-slate-400">/MO</span></p>
+                        <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('fin_details')}</h4>
+                        <div class="glass-card rounded-[5px] p-4 mb-3 flex justify-between items-center gap-2">
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('emi_amt')}</p>
+                                <p class="font-black text-base text-indigo-600 uppercase truncate">${fmt(v.emiAmount)}<span class="text-[11px] text-slate-400">/MO</span></p>
                             </div>
-                            <span class="badge bg-amber-100 text-amber-600 uppercase">${t('active')}</span>
+                            <span class="badge bg-amber-100 text-amber-600 uppercase flex-shrink-0">${t('active')}</span>
                         </div>
                         <div class="glass-card rounded-[5px] p-4">
-                            <div class="flex justify-between text-xs font-bold mb-3 uppercase">
-                                <span class="text-emerald-500"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span id="info-paid-val">${paid}</span> ${t('paid')}</span>
-                                <span class="text-amber-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span id="info-pending-val">${pending}</span> ${t('due')}</span>
+                            <div class="flex justify-between text-[11px] font-bold mb-3 uppercase">
+                                <span class="text-emerald-500 truncate pr-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 inline"></i> <span id="info-paid-val">${paid}</span> ${t('paid')}</span>
+                                <span class="text-amber-500 truncate pl-1 text-right"><i data-lucide="clock" class="w-3.5 h-3.5 inline"></i> <span id="info-pending-val">${pending}</span> ${t('due')}</span>
                             </div>
-                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div>
-                            </div>
-                            <p class="text-center text-[10px] font-bold text-slate-400 mt-2 uppercase">${total} ${t('tot_emi')}</p>
+                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div></div>
+                            <p class="text-center text-[11px] font-bold text-slate-400 mt-2.5 uppercase truncate">${total} ${t('tot_emi')}</p>
                         </div>
                     </div>
                 `;
             }
 
             const compBox = (title, status, expiry) => {
-                let iconHtml = '';
-                if (status === 'Available') {
-                    const isExpired = expiry && expiry < today();
-                    const iconName = isExpired ? 'x-circle' : 'check-circle';
-                    const iconColor = isExpired ? 'text-rose-500' : 'text-emerald-500';
-                    iconHtml = `<i data-lucide="${iconName}" class="w-5 h-5 ${iconColor} flex-shrink-0 ml-1"></i>`;
-                } else {
-                    iconHtml = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-500 flex-shrink-0 ml-1"></i>`;
-                }
+                const isExpired = expiry && expiry < today();
+                const iconName = isExpired || status !== 'Available' ? 'x-circle' : 'check-circle';
+                const iconColor = isExpired || status !== 'Available' ? 'text-rose-500' : 'text-emerald-500';
                 return `
-                <div class="glass-card rounded-[5px] p-3 flex justify-between items-center">
-                    <div class="overflow-hidden">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 truncate">${title}</p>
-                        <p class="font-black text-sm uppercase truncate ${status === 'Available' ? 'text-emerald-600' : 'text-rose-600'}">${ts(status)}</p>
+                <div class="glass-card rounded-[5px] p-3.5 flex justify-between items-center gap-2">
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${title}</p>
+                        <p class="font-black text-sm uppercase truncate ${status === 'Available' && !isExpired ? 'text-emerald-600' : 'text-rose-600'}">${ts(status)}</p>
                     </div>
-                    ${iconHtml}
+                    <i data-lucide="${iconName}" class="w-5 h-5 ${iconColor} flex-shrink-0"></i>
                 </div>`;
             };
 
             html = `
                 <div>
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('gen_info')}</h4>
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('gen_info')}</h4>
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('num')}</p><p class="font-black text-sm uppercase truncate">${v.number}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('type')}</p><p class="font-black text-sm uppercase truncate">${v.type}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('cap')}</p><p class="font-black text-sm uppercase truncate">${v.capacity}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('cab')}</p><p class="font-black text-sm uppercase truncate">${v.cabin || 'N/A'}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('fuel')}</p><p class="font-black text-sm uppercase truncate">${v.fuelType || 'N/A'}</p></div>
-                        <div class="glass-card rounded-[5px] p-3 flex justify-between items-center"><div class="overflow-hidden"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('run_status')}</p><p class="font-black text-sm uppercase truncate">${ts(v.runningStatus)}</p></div></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('num')}</p><p class="font-black text-sm uppercase truncate">${v.number}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('type')}</p><p class="font-black text-sm uppercase truncate">${v.type}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('cap')}</p><p class="font-black text-sm uppercase truncate">${v.capacity}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('cab')}</p><p class="font-black text-sm uppercase truncate">${v.cabin || 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('fuel')}</p><p class="font-black text-sm uppercase truncate">${v.fuelType || 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden flex flex-col justify-center"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('run_status')}</p><p class="font-black text-sm uppercase truncate">${ts(v.runningStatus)}</p></div>
                     </div>
                 </div>
-                
                 <div class="mt-6 mb-4">
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('comp')}</h4>
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('comp')}</h4>
                     <div class="grid grid-cols-2 gap-2">
                         ${compBox(t('permit'), v.nationalPermit, v.nationalPermitExpiry)}
                         ${compBox(t('fit'), v.fitness, v.fitnessExpiry)}
@@ -736,13 +633,11 @@ function renderPage(tab) {
                         ${compBox(t('ins'), v.insurance, v.insuranceExpiry)}
                     </div>
                 </div>
-                
                 ${financeHtml}
             `;
         } else if (currentDetailData.type === 'driver') {
             const d = item;
             const sh = d.salaryHistory || [];
-            
             let monthlyRecordsSection = '';
             let pendingOverall = 0;
             
@@ -750,31 +645,26 @@ function renderPage(tab) {
                 const totalOverall = sh.reduce((sum, s) => sum + s.total, 0);
                 const paidOverall = sh.reduce((sum, s) => sum + s.paid, 0);
                 pendingOverall = Math.max(0, totalOverall - paidOverall);
-
                 let historyHtml = '';
                 sh.forEach(s => {
                     const pending = Math.max(0, s.total - s.paid);
                     const percent = s.total > 0 ? Math.min(100, (s.paid / s.total) * 100) : 0;
-                    
-                    const epfoBadge = (d.epfo === 'Activated' && s.epfoSettled) ? `<div class="text-[10px] font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 uppercase flex items-center gap-1 text-blue-500"><i data-lucide="check-circle" class="w-3 h-3"></i> ${t('cleared')}</div>` : '';
-
+                    const epfoBadge = (d.epfo === 'Activated' && s.epfoSettled) ? `<div class="text-[11px] font-bold mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 uppercase flex items-center gap-1.5 text-blue-500 truncate"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> ${t('cleared')}</div>` : '';
                     historyHtml += `
                         <div class="glass-card rounded-[5px] p-4 mb-3">
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-black text-sm uppercase">${formatMonthStr(s.month)}</h5>
-                                <span class="badge ${pending === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase">${pending === 0 ? t('cleared') : t('pending')}</span>
+                            <div class="flex justify-between items-center mb-2 gap-2">
+                                <h5 class="font-black text-sm uppercase truncate flex-1">${formatMonthStr(s.month)}</h5>
+                                <span class="badge ${pending === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase flex-shrink-0">${pending === 0 ? t('cleared') : t('pending')}</span>
                             </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-emerald-500 !text-[11px] font-bold uppercase"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span class="!text-[11px]">${fmt(s.paid)}</span> ${t('paid')}</span>
-                                <span class="text-amber-500 !text-[11px] font-bold uppercase"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span id="info-bal-val">${fmt(pending)}</span> ${t('due')}</span>
+                            <div class="flex justify-between mb-1.5 text-[11px]">
+                                <span class="text-emerald-500 font-bold uppercase truncate pr-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 inline"></i> <span>${fmt(s.paid)}</span> ${t('paid')}</span>
+                                <span class="text-amber-500 font-bold uppercase text-right truncate pl-1"><i data-lucide="clock" class="w-3.5 h-3.5 inline"></i> <span>${fmt(pending)}</span> ${t('due')}</span>
                             </div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-slate-400 !text-[10px] font-bold uppercase tracking-tight">${t('total')}: ${fmt(s.total)}</span>
-                                <span class="text-indigo-500 !text-[10px] font-bold uppercase tracking-tight">${t('inc')}: ${fmt(s.incentive || 0)}</span>
+                            <div class="flex justify-between mb-2 text-[11px]">
+                                <span class="text-slate-400 font-bold uppercase tracking-tight truncate pr-1">${t('total')}: ${fmt(s.total)}</span>
+                                <span class="text-indigo-500 font-bold uppercase tracking-tight text-right truncate pl-1">${t('inc')}: ${fmt(s.incentive || 0)}</span>
                             </div>
-                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mt-1">
-                                <div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div>
-                            </div>
+                            <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div></div>
                             ${epfoBadge}
                         </div>
                     `;
@@ -782,9 +672,9 @@ function renderPage(tab) {
 
                 monthlyRecordsSection = `
                     <div class="mt-6 mb-4">
-                        <div class="flex justify-between items-end mb-3 px-1">
-                            <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">${t('month_rec')}</h4>
-                            <span class="text-xs font-bold ${pendingOverall > 0 ? 'text-amber-500' : 'text-emerald-500'} uppercase">${t('total')} ${t('due')}: ${fmt(pendingOverall)}</span>
+                        <div class="flex justify-between items-end mb-3 px-1 gap-2">
+                            <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase truncate flex-1">${t('month_rec')}</h4>
+                            <span class="text-[11px] font-bold ${pendingOverall > 0 ? 'text-amber-500' : 'text-emerald-500'} uppercase flex-shrink-0 text-right">${t('due')}: ${fmt(pendingOverall)}</span>
                         </div>
                         ${historyHtml}
                     </div>
@@ -793,22 +683,22 @@ function renderPage(tab) {
             
             const waMsgRaw = t('wa_msg').replace('{name}', d.name).replace('{amt}', pendingOverall);
             const waMsg = encodeURIComponent(waMsgRaw);
-            const waButton = d.phone ? `<a href="https://wa.me/91${d.phone}?text=${waMsg}" target="_blank" class="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-200 transition-colors" onclick="event.stopPropagation()"><i data-lucide="message-circle" class="w-4 h-4"></i></a>` : '';
+            const waButton = d.phone ? `<a href="https://wa.me/91${d.phone}?text=${waMsg}" target="_blank" class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-200 transition-colors flex-shrink-0" onclick="event.stopPropagation()"><i data-lucide="message-circle" class="w-4 h-4"></i></a>` : '';
 
             html = `
                 <div>
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('gen_info')}</h4>
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('gen_info')}</h4>
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('name')}</p><p class="font-black text-sm uppercase truncate">${d.name}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('phone')}</p><div class="flex justify-between items-center"><p class="font-black text-sm uppercase truncate">${d.phone}</p>${waButton}</div></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('role')}</p><p class="font-black text-sm uppercase truncate">${t(d.role === 'Driver' ? 'driver_r' : 'worker_r')}</p></div>
-                        ${d.role === 'Driver' ? `<div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('lic')}</p><p class="font-black text-sm uppercase truncate">${d.license || 'N/A'}</p></div>` : ''}
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('aadh')}</p><p class="font-black text-sm uppercase truncate">${d.aadhaar || 'N/A'}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('email')}</p><p class="font-black text-sm truncate">${d.email || 'N/A'}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('base_sal')}</p><p class="font-black text-sm uppercase truncate">${fmt(d.baseSalary)}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('name')}</p><p class="font-black text-sm uppercase truncate">${d.name}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('phone')}</p><div class="flex justify-between items-center gap-1"><p class="font-black text-sm uppercase truncate flex-1">${d.phone}</p>${waButton}</div></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('role')}</p><p class="font-black text-sm uppercase truncate">${t(d.role === 'Driver' ? 'driver_r' : 'worker_r')}</p></div>
+                        ${d.role === 'Driver' ? `<div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('lic')}</p><p class="font-black text-sm uppercase truncate">${d.license || 'N/A'}</p></div>` : ''}
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('aadh')}</p><p class="font-black text-sm uppercase truncate">${d.aadhaar || 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('email')}</p><p class="font-black text-sm truncate">${d.email || 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('base_sal')}</p><p class="font-black text-sm uppercase truncate">${fmt(d.baseSalary)}</p></div>
                         <div class="col-span-2 grid grid-cols-2 gap-2">
-                            <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('sal_type')}</p><p class="font-black text-sm uppercase truncate">${ts(d.salaryType)}</p></div>
-                            <div class="glass-card rounded-[5px] p-3 flex justify-between items-center"><div class="overflow-hidden"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('epfo')}</p><p class="font-black text-sm uppercase truncate ${d.epfo === 'Activated' ? 'text-blue-600' : ''}">${ts(d.epfo || 'Not Activated')}</p></div>${d.epfo === 'Activated' ? `<i data-lucide="check-circle" class="w-5 h-5 text-blue-500 flex-shrink-0 ml-1"></i>` : ''}</div>
+                            <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('sal_type')}</p><p class="font-black text-sm uppercase truncate">${ts(d.salaryType)}</p></div>
+                            <div class="glass-card rounded-[5px] p-3.5 overflow-hidden flex justify-between items-center gap-2"><div class="min-w-0 flex-1"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('epfo')}</p><p class="font-black text-sm uppercase truncate ${d.epfo === 'Activated' ? 'text-blue-600' : ''}">${ts(d.epfo || 'Not Activated')}</p></div>${d.epfo === 'Activated' ? `<i data-lucide="check-circle" class="w-5 h-5 text-blue-500 flex-shrink-0"></i>` : ''}</div>
                         </div>
                     </div>
                 </div>
@@ -828,31 +718,31 @@ function renderPage(tab) {
 
             html = `
                 <div>
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('route')}</h4>
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('route')}</h4>
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="glass-card rounded-[5px] p-3 col-span-2"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('client')}</p><p class="font-black text-sm uppercase truncate text-indigo-600 cursor-pointer hover:underline" onclick="viewDetails('client', '${tr.companyName || t('free_roam')}')">${tr.companyName || t('free_roam')} <i data-lucide="external-link" class="inline w-3 h-3 text-indigo-400"></i></p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('origin')}</p><p class="font-black text-sm uppercase truncate">${tr.origin}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('dest')}</p><p class="font-black text-sm uppercase truncate">${tr.dest}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('vehicle')}</p><p class="font-black text-sm uppercase truncate">${veh ? veh.number : 'N/A'}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('driver')}</p><p class="font-black text-sm uppercase truncate">${drv ? drv.name : 'N/A'}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('date')}</p><p class="font-black text-sm uppercase truncate">${tr.date}</p></div>
-                        <div class="glass-card rounded-[5px] p-3 flex justify-between items-center"><div class="overflow-hidden"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('status')}</p><p class="font-black text-sm uppercase truncate ${badgeClass}">${ts(tr.status)}</p></div><i data-lucide="${iconName}" class="w-5 h-5 ${iconClass} flex-shrink-0 ml-1"></i></div>
+                        <div class="glass-card rounded-[5px] p-3.5 col-span-2 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('client')}</p><p class="font-black text-sm uppercase truncate text-indigo-600 cursor-pointer hover:underline" data-client="${tr.companyName || t('free_roam')}" onclick="viewDetails('client', this.getAttribute('data-client'))">${tr.companyName || t('free_roam')} <i data-lucide="external-link" class="inline w-3.5 h-3.5 text-indigo-400"></i></p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('origin')}</p><p class="font-black text-sm uppercase truncate">${tr.origin}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('dest')}</p><p class="font-black text-sm uppercase truncate">${tr.dest}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('vehicle')}</p><p class="font-black text-sm uppercase truncate">${veh ? veh.number : 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('driver')}</p><p class="font-black text-sm uppercase truncate">${drv ? drv.name : 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('date')}</p><p class="font-black text-sm uppercase truncate">${tr.date}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden flex justify-between items-center gap-2"><div class="min-w-0 flex-1"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('status')}</p><p class="font-black text-sm uppercase truncate ${badgeClass}">${ts(tr.status)}</p></div><i data-lucide="${iconName}" class="w-5 h-5 ${iconClass} flex-shrink-0"></i></div>
                     </div>
                 </div>
 
                 <div class="mt-6 mb-4">
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('trip_fin')}</h4>
-                    <div class="glass-card rounded-[5px] p-4 mb-3 flex justify-between items-center">
-                        <div><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('tot_freight')}</p><p class="font-black text-lg text-indigo-600 uppercase">${fmt(tr.freightAmount)}</p></div>
-                        <span class="badge ${tr.status === 'Settled' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase">${ts(tr.status === 'Settled' ? 'Settled' : 'Pending')}</span>
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('trip_fin')}</h4>
+                    <div class="glass-card rounded-[5px] p-4 mb-3 flex justify-between items-center gap-2">
+                        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('tot_freight')}</p><p class="font-black text-base text-indigo-600 uppercase truncate">${fmt(tr.freightAmount)}</p></div>
+                        <span class="badge ${tr.status === 'Settled' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} uppercase flex-shrink-0">${ts(tr.status === 'Settled' ? 'Settled' : 'Pending')}</span>
                     </div>
                     <div class="glass-card rounded-[5px] p-4">
-                        <div class="flex justify-between text-xs font-bold mb-3 uppercase">
-                            <span class="text-emerald-500"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> <span id="info-adv-val">${fmt(tr.advance)}</span> ${t('adv')}</span>
-                            <span class="text-amber-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> <span id="info-bal-val">${fmt(pending)}</span> ${t('due')}</span>
+                        <div class="flex justify-between text-[11px] font-bold mb-3 uppercase">
+                            <span class="text-emerald-500 truncate pr-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 inline"></i> <span id="info-adv-val">${fmt(tr.advance)}</span> ${t('adv')}</span>
+                            <span class="text-amber-500 truncate pl-1 text-right"><i data-lucide="clock" class="w-3.5 h-3.5 inline"></i> <span id="info-bal-val">${fmt(pending)}</span> ${t('due')}</span>
                         </div>
                         <div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: ${percent}%"></div></div>
-                        <p class="text-center text-[10px] font-bold text-slate-400 mt-2 uppercase">${Math.round(percent)}% ${t('received')}</p>
+                        <p class="text-center text-[11px] font-bold text-slate-400 mt-2.5 uppercase truncate">${Math.round(percent)}% ${t('received')}</p>
                     </div>
                 </div>
             `;
@@ -881,25 +771,24 @@ function renderPage(tab) {
             const allExpenses = db.get('expenses');
             const relatedExpenses = allExpenses.filter(historyFilter).sort((a, b) => new Date(b.date) - new Date(a.date));
             const totalRelated = relatedExpenses.reduce((sum, x) => sum + x.amount, 0);
-
             const uniqueMonths = [...new Set(relatedExpenses.map(x => x.date.substring(0, 7)))].sort().reverse();
             const monthOptions = `<option value="All">${t('all_months')}</option>` + uniqueMonths.map(m => `<option value="${m}">${formatMonthStr(m)}</option>`).join('');
 
             let historyHtml = `
-                <div class="mt-8 mb-4">
-                    <div class="flex justify-between items-end mb-3 px-1">
-                        <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">${historyTitle}</h4>
-                        <select onchange="filterLedger(this.value)" class="bg-transparent border-none outline-none text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase text-right cursor-pointer">${monthOptions}</select>
+                <div class="mt-6 mb-4">
+                    <div class="flex justify-between items-end mb-3 px-1 gap-2">
+                        <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase truncate flex-1">${historyTitle}</h4>
+                        <select onchange="filterLedger(this.value)" class="bg-transparent border-none outline-none text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase text-right cursor-pointer flex-shrink-0 w-28">${monthOptions}</select>
                     </div>
                     <div class="glass-card rounded-[5px] overflow-hidden">
-                        <div class="grid grid-cols-[3fr_2fr] gap-2 p-3 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 uppercase">
+                        <div class="grid grid-cols-[3fr_2fr] gap-2 p-3 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 uppercase">
                             <div>${t('date')}</div><div class="text-right">${t('amt')}</div>
                         </div>
                         <div id="ledger-list-container" class="max-h-64 overflow-y-auto no-scrollbar">
             `;
 
             if (relatedExpenses.length === 0) {
-                historyHtml += `<div class="p-4 text-center text-xs text-slate-500 uppercase font-bold">${t('no_rec')}</div>`;
+                historyHtml += `<div class="p-4 text-center text-[11px] text-slate-500 uppercase font-bold">${t('no_rec')}</div>`;
             } else {
                 relatedExpenses.forEach(rx => {
                     const isCurrent = rx.id === e.id;
@@ -907,7 +796,7 @@ function renderPage(tab) {
                     const rowClass = isCurrent ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50';
                     historyHtml += `
                         <div class="ledger-item grid grid-cols-[3fr_2fr] gap-2 p-3 border-b border-slate-100 dark:border-slate-800 text-xs items-center cursor-pointer ${rowClass} transition-colors" onclick="viewDetails('expense','${rx.id}')" data-month="${monthStr}" data-amount="${rx.amount}">
-                            <div class="text-slate-500 font-bold tracking-tight">${rx.date}</div><div class="text-right font-black text-red-600">${fmt(rx.amount)}</div>
+                            <div class="text-slate-500 font-bold tracking-tight truncate">${rx.date}</div><div class="text-right font-black text-red-600 truncate">${fmt(rx.amount)}</div>
                         </div>`;
                 });
             }
@@ -915,7 +804,7 @@ function renderPage(tab) {
             historyHtml += `
                         </div>
                         <div class="p-3 bg-slate-50 dark:bg-slate-800/80 flex justify-between items-center border-t border-slate-200 dark:border-slate-700">
-                            <span class="text-xs font-black uppercase text-slate-500">${t('total')}</span><span id="ledger-total" class="font-black text-red-600">-${fmt(totalRelated)}</span>
+                            <span class="text-[11px] font-black uppercase text-slate-500 truncate">${t('total')}</span><span id="ledger-total" class="text-sm font-black text-red-600 truncate">-${fmt(totalRelated)}</span>
                         </div>
                     </div>
                 </div>
@@ -925,91 +814,57 @@ function renderPage(tab) {
 
             html = `
                 <div>
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('exp_info')}</h4>
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('exp_info')}</h4>
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('type')}</p><p class="font-black text-sm uppercase truncate">${eTypeLabel}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('amt')}</p><p class="font-black text-sm uppercase truncate text-red-600">${fmt(e.amount)}</p></div>
-                        <div class="glass-card rounded-[5px] p-3 col-span-2"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${relatedLabel}</p><p class="font-black text-sm uppercase truncate text-indigo-600">${relatedTo}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('date')}</p><p class="font-black text-sm uppercase truncate">${e.date}</p></div>
-                        <div class="glass-card rounded-[5px] p-3"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">${t('notes')}</p><p class="font-black text-sm uppercase truncate">${e.notes || 'N/A'}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('type')}</p><p class="font-black text-sm uppercase truncate">${eTypeLabel}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('amt')}</p><p class="font-black text-sm uppercase truncate text-red-600">${fmt(e.amount)}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 col-span-2 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${relatedLabel}</p><p class="font-black text-sm uppercase truncate text-indigo-600">${relatedTo}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('date')}</p><p class="font-black text-sm uppercase truncate">${e.date}</p></div>
+                        <div class="glass-card rounded-[5px] p-3.5 overflow-hidden"><p class="text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">${t('notes')}</p><p class="font-black text-sm uppercase truncate">${e.notes || 'N/A'}</p></div>
                     </div>
                 </div>
                 ${historyHtml}
             `;
         }
         
-        return `<div class="flex items-center gap-3 mb-4"><button onclick="goBack('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${t('details')}</h3></div><div>${html}</div><div class="flex gap-3 mt-4"><button onclick="editItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-blue-600 text-white uppercase">${t('edit')}</button><button onclick="deleteItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary bg-red-600 text-white uppercase">${t('delete')}</button></div>`;
+        return `<div class="flex items-center gap-4 mb-5"><button onclick="goBack('${back}')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px] flex-shrink-0"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-lg uppercase truncate flex-1">${t('details')}</h3></div><div>${html}</div><div class="flex gap-3 mt-5"><button onclick="editItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary py-3 px-4 bg-blue-600 text-white text-sm uppercase truncate">${t('edit')}</button><button onclick="deleteItem('${currentDetailData.type}','${currentDetailData.id}')" class="flex-1 btn-primary py-3 px-4 bg-red-600 text-white text-sm uppercase truncate">${t('delete')}</button></div>`;
     }
 
     if (tab === 'profile') {
         const cn = localStorage.getItem('ot_company_name') || t('app_title'), gst = localStorage.getItem('ot_gst_no') || '', isDark = document.documentElement.classList.contains('dark');
-        return `<div class="space-y-3"><div class="glass-card rounded-[5px] p-6 text-center border-2 border-slate-200 dark:border-slate-700"><div class="w-20 h-20 mx-auto bg-indigo-100 rounded-full border-4 border-indigo-500 overflow-hidden mb-3"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" class="w-full h-full"></div><h2 class="font-black text-xl uppercase">Admin</h2><p class="font-bold text-indigo-600 uppercase">XRV LABS</p></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div><label class="text-xs font-bold text-slate-500 uppercase">${t('company')}</label><input type="text" value="${cn}" class="field-input w-full mt-1 uppercase" oninput="updateCompanyName(this.value)"></div><div><label class="text-xs font-bold text-slate-500 uppercase">${t('gst')}</label><input type="text" value="${gst}" class="field-input w-full mt-1 uppercase" onchange="localStorage.setItem('ot_gst_no',this.value)"></div></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700 space-y-3"><div class="flex justify-between items-center"><span class="font-bold uppercase">${t('lang')}</span><button onclick="toggleLang()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-[5px] font-bold text-sm uppercase">${curLang === 'en' ? 'English' : 'Hinglish'}</button></div><div class="flex justify-between items-center"><span class="font-bold uppercase">${t('dark_mode')}</span><button onclick="toggleTheme();switchTab('profile',false)" class="px-4 py-2 ${isDark ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700'} rounded-[5px] font-bold text-sm uppercase">${isDark ? t('on') : t('off')}</button></div><div class="flex justify-between items-center"><span class="font-bold uppercase">${t('tut')}</span><button onclick="resetOnboarding()" class="px-4 py-2 bg-purple-600 text-white rounded-[5px] font-bold text-sm uppercase">${t('replay')}</button></div></div><div class="glass-card rounded-[5px] p-4 border-2 border-slate-200 dark:border-slate-700"><div class="grid grid-cols-2 gap-3 mb-3"><button onclick="exportData()" class="p-3 bg-blue-50 text-blue-600 rounded-[5px] font-bold border border-blue-200 uppercase"><i data-lucide="download" class="w-5 h-5 mx-auto mb-1"></i>${t('export')}</button><label class="p-3 bg-emerald-50 text-emerald-600 rounded-[5px] font-bold border border-emerald-200 cursor-pointer uppercase"><i data-lucide="upload" class="w-5 h-5 mx-auto mb-1"></i>${t('import')}<input type="file" class="hidden" accept=".json" onchange="importData(event)"></label></div><button onclick="if(confirm('${t('delete')}?')){localStorage.clear();location.reload()}" class="w-full p-3 bg-red-50 text-red-600 rounded-[5px] font-bold border border-red-200 uppercase">${t('erase')}</button></div><p class="text-center text-slate-400 text-sm font-bold pb-4 uppercase">v1.7.0 • XRV LABS</p></div>`;
+        return `<div class="space-y-3"><div class="glass-card rounded-[5px] p-6 text-center border border-slate-200 dark:border-slate-700"><div class="w-20 h-20 mx-auto bg-indigo-100 rounded-full border-[3px] border-indigo-500 overflow-hidden mb-3"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" class="w-full h-full"></div><h2 class="font-black text-base uppercase truncate">Admin</h2><p class="font-bold text-sm text-indigo-600 uppercase truncate">XRV LABS</p></div><div class="glass-card rounded-[5px] p-4 border border-slate-200 dark:border-slate-700 space-y-4"><div><label class="text-[11px] font-bold text-slate-500 uppercase truncate">${t('company')}</label><input type="text" value="${cn}" class="field-input w-full mt-1.5 uppercase text-sm" oninput="updateCompanyName(this.value)"></div><div><label class="text-[11px] font-bold text-slate-500 uppercase truncate">${t('gst')}</label><input type="text" value="${gst}" class="field-input w-full mt-1.5 uppercase text-sm" onchange="localStorage.setItem('ot_gst_no',this.value)"></div></div><div class="glass-card rounded-[5px] p-4 border border-slate-200 dark:border-slate-700 space-y-4"><div class="flex justify-between items-center gap-3"><span class="font-bold text-sm uppercase truncate flex-1">${t('lang')}</span><button onclick="toggleLang()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-[5px] font-bold text-xs uppercase flex-shrink-0 w-24">${curLang === 'en' ? 'English' : 'Hinglish'}</button></div><div class="flex justify-between items-center gap-3"><span class="font-bold text-sm uppercase truncate flex-1">${t('dark_mode')}</span><button onclick="toggleTheme();switchTab('profile',false)" class="px-4 py-2 ${isDark ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700'} rounded-[5px] font-bold text-xs uppercase flex-shrink-0 w-24">${isDark ? t('on') : t('off')}</button></div><div class="flex justify-between items-center gap-3"><span class="font-bold text-sm uppercase truncate flex-1">${t('tut')}</span><button onclick="resetOnboarding()" class="px-4 py-2 bg-purple-600 text-white rounded-[5px] font-bold text-xs uppercase flex-shrink-0 w-24">${t('replay')}</button></div></div><div class="glass-card rounded-[5px] p-4 border border-slate-200 dark:border-slate-700"><div class="grid grid-cols-2 gap-3 mb-3"><button onclick="exportData()" class="p-3 bg-blue-50 text-blue-600 rounded-[5px] font-bold border border-blue-200 uppercase text-xs truncate flex flex-col items-center"><i data-lucide="download" class="w-5 h-5 mb-1.5"></i>${t('export')}</button><label class="p-3 bg-emerald-50 text-emerald-600 rounded-[5px] font-bold border border-emerald-200 cursor-pointer uppercase text-xs truncate flex flex-col items-center"><i data-lucide="upload" class="w-5 h-5 mb-1.5"></i>${t('import')}<input type="file" class="hidden" accept=".json" onchange="importData(event)"></label></div><button onclick="if(confirm('${t('delete')}?')){localStorage.clear();location.reload()}" class="w-full p-3 bg-red-50 text-red-600 rounded-[5px] font-bold border border-red-200 uppercase text-sm truncate">${t('erase')}</button></div><p class="text-center text-slate-400 text-xs font-bold py-3 uppercase truncate">v1.9.0 • XRV LABS</p></div>`;
     }
 
     if (tab === 'add-vehicle' || tab === 'edit-vehicle') {
         const isEdit = tab.startsWith('edit'); 
-        let v = { 
-            number: '', type: '10-Wheeler', capacity: '', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'Stopped', 
-            nationalPermit: 'Available', nationalPermitIssue: '', nationalPermitExpiry: '', 
-            fitness: 'Available', fitnessIssue: '', fitnessExpiry: '', 
-            pollution: 'Available', pollutionIssue: '', pollutionExpiry: '', 
-            insurance: 'Available', insuranceIssue: '', insuranceExpiry: '', 
-            hasFinance: 'No', emiAmount: '', totalEmis: '', paidEmis: '', status: 'Active' 
-        };
+        let v = { number: '', type: '10-Wheeler', capacity: '', cabin: '2 PERSON', fuelType: 'Diesel', runningStatus: 'Stopped', nationalPermit: 'Available', nationalPermitIssue: '', nationalPermitExpiry: '', fitness: 'Available', fitnessIssue: '', fitnessExpiry: '', pollution: 'Available', pollutionIssue: '', pollutionExpiry: '', insurance: 'Available', insuranceIssue: '', insuranceExpiry: '', hasFinance: 'No', emiAmount: '', totalEmis: '', paidEmis: '', status: 'Active' };
         if (isEdit && currentDetailData) v = db.get('vehicles').find(x => x.id === currentDetailData.id) || v;
-        
         const editCompBox = (title, idPrefix, status, issue, expiry) => `
-            <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${title}</label>
-                <select id="${idPrefix}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('${idPrefix}-dates').classList.toggle('hidden', this.value === 'Not Available')">
-                    <option value="Available" ${status === 'Available' ? 'selected' : ''}>${t('available')}</option>
-                    <option value="Not Available" ${status === 'Not Available' ? 'selected' : ''}>${t('not_available')}</option>
-                </select>
-                <div id="${idPrefix}-dates" class="${status === 'Not Available' ? 'hidden' : ''} pt-2 border-t-2 border-slate-100 dark:border-slate-800 mt-2 space-y-2">
-                    <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('issue')}</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
-                    <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('expiry')}</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
-                </div>
-            </div>
-        `;
+            <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors">
+                <label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${title}</label>
+                <select id="${idPrefix}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('${idPrefix}-dates').classList.toggle('hidden', this.value === 'Not Available')"><option value="Available" ${status === 'Available' ? 'selected' : ''}>${t('available')}</option><option value="Not Available" ${status === 'Not Available' ? 'selected' : ''}>${t('not_available')}</option></select>
+                <div id="${idPrefix}-dates" class="${status === 'Not Available' ? 'hidden' : ''} pt-3 border-t border-slate-100 dark:border-slate-800 mt-3 space-y-2"><div><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('issue')}</label><input type="date" id="${idPrefix}-issue" value="${issue || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div><div><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('expiry')}</label><input type="date" id="${idPrefix}-expiry" value="${expiry || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div></div>
+            </div>`;
 
         return `
-        <div class="flex items-center gap-3 mb-4">
-            <button onclick="goBack('vehicles')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-            <h3 class="font-black text-xl uppercase">${isEdit ? t('edit_v') : t('add_v')}</h3>
+        <div class="flex items-center gap-4 mb-5">
+            <button onclick="goBack('vehicles')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px] flex-shrink-0"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <h3 class="font-black text-lg uppercase truncate flex-1">${isEdit ? t('edit_v') : t('add_v')}</h3>
         </div>
         <div class="space-y-6 pb-6">
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('gen_info')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('gen_info')}</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('num')}</label>
-                        <input type="text" id="v-number" value="${v.number}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('num')}">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('type')}</label>
-                        <select id="v-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select>
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('cap')}</label>
-                        <input type="text" id="v-capacity" value="${v.capacity}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="15 Ton">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('cab')}</label>
-                        <select id="v-cabin" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.cabin === '1 PERSON' ? 'selected' : ''}>1 PERSON</option><option ${v.cabin === '2 PERSON' ? 'selected' : ''}>2 PERSON</option><option ${v.cabin === '3 PERSON' ? 'selected' : ''}>3 PERSON</option><option ${v.cabin === '4 PERSON' ? 'selected' : ''}>4 PERSON</option></select>
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('fuel')}</label>
-                        <select id="v-fuelType" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Diesel" ${v.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option><option value="Petrol" ${v.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option><option value="CNG" ${v.fuelType === 'CNG' ? 'selected' : ''}>CNG</option><option value="EV" ${v.fuelType === 'EV' ? 'selected' : ''}>EV</option></select>
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('run_status')}</label>
-                        <select id="v-runningStatus" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Stopped" ${v.runningStatus === 'Stopped' ? 'selected' : ''}>${t('stopped')}</option><option value="On Trip" ${v.runningStatus === 'On Trip' ? 'selected' : ''}>${t('on_trip')}</option><option value="Maintenance" ${v.runningStatus === 'Maintenance' ? 'selected' : ''}>${t('maintenance')}</option></select>
-                    </div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('num')}</label><input type="text" id="v-number" value="${v.number}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('num')}"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('type')}</label><select id="v-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.type === '6-Wheeler' ? 'selected' : ''}>6-Wheeler</option><option ${v.type === '10-Wheeler' ? 'selected' : ''}>10-Wheeler</option><option ${v.type === '12-Wheeler' ? 'selected' : ''}>12-Wheeler</option><option ${v.type === '14-Wheeler' ? 'selected' : ''}>14-Wheeler</option><option ${v.type === 'Trailer' ? 'selected' : ''}>Trailer</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('cap')}</label><input type="text" id="v-capacity" value="${v.capacity}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="15 Ton"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('cab')}</label><select id="v-cabin" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option ${v.cabin === '1 PERSON' ? 'selected' : ''}>1 PERSON</option><option ${v.cabin === '2 PERSON' ? 'selected' : ''}>2 PERSON</option><option ${v.cabin === '3 PERSON' ? 'selected' : ''}>3 PERSON</option><option ${v.cabin === '4 PERSON' ? 'selected' : ''}>4 PERSON</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('fuel')}</label><select id="v-fuelType" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Diesel" ${v.fuelType === 'Diesel' ? 'selected' : ''}>Diesel</option><option value="Petrol" ${v.fuelType === 'Petrol' ? 'selected' : ''}>Petrol</option><option value="CNG" ${v.fuelType === 'CNG' ? 'selected' : ''}>CNG</option><option value="EV" ${v.fuelType === 'EV' ? 'selected' : ''}>EV</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('run_status')}</label><select id="v-runningStatus" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Stopped" ${v.runningStatus === 'Stopped' ? 'selected' : ''}>${t('stopped')}</option><option value="On Trip" ${v.runningStatus === 'On Trip' ? 'selected' : ''}>${t('on_trip')}</option><option value="Maintenance" ${v.runningStatus === 'Maintenance' ? 'selected' : ''}>${t('maintenance')}</option></select></div>
                 </div>
             </div>
-
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('comp')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('comp')}</h4>
                 <div class="grid grid-cols-2 gap-2">
                     ${editCompBox(t('permit'), 'v-permit', v.nationalPermit, v.nationalPermitIssue, v.nationalPermitExpiry)}
                     ${editCompBox(t('fit'), 'v-fitness', v.fitness, v.fitnessIssue, v.fitnessExpiry)}
@@ -1017,32 +872,16 @@ function renderPage(tab) {
                     ${editCompBox(t('ins'), 'v-insurance', v.insurance, v.insuranceIssue, v.insuranceExpiry)}
                 </div>
             </div>
-
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('fin_details')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('fin_details')}</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('is_fin')}</label>
-                        <select id="v-hasFinance" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.querySelectorAll('.finance-field').forEach(el => el.classList.toggle('hidden', this.value === 'No'))">
-                            <option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>${t('no')}</option>
-                            <option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>${t('yes')}</option>
-                        </select>
-                    </div>
-                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('paid_emi')}</label>
-                        <input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('emi_amt')}</label>
-                        <input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('tot_emi')}</label>
-                        <input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('is_fin')}</label><select id="v-hasFinance" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.querySelectorAll('.finance-field').forEach(el => el.classList.toggle('hidden', this.value === 'No'))"><option value="No" ${v.hasFinance === 'No' || !v.hasFinance ? 'selected' : ''}>${t('no')}</option><option value="Yes" ${v.hasFinance === 'Yes' ? 'selected' : ''}>${t('yes')}</option></select></div>
+                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('paid_emi')}</label><input type="number" id="v-paidEmis" value="${v.paidEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('emi_amt')}</label><input type="number" id="v-emiAmount" value="${v.emiAmount || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="finance-field ${v.hasFinance === 'Yes' ? '' : 'hidden'} glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('tot_emi')}</label><input type="number" id="v-totalEmis" value="${v.totalEmis || ''}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
                 </div>
             </div>
-            <button onclick="saveVehicle(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-2">${isEdit ? t('update') : t('save')}</button>
+            <button onclick="saveVehicle(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-3 py-3 text-sm">${isEdit ? t('update') : t('save')}</button>
         </div>`;
     }
 
@@ -1058,61 +897,30 @@ function renderPage(tab) {
         }, 50);
 
         return `
-        <div class="flex items-center gap-3 mb-4"><button onclick="goBack('drivers')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? t('edit_s') : t('add_s')}</h3></div>
+        <div class="flex items-center gap-4 mb-5"><button onclick="goBack('drivers')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px] flex-shrink-0"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-lg uppercase truncate flex-1">${isEdit ? t('edit_s') : t('add_s')}</h3></div>
         <div class="space-y-6 pb-6">
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('gen_info')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('gen_info')}</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('role')}</label>
-                        <select id="d-role" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('license-field').classList.toggle('invisible',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>${t('driver_r')}</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>${t('worker_r')}</option></select>
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('name')}</label>
-                        <input type="text" id="d-name" value="${d.name}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('phone')}</label>
-                        <input type="tel" id="d-phone" value="${d.phone}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('email')}</label>
-                        <input type="email" id="d-email" value="${d.email || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('aadh')}</label>
-                        <input type="text" id="d-aadhaar" value="${d.aadhaar || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div id="license-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${d.role === 'Worker' ? 'invisible' : ''}">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('lic')}</label>
-                        <input type="text" id="d-license" value="${d.license}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('epfo')}</label>
-                        <select id="d-epfo" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.querySelectorAll('.epfo-col').forEach(el => el.classList.toggle('hidden', this.value !== 'Activated'))">
-                            <option value="Not Activated" ${d.epfo !== 'Activated' ? 'selected' : ''}>${t('not_activated')}</option>
-                            <option value="Activated" ${d.epfo === 'Activated' ? 'selected' : ''}>${t('activated')}</option>
-                        </select>
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('sal_type')}</label>
-                        <select id="d-salaryType" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Fixed" ${d.salaryType === 'Fixed' ? 'selected' : ''}>${t('fixed')}</option><option value="Per Trip" ${d.salaryType === 'Per Trip' ? 'selected' : ''} class="trip-opt ${d.role === 'Worker' ? 'hidden' : ''}">${t('per_trip')}</option></select>
-                    </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('base_sal')}</label>
-                        <input type="number" id="d-baseSalary" value="${d.baseSalary}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('role')}</label><select id="d-role" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('license-field').classList.toggle('invisible',this.value==='Worker'); document.querySelector('.trip-opt').classList.toggle('hidden',this.value==='Worker'); if(this.value==='Worker') document.getElementById('d-salaryType').value='Fixed';"><option value="Driver" ${d.role === 'Driver' ? 'selected' : ''}>${t('driver_r')}</option><option value="Worker" ${d.role === 'Worker' ? 'selected' : ''}>${t('worker_r')}</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('name')}</label><input type="text" id="d-name" value="${d.name}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('name')}"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('phone')}</label><input type="tel" id="d-phone" value="${d.phone}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('phone')}"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('email')}</label><input type="email" id="d-email" value="${d.email || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('email')}"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('aadh')}</label><input type="text" id="d-aadhaar" value="${d.aadhaar || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('aadh')}"></div>
+                    <div id="license-field" class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors ${d.role === 'Worker' ? 'invisible' : ''}"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('lic')}</label><input type="text" id="d-license" value="${d.license}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400" placeholder="${t('lic')}"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('epfo')}</label><select id="d-epfo" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.querySelectorAll('.epfo-col').forEach(el => el.classList.toggle('hidden', this.value !== 'Activated'))"><option value="Not Activated" ${d.epfo !== 'Activated' ? 'selected' : ''}>${t('not_activated')}</option><option value="Activated" ${d.epfo === 'Activated' ? 'selected' : ''}>${t('activated')}</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('sal_type')}</label><select id="d-salaryType" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Fixed" ${d.salaryType === 'Fixed' ? 'selected' : ''}>${t('fixed')}</option><option value="Per Trip" ${d.salaryType === 'Per Trip' ? 'selected' : ''} class="trip-opt ${d.role === 'Worker' ? 'hidden' : ''}">${t('per_trip')}</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors col-span-2"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('base_sal')}</label><input type="number" id="d-baseSalary" value="${d.baseSalary}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
                 </div>
             </div>
-
             <div>
-                <div class="flex justify-between items-end mb-3 px-1">
-                    <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase">${t('month_rec')}</h4>
-                    <button type="button" onclick="window.addSalaryRow('', document.getElementById('d-baseSalary').value || 0, '', '', true)" class="text-[10px] font-bold bg-indigo-100 text-indigo-600 px-2 py-1 rounded-[5px] uppercase">${t('add_month')}</button>
+                <div class="flex justify-between items-end mb-3 px-1 gap-2">
+                    <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase truncate flex-1">${t('month_rec')}</h4>
+                    <button type="button" onclick="window.addSalaryRow('', document.getElementById('d-baseSalary').value || 0, '', '', true)" class="text-[11px] font-bold bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-[5px] uppercase flex-shrink-0">${t('add_month')}</button>
                 </div>
                 <div id="monthly-salaries-container"></div>
             </div>
-            <button onclick="saveDriver(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-2">${isEdit ? t('update') : t('save')}</button>
+            <button onclick="saveDriver(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-3 py-3 text-sm">${isEdit ? t('update') : t('save')}</button>
         </div>`;
     }
 
@@ -1122,28 +930,28 @@ function renderPage(tab) {
         if (isEdit && currentDetailData) tr = db.get('trips').find(x => x.id === currentDetailData.id) || tr;
         const dList = drivers.filter(d => d.role === 'Driver');
         return `
-        <div class="flex items-center gap-3 mb-4"><button onclick="goBack('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? t('edit_t') : t('add_t')}</h3></div>
+        <div class="flex items-center gap-4 mb-5"><button onclick="goBack('trips')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px] flex-shrink-0"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-lg uppercase truncate flex-1">${isEdit ? t('edit_t') : t('add_t')}</h3></div>
         <div class="space-y-6 pb-6">
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('route')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('route')}</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors col-span-2"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('client')}</label><input type="text" id="t-company" value="${tr.companyName || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('origin')}</label><input type="text" id="t-origin" value="${tr.origin}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('dest')}</label><input type="text" id="t-dest" value="${tr.dest}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('vehicle')}</label><select id="t-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${vehicles.map(v => `<option value="${v.id}" ${tr.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('driver')}</label><select id="t-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${dList.map(d => `<option value="${d.id}" ${tr.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('date')}</label><input type="date" id="t-date" value="${tr.date}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('status')}</label><select id="t-status" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Ongoing" ${tr.status === 'Ongoing' ? 'selected' : ''}>${t('ongoing')}</option><option value="Completed" ${tr.status === 'Completed' ? 'selected' : ''}>${t('completed')}</option><option value="Settled" ${tr.status === 'Settled' ? 'selected' : ''}>${t('settled')}</option></select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors col-span-2"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('client')}</label><input type="text" id="t-company" value="${tr.companyName || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('origin')}</label><input type="text" id="t-origin" value="${tr.origin}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('dest')}</label><input type="text" id="t-dest" value="${tr.dest}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('vehicle')}</label><select id="t-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${vehicles.map(v => `<option value="${v.id}" ${tr.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('driver')}</label><select id="t-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100">${dList.map(d => `<option value="${d.id}" ${tr.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('date')}</label><input type="date" id="t-date" value="${tr.date}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('status')}</label><select id="t-status" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="Ongoing" ${tr.status === 'Ongoing' ? 'selected' : ''}>${t('ongoing')}</option><option value="Completed" ${tr.status === 'Completed' ? 'selected' : ''}>${t('completed')}</option><option value="Settled" ${tr.status === 'Settled' ? 'selected' : ''}>${t('settled')}</option></select></div>
                 </div>
             </div>
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1 mt-4">${t('trip_fin')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 mt-4 truncate">${t('trip_fin')}</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('freight_amt')}</label><input type="number" id="t-freight" value="${tr.freightAmount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('adv_given')}</label><input type="number" id="t-advance" value="${tr.advance}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('freight_amt')}</label><input type="number" id="t-freight" value="${tr.freightAmount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('adv_given')}</label><input type="number" id="t-advance" value="${tr.advance}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
                 </div>
             </div>
-            <button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-4">${isEdit ? t('update') : t('save')}</button>
+            <button onclick="saveTrip(${isEdit})" class="btn-primary bg-indigo-600 text-white w-full uppercase mt-3 py-3 text-sm">${isEdit ? t('update') : t('save')}</button>
         </div>`;
     }
 
@@ -1152,13 +960,13 @@ function renderPage(tab) {
         let e = { type: 'Fuel', amount: '', vehicleId: '', driverId: '', payee: '', date: today(), notes: '' };
         if (isEdit && currentDetailData) e = db.get('expenses').find(x => x.id === currentDetailData.id) || e;
         return `
-        <div class="flex items-center gap-3 mb-4"><button onclick="goBack('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px]"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-xl uppercase">${isEdit ? t('edit_e') : t('add_e')}</h3></div>
+        <div class="flex items-center gap-4 mb-5"><button onclick="goBack('expenses')" class="w-10 h-10 flex items-center justify-center bg-slate-200 dark:bg-slate-800 rounded-[5px] flex-shrink-0"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h3 class="font-black text-lg uppercase truncate flex-1">${isEdit ? t('edit_e') : t('add_e')}</h3></div>
         <div class="space-y-6 pb-6">
             <div>
-                <h4 class="text-xs font-black text-slate-400 tracking-widest uppercase mb-3 px-1">${t('exp_info')}</h4>
+                <h4 class="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-3 px-1 truncate">${t('exp_info')}</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('type')}</label>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('type')}</label>
                         <select id="e-type" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100" onchange="document.getElementById('vehicle-field').classList.toggle('hidden', !['Fuel', 'Maintenance', 'Toll'].includes(this.value)); document.getElementById('driver-field').classList.toggle('hidden', this.value !== 'Salary'); document.getElementById('payee-field').classList.toggle('hidden', !['Office', 'Shop Account', 'Other'].includes(this.value));">
                             <option value="Fuel" ${e.type === 'Fuel' ? 'selected' : ''}>${t('fuel_t')}</option>
                             <option value="Maintenance" ${e.type === 'Maintenance' ? 'selected' : ''}>${t('maint_t')}</option>
@@ -1169,18 +977,15 @@ function renderPage(tab) {
                             <option value="Other" ${e.type === 'Other' ? 'selected' : ''}>${t('oth_t')}</option>
                         </select>
                     </div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('amt')}</label>
-                        <input type="number" id="e-amount" value="${e.amount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400">
-                    </div>
-                    <div id="vehicle-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${['Fuel', 'Maintenance', 'Toll'].includes(e.type) ? '' : 'hidden'}"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('vehicle')}</label><select id="e-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="">${t('none')}</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
-                    <div id="driver-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${e.type === 'Salary' ? '' : 'hidden'}"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('staff')}</label><select id="e-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="">${t('none')}</option>${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
-                    <div id="payee-field" class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors ${['Office', 'Shop Account', 'Other'].includes(e.type) ? '' : 'hidden'}"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('payee')}</label><input type="text" id="e-payee" value="${e.payee || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('date')}</label><input type="date" id="e-date" value="${e.date}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
-                    <div class="glass-card rounded-[5px] p-3 focus-within:border-indigo-500 dark:focus-within:border-indigo-400 transition-colors col-span-2"><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">${t('notes')}</label><textarea id="e-notes" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 h-16 resize-none placeholder-slate-400">${e.notes || ''}</textarea></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('amt')}</label><input type="number" id="e-amount" value="${e.amount}" placeholder="0" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div id="vehicle-field" class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors ${['Fuel', 'Maintenance', 'Toll'].includes(e.type) ? '' : 'hidden'}"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('vehicle')}</label><select id="e-vehicle" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="">${t('none')}</option>${vehicles.map(v => `<option value="${v.id}" ${e.vehicleId === v.id ? 'selected' : ''}>${v.number}</option>`).join('')}</select></div>
+                    <div id="driver-field" class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors ${e.type === 'Salary' ? '' : 'hidden'}"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('staff')}</label><select id="e-driver" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"><option value="">${t('none')}</option>${drivers.map(d => `<option value="${d.id}" ${e.driverId === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
+                    <div id="payee-field" class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors col-span-2 ${['Office', 'Shop Account', 'Other'].includes(e.type) ? '' : 'hidden'}"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('payee')}</label><input type="text" id="e-payee" value="${e.payee || ''}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 placeholder-slate-400"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('date')}</label><input type="date" id="e-date" value="${e.date}" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100"></div>
+                    <div class="glass-card rounded-[5px] p-3.5 focus-within:border-indigo-500 transition-colors col-span-2"><label class="text-[11px] font-bold text-slate-400 uppercase block mb-1 truncate">${t('notes')}</label><textarea id="e-notes" class="w-full bg-transparent border-none outline-none font-black text-sm uppercase text-slate-900 dark:text-slate-100 h-14 resize-none placeholder-slate-400">${e.notes || ''}</textarea></div>
                 </div>
             </div>
-            <button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full uppercase mt-2">${isEdit ? t('update') : t('save')}</button>
+            <button onclick="saveExpense(${isEdit})" class="btn-primary bg-red-500 text-white w-full uppercase mt-3 py-3 text-sm">${isEdit ? t('update') : t('save')}</button>
         </div>`;
     }
 
@@ -1205,8 +1010,8 @@ function saveDriver(isEdit) {
     const role = document.getElementById('d-role').value;
     const salaryHistory = [];
     document.querySelectorAll('.salary-row').forEach(row => {
-        const m = row.querySelector('.s-month').value, t = +row.querySelector('.s-total').value || 0, p = +row.querySelector('.s-paid').value || 0, i = +row.querySelector('.s-incentive').value || 0, epfo = row.querySelector('.s-epfo') ? row.querySelector('.s-epfo').checked : false;
-        if (m) salaryHistory.push({ month: m, total: t, paid: p, incentive: i, epfoSettled: epfo });
+        const m = row.querySelector('.s-month').value, t_val = +row.querySelector('.s-total').value || 0, p = +row.querySelector('.s-paid').value || 0, inc = +row.querySelector('.s-incentive').value || 0, epfo = row.querySelector('.s-epfo') ? row.querySelector('.s-epfo').checked : false;
+        if (m) salaryHistory.push({ month: m, total: t_val, paid: p, incentive: inc, epfoSettled: epfo });
     });
     salaryHistory.sort((a,b) => b.month.localeCompare(a.month)); 
     const d = { 
@@ -1271,20 +1076,26 @@ function initChart() {
         options: { 
             responsive: true, 
             maintainAspectRatio: false, 
-            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: {family: 'Quantico', size: 10} } } },
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: {family: 'Quantico', size: 11} } } },
             scales: { 
-                x: { grid: { display: false }, ticks: { font: {family: 'Quantico', size: 10} } }, 
-                y: { ticks: { font: {family: 'Quantico', size: 10} } } 
+                x: { grid: { display: false }, ticks: { font: {family: 'Quantico', size: 11} } }, 
+                y: { ticks: { font: {family: 'Quantico', size: 11} } } 
             }
         } 
     });
 }
 
-window.onload = () => { 
+document.addEventListener('DOMContentLoaded', () => { 
     translateUI();
     updateThemeIcon(); 
     updateCompanyName(localStorage.getItem('ot_company_name')); 
-    setTimeout(showOnboarding, 500); 
+    
+    // Added a safety check in case the onboarding functions are in another file
+    if (typeof showOnboarding === 'function') {
+        setTimeout(showOnboarding, 500); 
+    }
+
+    // This guarantees it will force the Home Dashboard immediately on every refresh
     history.replaceState({ tab: 'dashboard', detail: null }, t('home').toUpperCase(), '#dashboard');
     switchTab('dashboard', true, 'none');
 
@@ -1292,17 +1103,19 @@ window.onload = () => {
     const mainContent = document.getElementById('main-content');
     const header = document.getElementById('main-header');
     
-    mainContent.addEventListener('scroll', (e) => {
-        if (window.innerWidth >= 768) return;
-        const st = e.target.scrollTop;
-        if (st > lastScroll && st > 60) {
-            header.style.marginTop = `-${header.offsetHeight}px`;
-        } else if (st < lastScroll - 10 || st <= 0) {
-            header.style.marginTop = '0px';
-        }
-        lastScroll = st;
-    });
-};
+    if (mainContent && header) {
+        mainContent.addEventListener('scroll', (e) => {
+            if (window.innerWidth >= 768) return;
+            const st = e.target.scrollTop;
+            if (st > lastScroll && st > 60) {
+                header.style.marginTop = `-${header.offsetHeight}px`;
+            } else if (st < lastScroll - 10 || st <= 0) {
+                header.style.marginTop = '0px';
+            }
+            lastScroll = st;
+        });
+    }
+});
 
 window.addEventListener('popstate', (e) => {
     const fab = document.getElementById('fab-menu');
@@ -1312,7 +1125,16 @@ window.addEventListener('popstate', (e) => {
     if (e.state && e.state.tab) { currentDetailData = e.state.detail || null; switchTab(e.state.tab, false, 'none'); } 
     else { switchTab('dashboard', false, 'none'); }
 });
-
+function createConfetti() {
+    const c = document.getElementById('confetti-container'), colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    for (let i = 0; i < 100; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${Math.random()*8+4}px;height:${Math.random()*8+4}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation:confetti-fall ${Math.random()*2+2}s linear forwards;animation-delay:${Math.random()*0.5}s`;
+        c.appendChild(el);
+    }
+    setTimeout(() => c.innerHTML = '', 4000);
+}
 </script>
 </body>
 </html>
